@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>극야 | POLAR NIGHT</title>
+<style>
+:root{
+  --bg:#101A29;--panel:#1C2B3D;--panel2:#22364b;--line:#344b63;
+  --ice:#D6E6F8;--blue:#8FAFCB;--muted:#9aafc4;--text:#edf5ff;
+  --good:#9bd6c4;--warn:#e5bf83;--danger:#e28e98;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 50% -15%,#243a52 0%,var(--bg) 54%);color:var(--text);font-family:Inter,"Noto Sans KR",system-ui,-apple-system,sans-serif;min-height:100vh}
+button,select{font:inherit}
+button{cursor:pointer}
+.app{max-width:1440px;margin:auto;padding:22px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-mark{width:46px;height:46px;border:1px solid #7896b4;border-radius:14px;display:grid;place-items:center;color:var(--ice);font-size:23px;background:linear-gradient(145deg,#2c4560,#172638);box-shadow:0 8px 25px #0003}
+.brand h1{font-size:22px;letter-spacing:.18em;margin:0;font-weight:750}
+.brand small{display:block;color:var(--blue);font-size:10px;letter-spacing:.24em;margin-top:4px}
+.top-status{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:12px}
+.pulse{width:7px;height:7px;background:var(--good);border-radius:50%;box-shadow:0 0 10px #9bd6c477}
+.layout{display:grid;grid-template-columns:220px minmax(0,1fr) 270px;gap:18px;align-items:start}
+.panel{background:linear-gradient(150deg,#203247eF,#172638f7);border:1px solid #344b63;border-radius:18px;box-shadow:0 18px 45px #0002}
+.sidebar{padding:14px;position:sticky;top:18px}
+.section-label{font-size:10px;color:#7894af;letter-spacing:.2em;margin:9px 10px 12px}
+.nav{width:100%;display:flex;align-items:center;gap:12px;padding:12px;border:1px solid transparent;border-radius:11px;background:transparent;color:#a9bed2;text-align:left;margin:3px 0;transition:.15s}
+.nav .ico{width:22px;text-align:center;font-size:17px;color:var(--blue)}
+.nav:hover{background:#ffffff08;color:var(--ice)}
+.nav.active{background:#d6e6f811;border-color:#8faFCb44;color:var(--ice)}
+.nav.active .ico{color:var(--ice)}
+.sidebar-note{margin-top:24px;padding:13px;border-radius:12px;background:#0e1927a8;border:1px solid #2e4358}
+.sidebar-note strong{font-size:11px;color:var(--blue);letter-spacing:.08em}
+.sidebar-note p{font-size:11px;color:#93a8bd;line-height:1.7;margin:8px 0 0}
+main{min-width:0}
+.hero{padding:26px 28px;position:relative;overflow:hidden;min-height:190px;background:linear-gradient(110deg,#263e56,#1b2b3e 70%);margin-bottom:17px}
+.hero:after{content:"";position:absolute;width:240px;height:240px;right:-42px;top:-80px;border:1px solid #a6c6e522;border-radius:50%;box-shadow:0 0 0 24px #a6c6e008,0 0 0 50px #a6c6e006}
+.eyebrow{color:var(--blue);font-size:10px;letter-spacing:.22em;text-transform:uppercase}
+.hero h2{font-size:clamp(25px,3vw,36px);font-weight:650;letter-spacing:.04em;margin:12px 0 8px}
+.hero p{max-width:520px;font-size:13px;color:#b3c6d8;line-height:1.8;margin:0}
+.hero-tag{position:absolute;right:25px;bottom:23px;color:#a7c2dc;font-size:10px;letter-spacing:.16em;border:1px solid #91b1ce55;padding:7px 10px;border-radius:6px}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:17px}
+.stat{padding:16px}
+.stat-label{font-size:11px;color:var(--muted)}
+.stat-value{font-size:23px;font-weight:650;margin-top:8px;letter-spacing:.02em}
+.stat-sub{font-size:10px;color:#829bb3;margin-top:4px}
+.content-panel{padding:22px;margin-bottom:17px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:17px}
+.panel-head h3{font-size:15px;font-weight:650;margin:0}
+.panel-head p{font-size:11px;color:var(--muted);margin:6px 0 0}
+.pill{font-size:10px;color:var(--blue);border:1px solid #8faFCb55;padding:5px 8px;border-radius:20px;white-space:nowrap}
+.dungeon-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.dungeon{border:1px solid #344b63;background:#152437;border-radius:14px;padding:16px;cursor:pointer;transition:.18s;position:relative;min-height:145px}
+.dungeon:hover{transform:translateY(-2px);border-color:#7193b4}
+.dungeon.selected{border-color:var(--ice);box-shadow:inset 0 0 0 1px #d6e6f82a;background:linear-gradient(140deg,#29425b,#18283a)}
+.dungeon .symbol{font-size:23px;margin-bottom:13px}
+.dungeon h4{margin:0 0 7px;font-size:14px;font-weight:650}
+.dungeon p{margin:0;color:#9bb0c4;font-size:11px;line-height:1.65}
+.dungeon .level{position:absolute;right:13px;top:13px;color:#829bb3;font-size:10px}
+.dungeon.selected:after{content:"선택됨";position:absolute;right:12px;bottom:12px;font-size:9px;color:var(--ice)}
+
+.route-map{position:relative;min-height:370px;overflow:auto;border:1px solid #2e455c;border-radius:14px;background:radial-gradient(ellipse at center,#20354a 0%,#142235 72%);padding:12px}
+.route-map-inner{position:relative;min-width:590px;height:340px}
+.route-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.route-lines line{stroke:#526f8b;stroke-width:2.2;stroke-linecap:round}
+.route-lines line.hidden-path{stroke:#34485d;stroke-dasharray:5 7}
+.map-node{position:absolute;transform:translate(-50%,-50%);width:112px;min-height:66px;padding:9px 7px;border-radius:12px;border:1px solid #4b6680;background:#1b2d41;color:var(--text);text-align:center;box-shadow:0 7px 18px #0003;transition:.18s}
+.map-node .node-dot{display:block;width:9px;height:9px;border-radius:50%;margin:0 auto 7px;background:#8FAFCB;box-shadow:0 0 0 4px #8fafcb1c}
+.map-node strong{display:block;font-size:11px;line-height:1.4}
+.map-node small{display:block;color:#8fa8c0;font-size:9px;margin-top:4px}
+.map-node:hover:not(:disabled){border-color:var(--ice);transform:translate(-50%,-50%) scale(1.04)}
+.map-node.selected{border-color:var(--ice);background:#2a435c;box-shadow:0 0 0 2px #d6e6f822,0 8px 22px #0004}
+.map-node.selected .node-dot{background:#D6E6F8}
+.map-node.unknown{background:#152437;border-style:dashed;border-color:#42566b;color:#8da1b5}
+.map-node.unknown .node-dot{background:#465b70;box-shadow:none}
+.map-node:disabled{cursor:default;opacity:.85}
+.map-node.base{width:118px;border-color:#8FAFCB;background:#243b52}
+.map-node.base .node-dot{background:#D6E6F8}
+.map-caption{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:12px;color:#8fa8c0;font-size:10px;line-height:1.7}
+@media(max-width:700px){.route-map{padding:8px}.route-map-inner{min-width:570px}.map-node{width:102px}.route-map{min-height:355px}}
+
+.duration-row{display:flex;gap:9px;flex-wrap:wrap}
+.duration{flex:1;min-width:100px;padding:12px;border-radius:10px;border:1px solid #3a526b;background:#142337;color:#a9bfd4}
+.duration strong{display:block;font-size:13px;color:var(--ice);margin-bottom:4px}
+.duration span{font-size:10px}
+.duration.selected{background:#d6e6f812;border-color:#d6e6f8;color:var(--ice)}
+.primary{border:1px solid #d6e6f8;background:var(--ice);color:#152538;border-radius:10px;padding:12px 18px;font-weight:750;font-size:12px;transition:.15s}
+.primary:hover{background:#fff}
+.primary:disabled{opacity:.45;cursor:not-allowed}
+.secondary{border:1px solid #48627d;background:#20354a;color:var(--ice);border-radius:9px;padding:9px 12px;font-size:11px}
+.secondary:hover{background:#2b455f}
+.action-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:17px}
+.hint{font-size:10px;color:#829bb3;line-height:1.6}
+.expedition-state{padding:14px 15px;background:#142437;border:1px solid #344b63;border-radius:12px;margin-bottom:14px}
+.state-top{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:12px}
+.state-top strong{color:var(--ice)}
+.progress{height:5px;border-radius:20px;background:#31465b;margin:12px 0 8px;overflow:hidden}
+.progress>span{height:100%;display:block;width:0;background:linear-gradient(90deg,#8faFCb,#d6e6f8);transition:width .3s}
+.logs{display:flex;flex-direction:column;gap:9px;max-height:310px;overflow:auto;padding-right:3px}
+.log{display:grid;grid-template-columns:55px 1fr;gap:10px;padding:10px 12px;background:#142437;border:1px solid #2c4257;border-radius:9px;font-size:11px;line-height:1.7}
+.log-time{color:#83a5c5;font-variant-numeric:tabular-nums}
+.log p{margin:0;color:#c1d0df}
+.log.good p{color:#a8ddcc}.log.warn p{color:#e5c78f}.log.danger p{color:#eaa2aa}
+.empty{padding:24px;text-align:center;color:#8098af;font-size:12px;line-height:1.8;border:1px dashed #344b63;border-radius:11px}
+.rightcol{display:flex;flex-direction:column;gap:17px}
+.right-panel{padding:18px}
+.right-panel h3{margin:0 0 14px;font-size:13px}
+.mini-stat{display:flex;justify-content:space-between;gap:10px;font-size:11px;margin:13px 0;color:#a5bbcf}
+.mini-stat strong{color:#e0ebf7;font-weight:600}
+.divider{height:1px;background:#344b63;margin:14px 0}
+.notice{font-size:11px;color:#9fb4c8;line-height:1.8}
+.notice b{color:var(--ice)}
+.page{display:none}.page.active{display:block}
+.inventory-list{display:grid;gap:9px}
+.item{display:flex;align-items:center;justify-content:space-between;padding:13px;background:#142437;border:1px solid #344b63;border-radius:10px;font-size:12px}
+.item small{display:block;color:#91a8bd;margin-top:4px;font-size:10px}
+.character-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.character-stat{padding:15px;background:#142437;border:1px solid #344b63;border-radius:10px}
+.character-stat span{font-size:11px;color:#9ab0c4}
+.character-stat strong{display:block;font-size:20px;margin-top:8px}
+.relationship-empty{padding:22px;border-radius:12px;border:1px dashed #40566c;color:#91a8bd;font-size:12px;line-height:1.8}
+footer{text-align:center;color:#637f9a;font-size:10px;letter-spacing:.08em;padding:15px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:#d6e6f8;color:#142438;padding:11px 17px;border-radius:10px;font-size:12px;font-weight:650;opacity:0;pointer-events:none;transition:.2s;z-index:10;box-shadow:0 10px 30px #0005}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.small-title{font-size:11px;color:var(--blue);letter-spacing:.12em;margin:0 0 12px}
+@media(max-width:1100px){.layout{grid-template-columns:190px minmax(0,1fr)}.rightcol{grid-column:2;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.app{padding:13px}.topbar{margin-bottom:14px}.brand h1{font-size:18px}.top-status{font-size:10px}.layout{display:flex;flex-direction:column}.sidebar{position:static;width:100%;padding:8px;order:0}.section-label,.sidebar-note{display:none}.nav-wrap{display:flex;overflow:auto;gap:4px}.nav{width:auto;min-width:max-content;margin:0;padding:10px 12px;font-size:11px}.nav .ico{font-size:14px}main{width:100%;order:1}.rightcol{width:100%;order:2;display:grid;grid-template-columns:1fr 1fr}.hero{padding:21px;min-height:170px}.hero-tag{position:static;display:inline-block;margin-top:15px}.stats{gap:9px}.stat{padding:13px}.stat-value{font-size:20px}.content-panel{padding:16px}.dungeon-grid{grid-template-columns:1fr}.dungeon{min-height:120px}.log{grid-template-columns:45px 1fr}.right-panel{padding:14px}.character-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:420px){.rightcol{grid-template-columns:1fr}.brand-mark{width:40px;height:40px}.top-status{display:none}.hero h2{font-size:26px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">✧</div>
+      <div><h1>극야</h1><small>POLAR NIGHT · SURVIVAL LOG</small></div>
+    </div>
+    <div class="top-status"><span class="pulse"></span><span>프로토타입 로컬 모드</span></div>
+  </header>
+
+  <div class="layout">
+    <aside class="panel sidebar">
+      <div class="section-label">MAIN MENU</div>
+      <div class="nav-wrap">
+        <button class="nav active" data-page="home"><span class="ico">⌂</span>거점</button>
+        <button class="nav" data-page="explore"><span class="ico">⌁</span>던전 탐사</button>
+        <button class="nav" data-page="character"><span class="ico">♙</span>캐릭터</button>
+        <button class="nav" data-page="inventory"><span class="ico">▤</span>가방</button>
+        <button class="nav" data-page="relations"><span class="ico">◇</span>관계</button>
+      </div>
+      <div class="sidebar-note">
+        <strong>FIELD NOTE 001</strong>
+        <p>살아남는 것만으로도 충분한 날이 있다.<br>오늘은 얼마나 멀리 나아갈 것인가?</p>
+      </div>
+    </aside>
+
+    <main>
+      <section class="page active" id="page-home">
+        <div class="panel hero">
+          <div class="eyebrow">FROZEN FRONTIER · SECTOR 07</div>
+          <h2>얼어붙은 세계에 오신 것을 환영합니다.</h2>
+          <p>차가운 바람이 폐허 사이를 훑고 지나간다. 거점의 불빛은 아직 꺼지지 않았다. 준비를 마쳤다면, 탐사를 시작할 시간이다.</p>
+          <div class="hero-tag">현재 지역 · 북부 거점</div>
+        </div>
+        <div class="stats">
+          <div class="panel stat"><div class="stat-label">생존 상태</div><div class="stat-value" id="home-hp">100 <span style="font-size:12px;color:#8FAFCB">/ 100</span></div><div class="stat-sub">VITALITY</div></div>
+          <div class="panel stat"><div class="stat-label">보유 자원</div><div class="stat-value" id="home-scrap">12</div><div class="stat-sub">고철 조각</div></div>
+          <div class="panel stat"><div class="stat-label">탐사 횟수</div><div class="stat-value" id="home-runs">0</div><div class="stat-sub">완료한 탐사</div></div>
+          <div class="panel stat"><div class="stat-label">현재 상태</div><div class="stat-value" id="home-state" style="font-size:18px">대기 중</div><div class="stat-sub">FIELD STATUS</div></div>
+        </div>
+        <div class="panel content-panel">
+          <div class="panel-head"><div><h3>거점 상황</h3><p>탐사를 떠나기 전, 상태를 확인하세요.</p></div><span class="pill">SAFE ZONE</span></div>
+          <div class="notice">거점에서는 체력과 보유 자원을 확인할 수 있습니다. 던전 탐사를 시작하면 시간이 흐르는 동안 사건 로그가 기록됩니다. 탐사 결과는 이 브라우저에 저장됩니다.</div>
+          <div class="action-row"><button class="primary" onclick="showPage('explore')">탐사 준비하기 ↗</button><span class="hint">현재 버전은 1인용 테스트 프로토타입입니다.</span></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-explore">
+        <div class="panel hero">
+          <div class="eyebrow">EXPEDITION CONTROL</div>
+          <h2>던전 탐사</h2>
+          <p>목적지를 선택하고 탐사 시간을 정하세요. 탐사 중 발생한 사건은 시간 순서대로 로그에 기록됩니다.</p>
+          <div class="hero-tag">출정 준비</div>
+        </div>
+        <div class="panel content-panel">
+          <div class="panel-head"><div><h3>01 / 탐사 지역 선택</h3><p>길을 따라 지역을 발견하세요. 탐사를 완료하면 다음 경로가 열립니다.</p></div><span class="pill">ROUTE MAP</span></div>
+          <div class="route-map" id="route-map">
+            <div class="route-map-inner">
+              <svg class="route-lines" viewBox="0 0 620 340" preserveAspectRatio="none" aria-hidden="true">
+                <line x1="80" y1="170" x2="220" y2="170"/>
+                <line x1="220" y1="170" x2="375" y2="78" class="hidden-path" id="path-station"/>
+                <line x1="220" y1="170" x2="375" y2="270" class="hidden-path" id="path-village"/>
+                <line x1="375" y1="78" x2="535" y2="78" class="hidden-path" id="path-mine"/>
+              </svg>
+              <div class="map-node base" style="left:13%;top:50%" aria-label="북부 거점">
+                <span class="node-dot"></span><strong>북부 거점</strong><small>현재 위치 · 안전 구역</small>
+              </div>
+              <button class="map-node selected" style="left:36%;top:50%" data-dungeon="outskirts">
+                <span class="node-dot"></span><strong>얼어붙은 외곽</strong><small>위험도 I · 발견됨</small>
+              </button>
+              <button class="map-node unknown" style="left:61%;top:23%" data-dungeon="station" id="node-station" disabled>
+                <span class="node-dot"></span><strong>???</strong><small>미확인 지역</small>
+              </button>
+              <button class="map-node unknown" style="left:61%;top:79%" data-dungeon="village" id="node-village" disabled>
+                <span class="node-dot"></span><strong>???</strong><small>미확인 지역</small>
+              </button>
+              <button class="map-node unknown" style="left:87%;top:23%" data-dungeon="mine" id="node-mine" disabled>
+                <span class="node-dot"></span><strong>???</strong><small>미확인 지역</small>
+              </button>
+            </div>
+          </div>
+          <div class="map-caption"><span>● 발견한 지역　 ┄ 미확인 경로</span><span id="map-progress">발견한 지역 1 / 4</span></div>
+        </div>
+        <div class="panel content-panel">
+          <div class="panel-head"><div><h3>02 / 탐사 시간 설정</h3><p>테스트 버전에서는 실제 대기 없이 시간을 진행할 수 있습니다.</p></div></div>
+          <div class="duration-row">
+            <button class="duration selected" data-minutes="30"><strong>30분</strong><span>짧은 탐사</span></button>
+            <button class="duration" data-minutes="60"><strong>1시간</strong><span>표준 탐사</span></button>
+            <button class="duration" data-minutes="120"><strong>2시간</strong><span>장시간 탐사</span></button>
+          </div>
+          <div class="action-row">
+            <button class="primary" id="start-btn" onclick="startExpedition()">탐사 시작하기 ↗</button>
+            <span class="hint" id="start-hint">탐사를 시작하면 진행 상태가 자동 저장됩니다.</span>
+          </div>
+        </div>
+        <div class="panel content-panel">
+          <div class="panel-head"><div><h3>03 / 탐사 진행 상황</h3><p>현재 탐사의 진행 상태와 기록입니다.</p></div><span class="pill" id="exp-pill">NO ACTIVE RUN</span></div>
+          <div id="expedition-state" class="empty">진행 중인 탐사가 없습니다.<br>지도에서 발견한 지역을 선택하고 탐사 시간을 정하세요.</div>
+          <div class="action-row" id="test-controls" style="display:none">
+            <button class="secondary" onclick="advanceTime(10)">시간 +10분 (테스트)</button>
+            <button class="secondary" onclick="finishExpedition()">즉시 완료 (테스트)</button>
+          </div>
+          <div class="divider"></div>
+          <div class="small-title">FIELD LOG</div>
+          <div class="logs" id="logs"><div class="empty">아직 기록된 로그가 없습니다.</div></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-character">
+        <div class="panel hero"><div class="eyebrow">SURVIVOR PROFILE</div><h2>캐릭터 정보</h2><p>현재 생존자의 기본 상태입니다. 탐사 결과에 따라 일부 수치가 변할 수 있습니다.</p></div>
+        <div class="panel content-panel"><div class="panel-head"><div><h3>생존자 기록</h3><p>PLAYER · LOCAL PROFILE</p></div><span class="pill">RANK: ROOKIE</span></div>
+          <div class="character-grid">
+            <div class="character-stat"><span>체력</span><strong id="char-hp">100 / 100</strong></div>
+            <div class="character-stat"><span>탐사 완료</span><strong id="char-runs">0회</strong></div>
+            <div class="character-stat"><span>근력</span><strong>18</strong></div>
+            <div class="character-stat"><span>민첩</span><strong>22</strong></div>
+            <div class="character-stat"><span>생존 지식</span><strong>24</strong></div>
+            <div class="character-stat"><span>행운</span><strong>15</strong></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-inventory">
+        <div class="panel hero"><div class="eyebrow">CARRIED SUPPLIES</div><h2>가방</h2><p>탐사에서 회수한 물자와 거점에 보관 중인 자원을 확인합니다.</p></div>
+        <div class="panel content-panel"><div class="panel-head"><div><h3>보유 아이템</h3><p>탐사 보상은 완료 시 자동으로 반영됩니다.</p></div><span class="pill" id="item-count">3 ITEMS</span></div><div class="inventory-list" id="inventory-list"></div></div>
+      </section>
+
+      <section class="page" id="page-relations">
+        <div class="panel hero"><div class="eyebrow">CONNECTIONS</div><h2>관계</h2><p>다른 생존자와의 연결을 관리하는 공간입니다.</p></div>
+        <div class="panel content-panel"><div class="panel-head"><div><h3>친구 및 관계</h3><p>온라인 기능은 추후 구현 예정입니다.</p></div><span class="pill">COMING LATER</span></div>
+          <div class="relationship-empty">현재는 프로토타입 단계라 실제 친구 추가나 다른 플레이어와의 관계 설정은 작동하지 않습니다.<br><br>온라인 버전에서는 친구 요청을 보내고 상대가 수락한 뒤, 양쪽 동의로 관계를 설정하도록 확장할 예정입니다.</div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="rightcol">
+      <div class="panel right-panel">
+        <h3>생존자 상태</h3>
+        <div class="mini-stat"><span>체력</span><strong id="side-hp">100 / 100</strong></div>
+        <div class="progress"><span id="hp-bar" style="width:100%"></span></div>
+        <div class="mini-stat"><span>고철 조각</span><strong id="side-scrap">12</strong></div>
+        <div class="mini-stat"><span>완료한 탐사</span><strong id="side-runs">0</strong></div>
+        <div class="divider"></div>
+        <div class="mini-stat"><span>현재 위치</span><strong>북부 거점</strong></div>
+        <div class="mini-stat"><span>접속 상태</span><strong style="color:#9bd6c4">활동 중</strong></div>
+      </div>
+      <div class="panel right-panel">
+        <h3>작전 메모</h3>
+        <div class="notice"><b>01.</b> 탐사 시작 전 목적지와 시간을 선택하세요.<br><br><b>02.</b> 진행 중 로그는 자동으로 추가됩니다.<br><br><b>03.</b> 사이트를 다시 열면 저장된 상태를 불러옵니다.</div>
+      </div>
+      <div class="panel right-panel">
+        <h3>프로토타입 안내</h3>
+        <div class="notice">현재 데이터는 이 브라우저에 저장됩니다. 다른 기기와 공유되거나 다른 플레이어와 연결되지는 않습니다. 실제 온라인 서비스에는 서버 구축이 필요합니다.</div>
+        <div class="action-row"><button class="secondary" onclick="resetGame()">테스트 데이터 초기화</button></div>
+      </div>
+    </aside>
+  </div>
+  <footer>POLAR NIGHT · PROTOTYPE BUILD 0.2 · DISCOVER THE UNKNOWN</footer>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const STORAGE_KEY = "polarNightPrototype_v1";
+const dungeons = {
+  outskirts:{name:"얼어붙은 외곽",risk:1,loot:["고철 조각","천 조각","통조림"]},
+  station:{name:"폐쇄된 관측소",risk:2,loot:["전자 부품","고철 조각","응급 키트"]},
+  mine:{name:"빙하 아래 광산",risk:3,loot:["광물 파편","고철 조각","희귀 합금"]},
+  village:{name:"침묵의 마을",risk:2,loot:["천 조각","통조림","낡은 기록"]}
+};
+const itemDescriptions = {
+  "고철 조각":"수리와 제작에 사용할 수 있는 기본 자원.",
+  "천 조각":"방한 장비를 보수할 때 쓰이는 재료.",
+  "통조림":"오래 보관할 수 있는 식량.",
+  "전자 부품":"오래된 기계에서 회수한 부품.",
+  "응급 키트":"부상에 대비한 의료 물자.",
+  "광물 파편":"얼음 아래에서 채굴한 광물.",
+  "희귀 합금":"발견하기 어려운 고품질 소재.",
+  "낡은 기록":"이전 생존자들이 남긴 기록."
+};
+function freshState(){return {hp:100,scrap:12,runs:0,inventory:{"고철 조각":12,"천 조각":2,"통조림":3},selectedDungeon:"outskirts",selectedMinutes:30,discoveredRegions:["outskirts"],expedition:null,logs:[]};}
+let state;
+try { state = {...freshState(), ...(JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}"))}; } catch(e){ state=freshState(); }
+if(!state.inventory) state.inventory=freshState().inventory;
+if(!state.logs) state.logs=[];
+if(!state.discoveredRegions) state.discoveredRegions=["outskirts"];
+let toastTimer;
+function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}}
+function toast(message){const el=document.getElementById("toast");el.textContent=message;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2200);}
+function showPage(page){
+  document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id==="page-"+page));
+  document.querySelectorAll(".nav").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+  if(page==="inventory") renderInventory();
+  if(page==="character") renderStats();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll(".nav").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
+document.getElementById("route-map").addEventListener("click",e=>{
+  const b=e.target.closest("[data-dungeon]");
+  if(!b)return;
+  if(b.disabled || !state.discoveredRegions.includes(b.dataset.dungeon)){toast("아직 발견하지 못한 지역입니다.");return;}
+  if(state.expedition && !state.expedition.completed){toast("탐사가 진행 중입니다.");return;}
+  state.selectedDungeon=b.dataset.dungeon;
+  renderMap();save();
+});
+document.querySelectorAll(".duration").forEach(b=>b.addEventListener("click",()=>{
+  if(state.expedition && !state.expedition.completed){toast("탐사가 진행 중입니다.");return;}
+  state.selectedMinutes=Number(b.dataset.minutes);
+  document.querySelectorAll(".duration").forEach(x=>x.classList.toggle("selected",x===b));
+  save();
+}));
+function addLog(text,type=""){
+  state.logs.unshift({time:new Date().toISOString(),text,type});
+  if(state.logs.length>80)state.logs=state.logs.slice(0,80);
+}
+function formatClock(iso){return new Date(iso).toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit",hour12:false});}
+function startExpedition(){
+  if(state.expedition && !state.expedition.completed){toast("이미 탐사가 진행 중입니다.");return;}
+  const dungeon=dungeons[state.selectedDungeon]||dungeons.outskirts;
+  const now=Date.now();
+  state.expedition={dungeon:state.selectedDungeon,minutes:state.selectedMinutes,startAt:now,endAt:now+state.selectedMinutes*60000,completed:false,elapsed:0,rewarded:false};
+  state.logs=[];
+  addLog(`${dungeon.name} 탐사를 시작했다. 차가운 공기가 장비 틈으로 스며든다.`,"");
+  addLog("주변 지형을 확인하고 탐색을 시작한다.","");
+  save(); renderAll(); toast("탐사를 시작했습니다."); showPage("explore");
+}
+function generateEvent(){
+  if(!state.expedition)return;
+  const exp=state.expedition, d=dungeons[exp.dungeon], roll=Math.random();
+  const events = [
+    {text:`눈더미 아래에서 고철 조각을 발견했다. 자원 +${1+d.risk}.`,type:"good",fn:()=>{const n=1+d.risk;state.scrap+=n;state.inventory["고철 조각"]=(state.inventory["고철 조각"]||0)+n;}},
+    {text:"발자국처럼 보이는 흔적이 눈 위로 이어진다. 주변을 경계하며 이동했다.",type:""},
+    {text:"얼어붙은 잔해를 뒤져 쓸 만한 천 조각을 회수했다.",type:"good",fn:()=>state.inventory["천 조각"]=(state.inventory["천 조각"]||0)+1},
+    {text:"갑작스러운 돌풍이 시야를 가렸다. 잠시 엄폐해 바람이 잦아들기를 기다렸다.",type:"warn"},
+    {text:`위험한 지형을 통과하다 작은 부상을 입었다. 체력 -${d.risk*3}.`,type:"danger",fn:()=>state.hp=Math.max(1,state.hp-d.risk*3)},
+    {text:`버려진 보급 상자를 찾았다. ${d.loot[Math.floor(Math.random()*d.loot.length)]}을(를) 확보했다.`,type:"good",fn:()=>{const item=d.loot[Math.floor(Math.random()*d.loot.length)];state.inventory[item]=(state.inventory[item]||0)+1;}}
+  ];
+  const ev=events[Math.floor(Math.random()*events.length)];
+  ev.fn?.();
+  addLog(ev.text,ev.type);
+}
+function advanceTime(minutes){
+  if(!state.expedition || state.expedition.completed){toast("진행 중인 탐사가 없습니다.");return;}
+  const exp=state.expedition;
+  const remaining=Math.max(0,Math.ceil((exp.endAt-Date.now())/60000));
+  const move=Math.min(minutes,remaining);
+  exp.endAt-=move*60000;
+  exp.elapsed=Math.min(exp.minutes,exp.elapsed+move);
+  const count=Math.max(1,Math.floor(move/10));
+  for(let i=0;i<count;i++)generateEvent();
+  addLog(`테스트 시간 ${move}분이 경과했다. 탐사 진행 상황을 갱신했다.`,"");
+  if(Date.now()>=exp.endAt || exp.elapsed>=exp.minutes)finishExpedition(true);
+  save();renderAll();
+}
+function finishExpedition(fromTimer=false){
+  if(!state.expedition || state.expedition.completed){toast("완료할 탐사가 없습니다.");return;}
+  const exp=state.expedition,d=dungeons[exp.dungeon];
+  if(!fromTimer && exp.elapsed<exp.minutes){
+    // Explicit test completion ends early, while normal completion respects the timer.
+    addLog("테스트 기능으로 탐사를 조기 종료했다.","warn");
+  }
+  if(!exp.rewarded){
+    const bonus=2+d.risk*2;
+    state.scrap+=bonus;
+    state.inventory["고철 조각"]=(state.inventory["고철 조각"]||0)+bonus;
+    if(Math.random()>.45)state.inventory[d.loot[Math.floor(Math.random()*d.loot.length)]]=(state.inventory[d.loot[Math.floor(Math.random()*d.loot.length)]]||0)+1;
+    state.runs+=1;exp.rewarded=true;
+  }
+  exp.completed=true;exp.elapsed=exp.minutes;
+  if(!state.discoveredRegions)state.discoveredRegions=["outskirts"];
+  const reveal={outskirts:["station","village"],station:["mine"],village:[],mine:[]};
+  const newlyFound=(reveal[exp.dungeon]||[]).filter(id=>!state.discoveredRegions.includes(id));
+  state.discoveredRegions=[...new Set([...state.discoveredRegions,...newlyFound])];
+  newlyFound.forEach(id=>addLog(`탐사 기록 갱신: 새로운 지역의 흔적을 확인했다. 지도에 미확인 지역이 추가되었다.`,"good"));
+  addLog(`${d.name} 탐사 완료. 거점으로 복귀했다. 보상 고철 조각 +${2+d.risk*2}.`,"good");
+  save();renderAll();toast("탐사 결과를 저장했습니다.");
+}
+function updateTimer(){
+  if(!state.expedition || state.expedition.completed)return;
+  const exp=state.expedition;
+  const remaining=Math.max(0,exp.endAt-Date.now());
+  exp.elapsed=Math.min(exp.minutes,Math.max(exp.elapsed,exp.minutes-remaining/60000));
+  if(remaining<=0){generateEvent();finishExpedition(true);}
+  save();renderAll();
+}
+function renderLogs(){
+  const el=document.getElementById("logs");
+  if(!state.logs.length){el.innerHTML='<div class="empty">아직 기록된 로그가 없습니다.</div>';return;}
+  el.innerHTML=state.logs.map(l=>`<div class="log ${l.type||""}"><div class="log-time">${formatClock(l.time)}</div><p>${escapeHTML(l.text)}</p></div>`).join("");
+}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function renderExpedition(){
+  const box=document.getElementById("expedition-state"),pill=document.getElementById("exp-pill"),controls=document.getElementById("test-controls"),start=document.getElementById("start-btn");
+  const exp=state.expedition;
+  if(!exp){box.className="empty";box.innerHTML="진행 중인 탐사가 없습니다.<br>지도에서 발견한 지역을 선택하고 탐사 시간을 정하세요.";pill.textContent="NO ACTIVE RUN";controls.style.display="none";start.disabled=false;return;}
+  const d=dungeons[exp.dungeon]||dungeons.outskirts;
+  const remaining=exp.completed?0:Math.max(0,exp.endAt-Date.now());
+  const elapsed=exp.completed?exp.minutes:Math.min(exp.minutes,Math.max(0,exp.minutes-remaining/60000));
+  const pct=Math.min(100,Math.round(elapsed/exp.minutes*100));
+  box.className="expedition-state";
+  box.innerHTML=`<div class="state-top"><strong>${d.name} ${exp.completed?"· 탐사 완료":"· 탐사 진행 중"}</strong><span>${exp.completed?"완료":formatRemaining(remaining)}</span></div><div class="progress"><span style="width:${pct}%"></span></div><div class="state-top"><span style="color:#8faFCb">진행률 ${pct}%</span><span style="color:#9aafc4">${exp.minutes}분 탐사</span></div>${exp.completed?'<div class="notice" style="margin-top:12px">탐사가 종료되었습니다. 보상은 가방에 반영되었으며 이 기록은 저장되어 있습니다.</div>':'<div class="notice" style="margin-top:12px">브라우저를 닫아도 종료 예정 시각은 저장됩니다. 다시 접속하면 남은 시간 또는 완료 결과를 확인할 수 있습니다.</div>'}`;
+  pill.textContent=exp.completed?"COMPLETED":"IN PROGRESS";controls.style.display=exp.completed?"none":"flex";start.disabled=!exp.completed;
+}
+function formatRemaining(ms){
+  const total=Math.ceil(ms/1000),h=Math.floor(total/3600),m=Math.floor((total%3600)/60),s=total%60;
+  if(h>0)return `${h}시간 ${m}분 남음`;
+  return `${m}분 ${String(s).padStart(2,"0")}초 남음`;
+}
+function renderStats(){
+  document.getElementById("char-hp").textContent=`${state.hp} / 100`;
+  document.getElementById("char-runs").textContent=`${state.runs}회`;
+}
+function renderInventory(){
+  const el=document.getElementById("inventory-list"),items=Object.entries(state.inventory).filter(([k,v])=>v>0);
+  document.getElementById("item-count").textContent=`${items.length} ITEMS`;
+  if(!items.length){el.innerHTML='<div class="empty">보유한 아이템이 없습니다.</div>';return;}
+  el.innerHTML=items.map(([name,count])=>`<div class="item"><div>▧ ${escapeHTML(name)}<small>${escapeHTML(itemDescriptions[name]||"탐사에서 회수한 물자.")}</small></div><strong>× ${count}</strong></div>`).join("");
+}
+function renderMap(){
+  const regions={
+    outskirts:{name:"얼어붙은 외곽",risk:1},
+    station:{name:"폐쇄된 관측소",risk:2},
+    village:{name:"침묵의 마을",risk:2},
+    mine:{name:"빙하 아래 광산",risk:3}
+  };
+  Object.entries(regions).forEach(([id,info])=>{
+    const node=document.querySelector(`[data-dungeon="${id}"]`);
+    if(!node)return;
+    const discovered=(state.discoveredRegions||["outskirts"]).includes(id);
+    node.classList.toggle("unknown",!discovered);
+    node.classList.toggle("selected",state.selectedDungeon===id && discovered);
+    node.disabled=!discovered;
+    node.querySelector("strong").textContent=discovered?info.name:"???";
+    node.querySelector("small").textContent=discovered?`위험도 ${["","I","II","III"][info.risk]} · 발견됨`:"미확인 지역";
+  });
+  document.getElementById("path-station").classList.toggle("hidden-path",!(state.discoveredRegions||[]).includes("station"));
+  document.getElementById("path-village").classList.toggle("hidden-path",!(state.discoveredRegions||[]).includes("village"));
+  document.getElementById("path-mine").classList.toggle("hidden-path",!(state.discoveredRegions||[]).includes("mine"));
+  document.getElementById("map-progress").textContent=`발견한 지역 ${(state.discoveredRegions||["outskirts"]).length} / 4`;
+}
+function renderAll(){
+  document.getElementById("home-hp").innerHTML=`${state.hp} <span style="font-size:12px;color:#8FAFCB">/ 100</span>`;
+  document.getElementById("home-scrap").textContent=state.scrap;
+  document.getElementById("home-runs").textContent=state.runs;
+  document.getElementById("home-state").textContent=state.expedition&&!state.expedition.completed?"탐사 중":"대기 중";
+  document.getElementById("side-hp").textContent=`${state.hp} / 100`;
+  document.getElementById("side-scrap").textContent=state.scrap;
+  document.getElementById("side-runs").textContent=state.runs;
+  document.getElementById("hp-bar").style.width=`${state.hp}%`;
+  renderStats();renderInventory();renderExpedition();renderLogs();
+  renderMap();
+  document.querySelectorAll(".duration").forEach(b=>b.classList.toggle("selected",Number(b.dataset.minutes)===Number(state.selectedMinutes)));
+}
+function resetGame(){
+  if(!confirm("저장된 테스트 데이터를 모두 초기화할까요?"))return;
+  state=freshState();save();renderAll();showPage("home");toast("테스트 데이터를 초기화했습니다.");
+}
+// Update the timer while the page is open. A return visit checks the saved end timestamp.
+setInterval(()=>{if(state.expedition&&!state.expedition.completed){if(Date.now()>=state.expedition.endAt)updateTimer();else renderExpedition();}},1000);
+if(state.expedition&&!state.expedition.completed&&Date.now()>=state.expedition.endAt){finishExpedition(true);}
+renderAll();
+</script>
+</body>
+</html>
