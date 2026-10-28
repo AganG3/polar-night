@@ -1,494 +1,795 @@
 <!doctype html>
 <html lang="ko">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>극야 | POLAR NIGHT</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>극야 | 생존 기록 · 테스트 빌드 0.5</title>
 <style>
-:root{
-  --bg:#101A29;--panel:#1C2B3D;--panel2:#22364b;--line:#344b63;
-  --ice:#D6E6F8;--blue:#8FAFCB;--muted:#9aafc4;--text:#edf5ff;
-  --good:#9bd6c4;--warn:#e5bf83;--danger:#e28e98;
-}
-*{box-sizing:border-box}
-body{margin:0;background:radial-gradient(ellipse at 50% -15%,#243a52 0%,var(--bg) 54%);color:var(--text);font-family:Inter,"Noto Sans KR",system-ui,-apple-system,sans-serif;min-height:100vh}
-button,select{font:inherit}
-button{cursor:pointer}
-.app{max-width:1440px;margin:auto;padding:22px}
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px}
-.brand{display:flex;align-items:center;gap:14px}
-.brand-mark{width:46px;height:46px;border:1px solid #7896b4;border-radius:14px;display:grid;place-items:center;color:var(--ice);font-size:23px;background:linear-gradient(145deg,#2c4560,#172638);box-shadow:0 8px 25px #0003}
-.brand h1{font-size:22px;letter-spacing:.18em;margin:0;font-weight:750}
-.brand small{display:block;color:var(--blue);font-size:10px;letter-spacing:.24em;margin-top:4px}
-.top-status{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:12px}
-.pulse{width:7px;height:7px;background:var(--good);border-radius:50%;box-shadow:0 0 10px #9bd6c477}
-.layout{display:grid;grid-template-columns:220px minmax(0,1fr) 270px;gap:18px;align-items:start}
-.panel{background:linear-gradient(150deg,#203247eF,#172638f7);border:1px solid #344b63;border-radius:18px;box-shadow:0 18px 45px #0002}
-.sidebar{padding:14px;position:sticky;top:18px}
-.section-label{font-size:10px;color:#7894af;letter-spacing:.2em;margin:9px 10px 12px}
-.nav{width:100%;display:flex;align-items:center;gap:12px;padding:12px;border:1px solid transparent;border-radius:11px;background:transparent;color:#a9bed2;text-align:left;margin:3px 0;transition:.15s}
-.nav .ico{width:22px;text-align:center;font-size:17px;color:var(--blue)}
-.nav:hover{background:#ffffff08;color:var(--ice)}
-.nav.active{background:#d6e6f811;border-color:#8faFCb44;color:var(--ice)}
-.nav.active .ico{color:var(--ice)}
-.sidebar-note{margin-top:24px;padding:13px;border-radius:12px;background:#0e1927a8;border:1px solid #2e4358}
-.sidebar-note strong{font-size:11px;color:var(--blue);letter-spacing:.08em}
-.sidebar-note p{font-size:11px;color:#93a8bd;line-height:1.7;margin:8px 0 0}
-main{min-width:0}
-.hero{padding:26px 28px;position:relative;overflow:hidden;min-height:190px;background:linear-gradient(110deg,#263e56,#1b2b3e 70%);margin-bottom:17px}
-.hero:after{content:"";position:absolute;width:240px;height:240px;right:-42px;top:-80px;border:1px solid #a6c6e522;border-radius:50%;box-shadow:0 0 0 24px #a6c6e008,0 0 0 50px #a6c6e006}
-.eyebrow{color:var(--blue);font-size:10px;letter-spacing:.22em;text-transform:uppercase}
-.hero h2{font-size:clamp(25px,3vw,36px);font-weight:650;letter-spacing:.04em;margin:12px 0 8px}
-.hero p{max-width:520px;font-size:13px;color:#b3c6d8;line-height:1.8;margin:0}
-.hero-tag{position:absolute;right:25px;bottom:23px;color:#a7c2dc;font-size:10px;letter-spacing:.16em;border:1px solid #91b1ce55;padding:7px 10px;border-radius:6px}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:17px}
-.stat{padding:16px}
-.stat-label{font-size:11px;color:var(--muted)}
-.stat-value{font-size:23px;font-weight:650;margin-top:8px;letter-spacing:.02em}
-.stat-sub{font-size:10px;color:#829bb3;margin-top:4px}
-.content-panel{padding:22px;margin-bottom:17px}
-.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:17px}
-.panel-head h3{font-size:15px;font-weight:650;margin:0}
-.panel-head p{font-size:11px;color:var(--muted);margin:6px 0 0}
-.pill{font-size:10px;color:var(--blue);border:1px solid #8faFCb55;padding:5px 8px;border-radius:20px;white-space:nowrap}
-.dungeon-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.dungeon{border:1px solid #344b63;background:#152437;border-radius:14px;padding:16px;cursor:pointer;transition:.18s;position:relative;min-height:145px}
-.dungeon:hover{transform:translateY(-2px);border-color:#7193b4}
-.dungeon.selected{border-color:var(--ice);box-shadow:inset 0 0 0 1px #d6e6f82a;background:linear-gradient(140deg,#29425b,#18283a)}
-.dungeon .symbol{font-size:23px;margin-bottom:13px}
-.dungeon h4{margin:0 0 7px;font-size:14px;font-weight:650}
-.dungeon p{margin:0;color:#9bb0c4;font-size:11px;line-height:1.65}
-.dungeon .level{position:absolute;right:13px;top:13px;color:#829bb3;font-size:10px}
-.dungeon.selected:after{content:"선택됨";position:absolute;right:12px;bottom:12px;font-size:9px;color:var(--ice)}
+:root{--bg:#101a29;--panel:#1c2b3d;--panel2:#22354a;--text:#e3edf7;--muted:#8fafcb;--line:#35495e;--ice:#d6e6f8;--gold:#e6b779;--danger:#d98e8e;--green:#9fc5ac}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.55 system-ui,-apple-system,"Malgun Gothic",sans-serif}button,input,select{font:inherit}button{background:#2c435a;color:var(--text);border:1px solid #526b82;padding:8px 12px;cursor:pointer;border-radius:3px}button:hover{background:#38536e}button:disabled{opacity:.45;cursor:not-allowed}.shell{width:min(98vw,1900px);max-width:none;margin:0 auto;padding:18px clamp(12px,1.4vw,28px)}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 2px 14px}.brand{font-size:25px;letter-spacing:5px;font-weight:800;color:var(--ice)}.sub{color:var(--muted);font-size:12px}.statusline{display:flex;gap:14px;flex-wrap:wrap;color:#c2d2e2}.nav{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}.nav button{background:transparent;border-color:transparent;color:#9db3c8}.nav button.active{background:var(--panel2);border-color:#516a82;color:var(--ice)}.layout{display:grid;grid-template-columns:minmax(245px,280px) minmax(0,1fr) minmax(285px,330px);gap:16px;align-items:start}.panel{background:var(--panel);padding:13px;min-width:0}.panel h2,.panel h3{margin:0 0 10px;font-size:15px;font-weight:700;color:var(--ice)}.panel h3{font-size:13px;color:#c3d5e6;margin-top:12px}.profile{display:flex;gap:10px;align-items:center}.avatar{width:54px;height:64px;background:#2a3d51;display:grid;place-items:center;font-size:27px;color:#a8c3dc;border:1px solid #52677d}.stat{display:flex;justify-content:space-between;margin:5px 0;color:#c9d7e5}.bar{height:7px;background:#0e1722;margin:5px 0 10px}.bar span{display:block;height:100%;background:#8fafcb}.bar.warm span{background:#d6a46c}.mini{font-size:12px;color:var(--muted)}.divider{height:1px;background:var(--line);margin:12px 0;opacity:.55}.map-wrap{background:#152335;padding:8px;border:1px solid #30465b}.map-svg{width:100%;height:auto;display:block;min-height:260px}.map-svg line{stroke:#5a7187;stroke-width:2}.map-svg line.hidden{stroke:#3b4b5b;stroke-dasharray:4 5;opacity:.5}.node{cursor:pointer}.node circle{fill:#30465b;stroke:#91b0cb;stroke-width:1.5}.node text{fill:#dbe8f5;font-size:12px;text-anchor:middle}.node.unknown circle{fill:#172434;stroke:#657789;stroke-dasharray:3 3}.node.unknown text{fill:#8195a9}.node.selected circle{fill:#516c83;stroke:#e1efff;stroke-width:2.5}.node.base circle{fill:#8a6e4e;stroke:#f1c891}.node:focus{outline:none}.map-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);padding:8px 2px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#91b0cb;margin-right:5px}.dot.unknown{background:#455769}.dot.base{background:#d5a56d}.region-info{margin-top:10px;background:#172537;padding:10px}.region-info h3{margin:0 0 5px}.pill{display:inline-block;padding:2px 6px;border:1px solid #526b82;color:#b7cde0;font-size:11px;margin:2px 3px 2px 0}.pill.good{color:var(--green);border-color:#557e68}.pill.warn{color:var(--gold);border-color:#896f4f}.action-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.action{background:#203248;padding:10px 8px;text-align:left;min-height:88px}.action strong{display:block;color:var(--ice);margin-bottom:4px}.action small{display:block;color:var(--muted);font-size:11px}.selectrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}.selectrow select{background:#101a29;color:var(--text);border:1px solid #526b82;padding:7px}.progress{height:6px;background:#0e1722;margin-top:7px}.progress span{display:block;height:100%;background:#9fc5ac}.log{max-height:300px;overflow:auto}.log-entry{padding:6px 0 9px}.log-time{color:#8fafcb;font-size:11px}.log-text{color:#d9e5f1}.log-entry.important .log-text{color:#f0d3a8}.resource{display:flex;justify-content:space-between;padding:4px 0;color:#cddbe8}.resource span:last-child{color:var(--ice);font-variant-numeric:tabular-nums}.smallbtn{padding:5px 8px;font-size:12px}.warning{color:var(--gold)}.danger{color:var(--danger)}.goodtext{color:var(--green)}.content-tab{display:none}.content-tab.active{display:block}.nav{position:sticky;top:0;z-index:3;background:#101a29;padding:5px 0}.nav button{white-space:nowrap}.test-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.item-card{background:#172537;border:1px solid #35495e;padding:10px;margin:7px 0}.item-card p{margin:4px 0;color:#9db3c8;font-size:12px}.item-card button{margin-top:6px}@media(max-width:650px){.test-grid{grid-template-columns:1fr}.nav{position:static}}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}.skill{margin:8px 0}.skill label{display:flex;justify-content:space-between;font-size:12px;color:#c7d8e8}.quest{padding:6px 0}.quest b{font-weight:600}.hidden{display:none!important}.foot{color:#71879d;font-size:11px;margin:12px 2px}.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#d6e6f8;color:#172536;padding:9px 15px;border-radius:3px;display:none;z-index:5;box-shadow:0 5px 20px #0006}.modal-back{position:fixed;inset:0;background:#07101acc;display:none;align-items:center;justify-content:center;padding:20px;z-index:4}.modal{max-width:430px;width:100%;background:var(--panel);padding:18px;border:1px solid #5c748b}.modal h2{margin-top:0}.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:15px}@media(max-width:1000px){.layout{grid-template-columns:220px minmax(0,1fr)}.rightcol{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:12px}.rightcol .panel{min-width:0}}@media(max-width:650px){.shell{padding:8px}.layout{grid-template-columns:1fr}.rightcol{grid-column:auto;display:flex;flex-direction:column}.action-grid{grid-template-columns:1fr}.two-col{grid-template-columns:1fr}.brand{font-size:21px}.map-svg{min-height:220px}}
 
-.route-map{position:relative;min-height:370px;overflow:auto;border:1px solid #2e455c;border-radius:14px;background:radial-gradient(ellipse at center,#20354a 0%,#142235 72%);padding:12px}
-.route-map-inner{position:relative;min-width:590px;height:340px}
-.route-lines{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.route-lines line{stroke:#526f8b;stroke-width:2.2;stroke-linecap:round}
-.route-lines line.hidden-path{stroke:#34485d;stroke-dasharray:5 7}
-.map-node{position:absolute;transform:translate(-50%,-50%);width:112px;min-height:66px;padding:9px 7px;border-radius:12px;border:1px solid #4b6680;background:#1b2d41;color:var(--text);text-align:center;box-shadow:0 7px 18px #0003;transition:.18s}
-.map-node .node-dot{display:block;width:9px;height:9px;border-radius:50%;margin:0 auto 7px;background:#8FAFCB;box-shadow:0 0 0 4px #8fafcb1c}
-.map-node strong{display:block;font-size:11px;line-height:1.4}
-.map-node small{display:block;color:#8fa8c0;font-size:9px;margin-top:4px}
-.map-node:hover:not(:disabled){border-color:var(--ice);transform:translate(-50%,-50%) scale(1.04)}
-.map-node.selected{border-color:var(--ice);background:#2a435c;box-shadow:0 0 0 2px #d6e6f822,0 8px 22px #0004}
-.map-node.selected .node-dot{background:#D6E6F8}
-.map-node.unknown{background:#152437;border-style:dashed;border-color:#42566b;color:#8da1b5}
-.map-node.unknown .node-dot{background:#465b70;box-shadow:none}
-.map-node:disabled{cursor:default;opacity:.85}
-.map-node.base{width:118px;border-color:#8FAFCB;background:#243b52}
-.map-node.base .node-dot{background:#D6E6F8}
-.map-caption{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:12px;color:#8fa8c0;font-size:10px;line-height:1.7}
-@media(max-width:700px){.route-map{padding:8px}.route-map-inner{min-width:570px}.map-node{width:102px}.route-map{min-height:355px}}
+.prologue-back{position:fixed;inset:0;background:#07101af2;z-index:20;display:none;align-items:center;justify-content:center;padding:16px;overflow:auto}.prologue{max-width:760px;width:100%;background:#1c2b3d;border:1px solid #607b95;padding:22px;box-shadow:0 18px 70px #0009}.prologue h1{letter-spacing:4px;color:#d6e6f8;margin:0 0 4px}.prologue-copy{white-space:pre-line;line-height:1.8;color:#d7e4f1;max-height:48vh;overflow:auto;padding-right:8px}.prologue input{background:#101a29;border:1px solid #526b82;color:#e3edf7;padding:9px;width:100%;margin:8px 0}.prologue-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.test-stop{border-color:#b77d7d;color:#ffdede}.resource-hint{color:#9fc5ac;font-size:12px;margin-top:5px}@media(max-width:650px){.prologue{padding:16px}.prologue-copy{max-height:44vh}}
+.recipe-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;margin-top:8px}.warning-card{border-left:3px solid var(--gold);padding:10px;background:#263447;margin:8px 0}.danger-card{border-left:3px solid var(--danger);padding:10px;background:#302b35;margin:8px 0}.region-guide{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin:10px 0}.region-guide .region-info{margin:0}.decode-count{font-weight:700;color:var(--gold)}@media(max-width:700px){.recipe-grid,.region-guide{grid-template-columns:1fr}}</style>
 
-.duration-row{display:flex;gap:9px;flex-wrap:wrap}
-.duration{flex:1;min-width:100px;padding:12px;border-radius:10px;border:1px solid #3a526b;background:#142337;color:#a9bfd4}
-.duration strong{display:block;font-size:13px;color:var(--ice);margin-bottom:4px}
-.duration span{font-size:10px}
-.duration.selected{background:#d6e6f812;border-color:#d6e6f8;color:var(--ice)}
-.primary{border:1px solid #d6e6f8;background:var(--ice);color:#152538;border-radius:10px;padding:12px 18px;font-weight:750;font-size:12px;transition:.15s}
-.primary:hover{background:#fff}
-.primary:disabled{opacity:.45;cursor:not-allowed}
-.secondary{border:1px solid #48627d;background:#20354a;color:var(--ice);border-radius:9px;padding:9px 12px;font-size:11px}
-.secondary:hover{background:#2b455f}
-.action-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:17px}
-.hint{font-size:10px;color:#829bb3;line-height:1.6}
-.expedition-state{padding:14px 15px;background:#142437;border:1px solid #344b63;border-radius:12px;margin-bottom:14px}
-.state-top{display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:12px}
-.state-top strong{color:var(--ice)}
-.progress{height:5px;border-radius:20px;background:#31465b;margin:12px 0 8px;overflow:hidden}
-.progress>span{height:100%;display:block;width:0;background:linear-gradient(90deg,#8faFCb,#d6e6f8);transition:width .3s}
-.logs{display:flex;flex-direction:column;gap:9px;max-height:310px;overflow:auto;padding-right:3px}
-.log{display:grid;grid-template-columns:55px 1fr;gap:10px;padding:10px 12px;background:#142437;border:1px solid #2c4257;border-radius:9px;font-size:11px;line-height:1.7}
-.log-time{color:#83a5c5;font-variant-numeric:tabular-nums}
-.log p{margin:0;color:#c1d0df}
-.log.good p{color:#a8ddcc}.log.warn p{color:#e5c78f}.log.danger p{color:#eaa2aa}
-.empty{padding:24px;text-align:center;color:#8098af;font-size:12px;line-height:1.8;border:1px dashed #344b63;border-radius:11px}
-.rightcol{display:flex;flex-direction:column;gap:17px}
-.right-panel{padding:18px}
-.right-panel h3{margin:0 0 14px;font-size:13px}
-.mini-stat{display:flex;justify-content:space-between;gap:10px;font-size:11px;margin:13px 0;color:#a5bbcf}
-.mini-stat strong{color:#e0ebf7;font-weight:600}
-.divider{height:1px;background:#344b63;margin:14px 0}
-.notice{font-size:11px;color:#9fb4c8;line-height:1.8}
-.notice b{color:var(--ice)}
-.page{display:none}.page.active{display:block}
-.inventory-list{display:grid;gap:9px}
-.item{display:flex;align-items:center;justify-content:space-between;padding:13px;background:#142437;border:1px solid #344b63;border-radius:10px;font-size:12px}
-.item small{display:block;color:#91a8bd;margin-top:4px;font-size:10px}
-.character-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.character-stat{padding:15px;background:#142437;border:1px solid #344b63;border-radius:10px}
-.character-stat span{font-size:11px;color:#9ab0c4}
-.character-stat strong{display:block;font-size:20px;margin-top:8px}
-.relationship-empty{padding:22px;border-radius:12px;border:1px dashed #40566c;color:#91a8bd;font-size:12px;line-height:1.8}
-footer{text-align:center;color:#637f9a;font-size:10px;letter-spacing:.08em;padding:15px}
-.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:#d6e6f8;color:#142438;padding:11px 17px;border-radius:10px;font-size:12px;font-weight:650;opacity:0;pointer-events:none;transition:.2s;z-index:10;box-shadow:0 10px 30px #0005}
-.toast.show{opacity:1;transform:translate(-50%,0)}
-.small-title{font-size:11px;color:var(--blue);letter-spacing:.12em;margin:0 0 12px}
-@media(max-width:1100px){.layout{grid-template-columns:190px minmax(0,1fr)}.rightcol{grid-column:2;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:700px){.app{padding:13px}.topbar{margin-bottom:14px}.brand h1{font-size:18px}.top-status{font-size:10px}.layout{display:flex;flex-direction:column}.sidebar{position:static;width:100%;padding:8px;order:0}.section-label,.sidebar-note{display:none}.nav-wrap{display:flex;overflow:auto;gap:4px}.nav{width:auto;min-width:max-content;margin:0;padding:10px 12px;font-size:11px}.nav .ico{font-size:14px}main{width:100%;order:1}.rightcol{width:100%;order:2;display:grid;grid-template-columns:1fr 1fr}.hero{padding:21px;min-height:170px}.hero-tag{position:static;display:inline-block;margin-top:15px}.stats{gap:9px}.stat{padding:13px}.stat-value{font-size:20px}.content-panel{padding:16px}.dungeon-grid{grid-template-columns:1fr}.dungeon{min-height:120px}.log{grid-template-columns:45px 1fr}.right-panel{padding:14px}.character-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:420px){.rightcol{grid-template-columns:1fr}.brand-mark{width:40px;height:40px}.top-status{display:none}.hero h2{font-size:26px}}
+<style id="polar-night-light-theme">
+/* Soft snow-paper theme: keep the game's icy identity without pure-white glare. */
+:root[data-theme="light"]{color-scheme:light;--bg:#e8eff5;--panel:#f7f9fc;--panel2:#e5edf5;--text:#26394d;--muted:#71869b;--line:#d4e0eb;--ice:#355a7b;--gold:#9a6a32;--danger:#a94e59;--green:#3e795e}
+html[data-theme="light"] body{background:var(--bg)!important;color:var(--text)!important}
+html[data-theme="light"] .nav{background:#e8eff5!important}
+html[data-theme="light"] .nav button{color:#617b93}
+html[data-theme="light"] .nav button.active{background:#dbe7f1;border-color:#b8cada;color:#294d6c}
+html[data-theme="light"] .panel,html[data-theme="light"] .modal{background:var(--panel);border-color:var(--line);color:var(--text)}
+html[data-theme="light"] .panel h2,html[data-theme="light"] .panel h3{color:#355a7b}
+html[data-theme="light"] .sub,html[data-theme="light"] .mini,html[data-theme="light"] .foot{color:#71869b!important}
+html[data-theme="light"] .statusline{color:#526a80}
+html[data-theme="light"] button{background:#e2ebf3;color:#2d4963;border-color:#bdcedd}
+html[data-theme="light"] button:hover{background:#d3e2ee}
+html[data-theme="light"] .action,html[data-theme="light"] .item-card,html[data-theme="light"] .region-info,html[data-theme="light"] .map-wrap,html[data-theme="light"] .warning-card,html[data-theme="light"] .danger-card{background:#edf3f8;border-color:#d1dfeb;color:#2d4358}
+html[data-theme="light"] .action strong{color:#355a7b}
+html[data-theme="light"] .action small,html[data-theme="light"] .item-card p{color:#71869b}
+html[data-theme="light"] .selectrow select,html[data-theme="light"] input,html[data-theme="light"] select{background:#fbfcfe!important;color:#26394d!important;border-color:#c5d4e2!important}
+html[data-theme="light"] .stat,html[data-theme="light"] .resource,html[data-theme="light"] .skill label{color:#40566c}
+html[data-theme="light"] .resource span:last-child{color:#355a7b}
+html[data-theme="light"] .bar,html[data-theme="light"] .progress{background:#d8e3ed}
+html[data-theme="light"] .map-svg line{stroke:#9bb0c3}
+html[data-theme="light"] .node circle{fill:#d6e4ef;stroke:#7193ae}
+html[data-theme="light"] .node text{fill:#35516b}
+html[data-theme="light"] .node.unknown circle{fill:#edf2f6;stroke:#aab9c7}
+html[data-theme="light"] .node.unknown text{fill:#8799aa}
+html[data-theme="light"] .node.selected circle{fill:#a8c8df;stroke:#416d90}
+html[data-theme="light"] .node.base circle{fill:#d7b88f;stroke:#a67c4c}
+html[data-theme="light"] .region-info h3{color:#355a7b}
+html[data-theme="light"] .pill{color:#4d6b84;border-color:#b9ccdc}
+html[data-theme="light"] .pill.good{color:#3e795e;border-color:#9dc7af}
+html[data-theme="light"] .pill.warn{color:#95652f;border-color:#d9bc91}
+html[data-theme="light"] .log-text{color:#40566c}
+html[data-theme="light"] .log-time{color:#718ba2}
+html[data-theme="light"] .log-entry.important .log-text{color:#8c622e}
+html[data-theme="light"] .avatar{background:#e1ebf3;color:#527795;border-color:#c2d2e0}
+html[data-theme="light"] .prologue-back{background:#e8eff5f2}
+html[data-theme="light"] .prologue{background:#f7f9fc;border-color:#c8d8e6;box-shadow:0 18px 70px #40566c26}
+html[data-theme="light"] .prologue h1{color:#355a7b}
+html[data-theme="light"] .prologue-copy{color:#40566c}
+html[data-theme="light"] .prologue input{background:#fbfcfe;color:#26394d;border-color:#c5d4e2}
+html[data-theme="light"] .modal-back{background:#34485c66}
+html[data-theme="light"] .toast{background:#d9e9f5;color:#29465f;box-shadow:0 5px 20px #40566c22}
+</style>
+
+<style>
+/* Layout correction: wider homepage, no bottom tab/footer strip. */
+.shell{width:min(98vw,1900px);max-width:none;margin-inline:auto}
+.foot,.bottom-tabs,.bottom-nav,[class*="bottom-tab"],[id*="bottom-tab"]{display:none!important}
+@media(min-width:1500px){.layout{grid-template-columns:minmax(260px,300px) minmax(0,1fr) minmax(300px,350px);gap:18px}}
+@media(max-width:1100px){.shell{width:100%;padding:10px}.layout{grid-template-columns:minmax(220px,260px) minmax(0,1fr);gap:12px}}
+@media(max-width:760px){.shell{width:100%;padding:8px}.layout{grid-template-columns:minmax(0,1fr)}}
 </style>
 </head>
 <body>
-<div class="app">
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand-mark">✧</div>
-      <div><h1>극야</h1><small>POLAR NIGHT · SURVIVAL LOG</small></div>
-    </div>
-    <div class="top-status"><span class="pulse"></span><span>프로토타입 로컬 모드</span></div>
-  </header>
+<div class="prologue-back" id="prologueOverlay"><div class="prologue"><div class="sub">POLAR NIGHT · SURVIVAL LOG</div><h1>극야</h1><h2 id="prologueHeading">프롤로그 — 마지막 겨울</h2><div class="prologue-copy" id="prologueCopy">세계가 얼어붙기 시작한 날을 정확히 기억하는 사람은 많지 않다.
 
-  <div class="layout">
-    <aside class="panel sidebar">
-      <div class="section-label">MAIN MENU</div>
-      <div class="nav-wrap">
-        <button class="nav active" data-page="home"><span class="ico">⌂</span>거점</button>
-        <button class="nav" data-page="explore"><span class="ico">⌁</span>던전 탐사</button>
-        <button class="nav" data-page="character"><span class="ico">♙</span>캐릭터</button>
-        <button class="nav" data-page="inventory"><span class="ico">▤</span>가방</button>
-        <button class="nav" data-page="relations"><span class="ico">◇</span>관계</button>
-      </div>
-      <div class="sidebar-note">
-        <strong>FIELD NOTE 001</strong>
-        <p>살아남는 것만으로도 충분한 날이 있다.<br>오늘은 얼마나 멀리 나아갈 것인가?</p>
-      </div>
-    </aside>
+처음에는 이례적인 한파라고 했다. 며칠만 버티면 기온이 오를 거라고, 곧 도로가 복구되고 전력과 통신도 돌아올 거라고 했다.
 
-    <main>
-      <section class="page active" id="page-home">
-        <div class="panel hero">
-          <div class="eyebrow">FROZEN FRONTIER · SECTOR 07</div>
-          <h2>얼어붙은 세계에 오신 것을 환영합니다.</h2>
-          <p>차가운 바람이 폐허 사이를 훑고 지나간다. 거점의 불빛은 아직 꺼지지 않았다. 준비를 마쳤다면, 탐사를 시작할 시간이다.</p>
-          <div class="hero-tag">현재 지역 · 북부 거점</div>
-        </div>
-        <div class="stats">
-          <div class="panel stat"><div class="stat-label">생존 상태</div><div class="stat-value" id="home-hp">100 <span style="font-size:12px;color:#8FAFCB">/ 100</span></div><div class="stat-sub">VITALITY</div></div>
-          <div class="panel stat"><div class="stat-label">보유 자원</div><div class="stat-value" id="home-scrap">12</div><div class="stat-sub">고철 조각</div></div>
-          <div class="panel stat"><div class="stat-label">탐사 횟수</div><div class="stat-value" id="home-runs">0</div><div class="stat-sub">완료한 탐사</div></div>
-          <div class="panel stat"><div class="stat-label">현재 상태</div><div class="stat-value" id="home-state" style="font-size:18px">대기 중</div><div class="stat-sub">FIELD STATUS</div></div>
-        </div>
-        <div class="panel content-panel">
-          <div class="panel-head"><div><h3>거점 상황</h3><p>탐사를 떠나기 전, 상태를 확인하세요.</p></div><span class="pill">SAFE ZONE</span></div>
-          <div class="notice">거점에서는 체력과 보유 자원을 확인할 수 있습니다. 던전 탐사를 시작하면 시간이 흐르는 동안 사건 로그가 기록됩니다. 탐사 결과는 이 브라우저에 저장됩니다.</div>
-          <div class="action-row"><button class="primary" onclick="showPage('explore')">탐사 준비하기 ↗</button><span class="hint">현재 버전은 1인용 테스트 프로토타입입니다.</span></div>
-        </div>
-      </section>
+하지만 눈은 그치지 않았다.
 
-      <section class="page" id="page-explore">
-        <div class="panel hero">
-          <div class="eyebrow">EXPEDITION CONTROL</div>
-          <h2>던전 탐사</h2>
-          <p>목적지를 선택하고 탐사 시간을 정하세요. 탐사 중 발생한 사건은 시간 순서대로 로그에 기록됩니다.</p>
-          <div class="hero-tag">출정 준비</div>
-        </div>
-        <div class="panel content-panel">
-          <div class="panel-head"><div><h3>01 / 탐사 지역 선택</h3><p>길을 따라 지역을 발견하세요. 탐사를 완료하면 다음 경로가 열립니다.</p></div><span class="pill">ROUTE MAP</span></div>
-          <div class="route-map" id="route-map">
-            <div class="route-map-inner">
-              <svg class="route-lines" viewBox="0 0 620 340" preserveAspectRatio="none" aria-hidden="true">
-                <line x1="80" y1="170" x2="220" y2="170"/>
-                <line x1="220" y1="170" x2="375" y2="78" class="hidden-path" id="path-station"/>
-                <line x1="220" y1="170" x2="375" y2="270" class="hidden-path" id="path-village"/>
-                <line x1="375" y1="78" x2="535" y2="78" class="hidden-path" id="path-mine"/>
-              </svg>
-              <div class="map-node base" style="left:13%;top:50%" aria-label="북부 거점">
-                <span class="node-dot"></span><strong>북부 거점</strong><small>현재 위치 · 안전 구역</small>
-              </div>
-              <button class="map-node selected" style="left:36%;top:50%" data-dungeon="outskirts">
-                <span class="node-dot"></span><strong>얼어붙은 외곽</strong><small>위험도 I · 발견됨</small>
-              </button>
-              <button class="map-node unknown" style="left:61%;top:23%" data-dungeon="station" id="node-station" disabled>
-                <span class="node-dot"></span><strong>???</strong><small>미확인 지역</small>
-              </button>
-              <button class="map-node unknown" style="left:61%;top:79%" data-dungeon="village" id="node-village" disabled>
-                <span class="node-dot"></span><strong>???</strong><small>미확인 지역</small>
-              </button>
-              <button class="map-node unknown" style="left:87%;top:23%" data-dungeon="mine" id="node-mine" disabled>
-                <span class="node-dot"></span><strong>???</strong><small>미확인 지역</small>
-              </button>
-            </div>
-          </div>
-          <div class="map-caption"><span>● 발견한 지역　 ┄ 미확인 경로</span><span id="map-progress">발견한 지역 1 / 4</span></div>
-        </div>
-        <div class="panel content-panel">
-          <div class="panel-head"><div><h3>02 / 탐사 시간 설정</h3><p>테스트 버전에서는 실제 대기 없이 시간을 진행할 수 있습니다.</p></div></div>
-          <div class="duration-row">
-            <button class="duration selected" data-minutes="30"><strong>30분</strong><span>짧은 탐사</span></button>
-            <button class="duration" data-minutes="60"><strong>1시간</strong><span>표준 탐사</span></button>
-            <button class="duration" data-minutes="120"><strong>2시간</strong><span>장시간 탐사</span></button>
-          </div>
-          <div class="action-row">
-            <button class="primary" id="start-btn" onclick="startExpedition()">탐사 시작하기 ↗</button>
-            <span class="hint" id="start-hint">탐사를 시작하면 진행 상태가 자동 저장됩니다.</span>
-          </div>
-        </div>
-        <div class="panel content-panel">
-          <div class="panel-head"><div><h3>03 / 탐사 진행 상황</h3><p>현재 탐사의 진행 상태와 기록입니다.</p></div><span class="pill" id="exp-pill">NO ACTIVE RUN</span></div>
-          <div id="expedition-state" class="empty">진행 중인 탐사가 없습니다.<br>지도에서 발견한 지역을 선택하고 탐사 시간을 정하세요.</div>
-          <div class="action-row" id="test-controls" style="display:none">
-            <button class="secondary" onclick="advanceTime(10)">시간 +10분 (테스트)</button>
-            <button class="secondary" onclick="finishExpedition()">즉시 완료 (테스트)</button>
-          </div>
-          <div class="divider"></div>
-          <div class="small-title">FIELD LOG</div>
-          <div class="logs" id="logs"><div class="empty">아직 기록된 로그가 없습니다.</div></div>
-        </div>
-      </section>
+산사태가 도로를 삼켰고, 철도는 눈 아래 묻혔다. 전력망은 차례로 끊겼으며, 익숙했던 도시의 불빛은 하나둘 어둠에 잠겼다. 무전기에서는 잡음만 흘러나왔고, 구조 요청에 답하는 목소리도 점차 사라졌다.
 
-      <section class="page" id="page-character">
-        <div class="panel hero"><div class="eyebrow">SURVIVOR PROFILE</div><h2>캐릭터 정보</h2><p>현재 생존자의 기본 상태입니다. 탐사 결과에 따라 일부 수치가 변할 수 있습니다.</p></div>
-        <div class="panel content-panel"><div class="panel-head"><div><h3>생존자 기록</h3><p>PLAYER · LOCAL PROFILE</p></div><span class="pill">RANK: ROOKIE</span></div>
-          <div class="character-grid">
-            <div class="character-stat"><span>체력</span><strong id="char-hp">100 / 100</strong></div>
-            <div class="character-stat"><span>탐사 완료</span><strong id="char-runs">0회</strong></div>
-            <div class="character-stat"><span>근력</span><strong>18</strong></div>
-            <div class="character-stat"><span>민첩</span><strong>22</strong></div>
-            <div class="character-stat"><span>생존 지식</span><strong>24</strong></div>
-            <div class="character-stat"><span>행운</span><strong>15</strong></div>
-          </div>
-        </div>
-      </section>
+사람들은 대피소로 향했다. 식량을 찾아 떠났고, 살아남은 사람들은 서로의 생사를 확인하기 위해 낡은 무전기를 붙잡았다. 그러나 누구도 이 겨울이 언제 끝날지 알지 못했다.
 
-      <section class="page" id="page-inventory">
-        <div class="panel hero"><div class="eyebrow">CARRIED SUPPLIES</div><h2>가방</h2><p>탐사에서 회수한 물자와 거점에 보관 중인 자원을 확인합니다.</p></div>
-        <div class="panel content-panel"><div class="panel-head"><div><h3>보유 아이템</h3><p>탐사 보상은 완료 시 자동으로 반영됩니다.</p></div><span class="pill" id="item-count">3 ITEMS</span></div><div class="inventory-list" id="inventory-list"></div></div>
-      </section>
+지금은 살아남는 것만으로도 벅찬 세상이다.
 
-      <section class="page" id="page-relations">
-        <div class="panel hero"><div class="eyebrow">CONNECTIONS</div><h2>관계</h2><p>다른 생존자와의 연결을 관리하는 공간입니다.</p></div>
-        <div class="panel content-panel"><div class="panel-head"><div><h3>친구 및 관계</h3><p>온라인 기능은 추후 구현 예정입니다.</p></div><span class="pill">COMING LATER</span></div>
-          <div class="relationship-empty">현재는 프로토타입 단계라 실제 친구 추가나 다른 플레이어와의 관계 설정은 작동하지 않습니다.<br><br>온라인 버전에서는 친구 요청을 보내고 상대가 수락한 뒤, 양쪽 동의로 관계를 설정하도록 확장할 예정입니다.</div>
-        </div>
-      </section>
-    </main>
+당신이 도착한 곳은 북부의 작은 거점. 거점 한가운데 놓인 거대한 난로에는 희미한 불씨가 남아 있고, 창밖으로는 끝을 알 수 없는 눈보라가 몰아친다. 벽에 걸린 지도에는 아직 가 보지 못한 장소들이 남아 있다. 어딘가에는 쓸 만한 물자가, 누군가의 흔적이 잠들어 있을지도 모른다.
 
-    <aside class="rightcol">
-      <div class="panel right-panel">
-        <h3>생존자 상태</h3>
-        <div class="mini-stat"><span>체력</span><strong id="side-hp">100 / 100</strong></div>
-        <div class="progress"><span id="hp-bar" style="width:100%"></span></div>
-        <div class="mini-stat"><span>고철 조각</span><strong id="side-scrap">12</strong></div>
-        <div class="mini-stat"><span>완료한 탐사</span><strong id="side-runs">0</strong></div>
-        <div class="divider"></div>
-        <div class="mini-stat"><span>현재 위치</span><strong>북부 거점</strong></div>
-        <div class="mini-stat"><span>접속 상태</span><strong style="color:#9bd6c4">활동 중</strong></div>
-      </div>
-      <div class="panel right-panel">
-        <h3>작전 메모</h3>
-        <div class="notice"><b>01.</b> 탐사 시작 전 목적지와 시간을 선택하세요.<br><br><b>02.</b> 진행 중 로그는 자동으로 추가됩니다.<br><br><b>03.</b> 사이트를 다시 열면 저장된 상태를 불러옵니다.</div>
-      </div>
-      <div class="panel right-panel">
-        <h3>프로토타입 안내</h3>
-        <div class="notice">현재 데이터는 이 브라우저에 저장됩니다. 다른 기기와 공유되거나 다른 플레이어와 연결되지는 않습니다. 실제 온라인 서비스에는 서버 구축이 필요합니다.</div>
-        <div class="action-row"><button class="secondary" onclick="resetGame()">테스트 데이터 초기화</button></div>
-      </div>
-    </aside>
-  </div>
-  <footer>POLAR NIGHT · PROTOTYPE BUILD 0.2 · DISCOVER THE UNKNOWN</footer>
+그때, 구석에 놓인 낡은 무전기에서 잡음이 일었다.
+
+“...들리는 사람 있습니까?”
+
+잠시 침묵이 흐른 뒤, 다시 목소리가 들려왔다.
+
+“혹시 아직 살아 있다면... 응답해 주십시오.”
+
+신호는 곧 끊겼다. 당신은 무전기를 내려다보다가, 벽에 걸린 지도를 향해 시선을 돌렸다.
+
+이 겨울의 끝에 무엇이 기다리고 있는지는 아직 아무도 모른다. 다만 한 가지는 분명했다. 살아남기 위해서는, 밖으로 나가야 한다.</div><div id="characterSetup"><label for="playerName">캐릭터 이름</label><input id="playerName" maxlength="20" placeholder="이름을 입력하세요 (선택)"><div class="mini">과거와 출신은 자유 설정입니다. 게임이 특정한 배경이나 사연을 정하지 않습니다.</div></div><div class="prologue-actions"><button id="enterGame">북부 거점에 도착하기</button><button class="smallbtn" id="skipPrologue">테스트용 바로 시작</button></div></div></div>
+<div class="shell">
+<header class="top"><div><div class="brand">POLAR NIGHT <span style="font-size:12px;letter-spacing:2px;color:#8fafcb">극야</span></div><div class="sub">생존 기록 · 북부 개척 구역</div></div><div class="statusline"><span id="clock">현실 시각 --:--</span><span>기온 <b class="warning">-18°C</b></span><span>거점 난방 <b id="heatStatus" class="goodtext">가동 중</b></span></div></header>
+<nav class="nav"><button class="active" data-tab="base">거점</button><button data-tab="character">캐릭터</button><button data-tab="inventory">가방 · 제작</button><button data-tab="relations">관계</button><button data-tab="radio">무전</button><button data-tab="journal">탐사 일지</button><button data-tab="garden">재배</button><button data-tab="raid">레이드</button><button data-tab="gear">장비 · 수리</button><button data-tab="admin">테스트 도구</button></nav>
+<div class="layout">
+<aside class="leftcol">
+<section class="panel"><div class="profile"><div class="avatar">♙</div><div><strong>아강</strong><div class="sub">초보 생존자 · Lv. 1</div><span class="pill">탐사자</span></div></div><div class="divider"></div><div class="stat"><span>체력</span><b id="hpLabel">86 / 100</b></div><div class="bar"><span id="hpBar" style="width:86%"></span></div><div class="stat"><span>정신력</span><b id="mindLabel">78 / 100</b></div><div class="bar"><span id="mindBar" style="width:78%"></span></div><div class="stat"><span>체온</span><b id="coldLabel">82 / 100</b></div><div class="bar warm"><span id="coldBar" style="width:82%"></span></div><div class="stat"><span>현재 위치</span><b id="locationLabel">북부 거점</b></div></section>
+<section class="panel" style="margin-top:12px"><h2>거점 난방</h2><div class="stat"><span>난로 상태</span><b id="stoveLabel" class="goodtext">가동 중</b></div><div class="stat"><span>장작 보유량</span><b><span id="wood">8</span>개</b></div><div class="stat"><span>예상 잔여 시간</span><b id="woodTime">약 6시간 40분</b></div><div class="bar warm"><span id="woodBar" style="width:80%"></span></div><div class="stat"><span>난방 효율</span><b id="heatPercent">80%</b></div><div class="mini" id="heatNote">난방 80% 이상이면 거점 내 생존 활동에 보너스가 적용됩니다.</div><div class="resource-hint">난로는 보통 수준으로 관리합니다. 허기는 낮은 중요도의 보조 요소입니다.</div><div class="selectrow"><button class="smallbtn" id="addWood">장작 투입 +3</button><button class="smallbtn" id="makeWood">폐목재 가공</button></div></section>
+<section class="panel" style="margin-top:12px"><h2>보유 물자</h2><div class="resource"><span>식량</span><span id="food">6</span></div><div class="resource"><span>물</span><span id="water">4</span></div><div class="resource"><span>약초</span><span id="herb">2</span></div><div class="resource"><span>폐목재</span><span id="scrapwood">3</span></div><div class="resource"><span>천 조각</span><span id="cloth">2</span></div></section><section class="panel" style="margin-top:12px"><h2>상태 효과</h2><div id="effectList"><span class="pill good">따뜻함 · 거점 활동 보너스</span></div><div class="mini" id="effectNote" style="margin-top:7px">난방 상태와 체온에 따라 효과가 바뀝니다.</div><div class="selectrow"><button class="smallbtn" id="restWarm">따뜻하게 휴식</button><button class="smallbtn" id="herbalTea">약초차 마시기</button></div></section>
+</aside>
+<main>
+<section class="content-tab active" id="tab-base">
+<section class="panel"><div style="display:flex;justify-content:space-between;align-items:start;gap:10px;flex-wrap:wrap"><div><h2>공동 세계 지도</h2><div class="mini">발견된 지역은 지도에 기록됩니다. 미발견 지역은 탐사로 밝혀낼 수 있습니다.</div></div><span class="pill good" id="mapCount">발견 지역 3 / 7</span></div>
+<div class="map-wrap"><svg class="map-svg" viewBox="0 0 620 360" role="img" aria-label="분기형 탐험 지도">
+<line x1="310" y1="290" x2="170" y2="215"/><line x1="310" y1="290" x2="450" y2="215"/><line x1="170" y1="215" x2="110" y2="125"/><line x1="170" y1="215" x2="270" y2="110"/><line x1="450" y1="215" x2="500" y2="120"/><line x1="270" y1="110" x2="390" y2="45" class="hidden"/><line x1="500" y1="120" x2="390" y2="45" class="hidden"/>
+<g class="node base selected" data-region="base" tabindex="0"><circle cx="310" cy="290" r="30"/><text x="310" y="286">북부</text><text x="310" y="301">거점</text></g>
+<g class="node" data-region="outskirts" tabindex="0"><circle cx="170" cy="215" r="24"/><text x="170" y="219">얼어붙은 외곽</text></g>
+<g class="node" data-region="village" tabindex="0"><circle cx="450" cy="215" r="24"/><text x="450" y="219">침묵의 마을</text></g>
+<g class="node unknown" data-region="observatory" tabindex="0"><circle cx="110" cy="125" r="24"/><text x="110" y="129">미발견</text></g>
+<g class="node unknown" data-region="mine" tabindex="0"><circle cx="270" cy="110" r="24"/><text x="270" y="114">미발견</text></g>
+<g class="node unknown" data-region="supply" tabindex="0"><circle cx="500" cy="120" r="24"/><text x="500" y="124">미발견</text></g>
+<g class="node unknown" data-region="lab" tabindex="0"><circle cx="390" cy="45" r="24"/><text x="390" y="49">미발견</text></g>
+</svg></div><div class="selectrow" style="margin-top:8px"><span class="mini">지역 세부 장소:</span><button class="smallbtn" data-local-region="conifer">침엽수림</button><button class="smallbtn" data-local-region="birch">자작나무 숲</button><button class="smallbtn" data-local-region="deadwood">고사목 지대</button><button class="smallbtn" data-local-region="creek">얼어붙은 개울</button></div><div class="map-legend"><span><i class="dot base"></i>거점</span><span><i class="dot"></i>발견 지역</span><span><i class="dot unknown"></i>미발견</span></div>
+<div class="region-info"><div style="display:flex;justify-content:space-between;gap:8px;align-items:start"><div><h3 id="regionName">북부 거점</h3><div class="mini" id="regionDesc">생존자들이 모여 만든 임시 거점. 중앙 난로와 낡은 작업대가 있다.</div></div><span class="pill" id="regionRisk">안전 구역</span></div><div id="regionStatus" class="mini" style="margin-top:7px">이곳에서 장비를 정비하고 작전을 준비할 수 있다. 이동 시간 없이 선택한 지역에서 바로 활동을 시작한다.</div></div>
+</section>
+<section class="panel" style="margin-top:12px"><h2>행동 선택</h2><div class="mini">지역을 선택한 뒤 행동과 시간을 정하세요. 테스트 편의를 위해 이동 시간은 없으며, 시작 즉시 선택한 지역에 도착합니다.</div><div class="action-grid" style="margin-top:10px"><button class="action" id="exploreBtn"><strong>⌕ 탐사 · 수색</strong><small>새 지역, 건물, 기록 발견</small></button><button class="action" id="gatherBtn"><strong>♧ 채집</strong><small>장작, 약초, 제작 재료</small></button><button class="action" id="huntBtn"><strong>⌁ 사냥</strong><small>동물 추적, 고기와 가죽</small></button></div><div class="selectrow"><label for="duration" class="mini">행동 시간</label><select id="duration"><option value="30">30분</option><option value="60" selected>1시간</option><option value="120">2시간</option></select></div><div id="actionSummary" class="mini" style="margin-top:8px">지역을 선택하면 무엇을 할 수 있는지와 예상 행동 시간을 확인할 수 있습니다.</div><div class="selectrow"><button id="startAction">작전 개시</button><button id="returnBase" class="smallbtn">거점으로 귀환</button></div><div id="activeMission" class="region-info hidden"><div style="display:flex;justify-content:space-between;gap:8px"><strong id="missionTitle">작전 진행 중</strong><span class="pill warn" id="missionState">진행 중</span></div><div class="mini" id="missionDetails" style="margin-top:5px"></div><div class="progress"><span id="missionBar" style="width:0%"></span></div><div class="selectrow"><button class="smallbtn" id="refreshMission">진행 상황 갱신</button><button class="smallbtn test-stop" id="stopExploreTest">탐험 그만하기 (테스트)</button></div></div></section>
+<section class="panel" style="margin-top:12px"><h2>작전 기록</h2><div class="log" id="log"><div class="log-entry"><div class="log-time">01:40 · 북부 거점</div><div class="log-text">난로에 장작이 타오른다. 벽 틈새로 들어오던 찬바람이 조금 잦아들었다.</div></div><div class="log-entry"><div class="log-time">어제 22:15 · 얼어붙은 외곽</div><div class="log-text">무너진 가로등 아래에서 낡은 발자국을 발견했다. 눈이 더 쌓이기 전에 흔적을 기록했다.</div></div></div></section>
+</section>
+<section class="content-tab" id="tab-character"><div class="panel"><h2>상세 프로필</h2><div class="mini">캐릭터의 능력치는 행동 성공률과 생존 능력에 영향을 줍니다.</div><div class="two-col"><div><h3>주요 능력치</h3><div class="resource"><span>근력</span><span>3</span></div><div class="resource"><span>민첩</span><span>4</span></div><div class="resource"><span>정신</span><span>3</span></div><div class="resource"><span>보온</span><span>2</span></div><div class="resource"><span>체질</span><span>3</span></div><div class="resource"><span>행운</span><span>2</span></div><h3>전투 · 생존</h3><div class="stat"><span>근접 피해</span><b>8–12</b></div><div class="stat"><span>회피율</span><b>7%</b></div><div class="stat"><span>최대 체력</span><b>100</b></div></div><div><h3>기술 숙련도</h3><div class="skill"><label><span>생존</span><span>Lv. 2</span></label><div class="bar"><span style="width:36%"></span></div></div><div class="skill"><label><span>요리</span><span>Lv. 1</span></label><div class="bar"><span style="width:18%"></span></div></div><div class="skill"><label><span>제작</span><span>Lv. 1</span></label><div class="bar"><span style="width:22%"></span></div></div><div class="skill"><label><span>전투</span><span>Lv. 1</span></label><div class="bar"><span style="width:12%"></span></div></div><div class="skill"><label><span>사회</span><span>Lv. 1</span></label><div class="bar"><span style="width:8%"></span></div></div></div></div><h3>특성</h3><span class="pill">침착함</span><span class="pill">손재주</span><span class="pill">초보 사냥꾼</span></div></section>
+<section class="content-tab" id="tab-inventory"><div class="panel"><h2>가방 · 제작 작업대</h2><div class="mini">재료와 제작 결과, 소요 시간을 확인한 뒤 제작하세요. 제작은 테스트 버전에서 즉시 완료됩니다.</div><h3>제작 분류</h3><div class="pill">식량·조리</div><div class="pill">의약품</div><div class="pill">생존 도구</div><div class="pill">장비·수리</div><div class="two-col"><div><h3>소지품</h3><div class="resource"><span>잭나이프</span><span>1</span></div><div class="resource"><span>붕대</span><span>2</span></div><div class="resource"><span>생고기</span><span id="rawMeat">1</span></div><div class="resource"><span>장작</span><span id="invWood">8</span></div><div class="resource"><span>약초</span><span id="invHerb">2</span></div><div class="resource"><span>폐목재</span><span id="invScrap">3</span></div></div><div><h3>빠른 제작</h3><div class="region-info"><b>구운 고기</b><div class="mini">생고기 1개 · 조리 시간 3분</div><button class="smallbtn" style="margin-top:8px" id="cook">조리하기</button></div><div class="region-info"><b>장작 3개</b><div class="mini">폐목재 2개 · 가공 시간 2분</div><button class="smallbtn" style="margin-top:8px" id="craftWood">장작 가공</button></div><div class="region-info"><b>붕대</b><div class="mini">천 조각 2개 · 제작 시간 3분</div><button class="smallbtn" style="margin-top:8px" id="craftBandage">제작하기</button></div></div></div><h3>장비</h3><span class="pill">무기 · 잭나이프</span><span class="pill">상의 · 낡은 방한복</span><span class="pill">신발 · 방한 부츠</span><h3>제작 도감</h3><div class="recipe-grid"><div class="region-info"><b>온기 죽</b><div class="mini">식량 1 · 약초 1 · 3분</div><div class="mini">효과: 체온 회복 보조</div></div><div class="region-info"><b>회복 차</b><div class="mini">약초 2 · 물 1 · 2분</div><div class="mini">효과: 피로 완화</div></div><div class="region-info"><b>붕대</b><div class="mini">천 조각 2 · 3분</div><div class="mini">효과: 출혈·부상 처치</div></div><div class="region-info"><b>수리 키트</b><div class="mini">폐목재 2 · 금속 부품 1 · 5분</div><div class="mini">효과: 장비 내구도 복구</div></div><div class="region-info"><b>간이 침낭</b><div class="mini">천 조각 3 · 섬유 2 · 6분</div><div class="mini">효과: 야외 휴식 보조</div></div><div class="region-info"><b>방한 장갑</b><div class="mini">가죽 1 · 천 조각 2 · 7분</div><div class="mini">효과: 추위 노출 완화</div></div></div></div></section>
+<section class="content-tab" id="tab-relations"><div class="panel"><h2>관계 · 기록</h2><div class="mini">온라인 플레이어와의 관계 기능은 추후 계정 서버 연결 시 확장할 수 있습니다.</div><h3>거점 생존자</h3><div class="resource"><span>엘리 — 의무 담당</span><span class="goodtext">거점</span></div><div class="resource"><span>도윤 — 정비 담당</span><span class="goodtext">거점</span></div><h3>공동 지도 기록</h3><div class="log-entry"><div class="log-time">오늘 00:20</div><div class="log-text">얼어붙은 외곽의 위치 정보가 공동 지도에 등록되었다.</div></div><div class="log-entry"><div class="log-time">어제 19:40</div><div class="log-text">북부 거점 주변의 이동 경로가 정리되었다.</div></div><h3>장기 목표</h3><div class="quest"><b>북부 개척</b><div class="mini">새로운 지역 3곳 발견 · 0 / 3</div></div><div class="quest"><b>난방 유지</b><div class="mini">거점 난로를 가동 상태로 유지하기</div></div><div class="quest"><b>기록 수집</b><div class="mini">특수 장소의 기록 0 / 5</div></div></div></section>
+
+<section class="content-tab" id="tab-radio"><div class="panel"><h2>무전실 · 미확인 신호</h2><p class="mini">주파수를 맞추고 신호를 해독하세요. 수신 기록은 탐사 일지에 남으며 일부 신호는 새로운 경로나 퀘스트를 엽니다.</p><div class="region-info"><div class="stat"><span>현재 주파수</span><b id="radioFrequency">104.7 MHz</b></div><div class="stat"><span>신호 상태</span><b id="radioStatus">약한 신호 감지</b></div><div class="bar"><span id="radioSignalBar" style="width:38%"></span></div><div id="radioMessage" class="log-text">“…여기는 북부 관측소. 반복한다. 지하 출입구는 폐쇄하지 마라. 아래에서—”</div><div class="selectrow"><button id="scanRadio">주파수 탐색</button><button id="decodeRadio">신호 해독</button><button id="saveRadio">일지에 기록</button></div></div><h3>수신 이력</h3><div id="radioHistory"><div class="log-entry"><div class="log-time">00:42 · 미확인 신호</div><div class="log-text">“…관측소 쪽에서 불빛을 봤다는 사람이 있어. 직접 확인하기 전까진 믿지 마.”</div></div></div></div></section>
+<section class="content-tab" id="tab-journal"><div class="panel"><h2>탐사 일지 · 발견 기록</h2><div class="mini">발견한 장소, 생존자 기록, 무전, 특수 단서를 모아 재난의 원인을 추적합니다.</div><div class="two-col"><div><h3>지역 발견</h3><div id="journalRegions"></div><h3>수집한 기록</h3><div id="journalRecords"><div class="item-card"><b>찢어진 구조 일지</b><p>“구조대는 북쪽 도로에서 돌아오지 않았다. 눈이 내린 게 아니라 하늘에서 쏟아져 내렸다.”</p><span class="pill">세계관 단서</span></div></div></div><div><h3>숨겨진 경로 단서</h3><div id="hiddenClues" class="item-card">폐쇄된 관측소의 지하 출입구에 관한 단서가 아직 부족합니다.</div><h3>수집 목표</h3><div class="quest">생존자 기록 <b id="recordCount">1</b>개 수집</div><div class="quest">미확인 무전 <b id="radioCount">0</b>건 해독</div></div></div></div></section>
+<section class="content-tab" id="tab-garden"><div class="panel"><h2>재배 · 임시 온실</h2><p class="mini">씨앗과 재배 상자를 먼저 확보해야 합니다. 물·비료·온도 수치를 따로 관리하지 않고, 성장 시간만 기다리면 됩니다.</p><div class="stat"><span>재배 상자</span><b id="planterStatus">미확보</b></div><div class="stat"><span>씨앗</span><b id="seedCount">0</b></div><div class="selectrow"><button id="findPlanter">탐사 물자로 재배 상자 확보 (테스트)</button><button id="findSeeds">씨앗 발견 (테스트)</button></div><div class="divider"></div><div class="test-grid"><div class="item-card"><b>약초</b><p>성장 시간 2시간 · 수확량 2~3개</p><button id="plantHerb">약초 씨앗 심기</button></div><div class="item-card"><b>식용 작물</b><p>성장 시간 5시간 · 수확량 2~4개</p><button id="plantCrop">식용 작물 심기</button></div></div><h3>재배 중</h3><div id="plantList"><div class="mini">아직 심은 식물이 없습니다.</div></div></div></section>
+<section class="content-tab" id="tab-raid"><div class="panel"><h2>약탈자 접근 · 48시간 주기</h2><p class="mini">약탈자와 먼저 대화 판정을 진행합니다. 협상에 성공하면 희귀 개인 상점이 열리고, 실패하면 21:00 자동 전투가 발생합니다.</p><div class="region-info"><div class="stat"><span>접근 집단</span><b id="raiderName">회색 송곳니</b></div><div class="stat"><span>태도</span><b id="raiderMood">경계</b></div><div class="stat"><span>다음 레이드</span><b id="raidTimer">테스트 모드: 언제든 시작 가능</b></div><div id="raiderDialogue" class="log-text">“쓸데없는 소리 말고, 가진 걸 보여줘. 얘기가 통하면 서로 피곤할 일은 없겠지.”</div><div class="selectrow"><button id="negotiateRaid">협상 판정</button><button id="openRaidShop" disabled>희귀 상점 열기</button></div></div><h3>방어 전략 선택</h3><div class="selectrow"><select id="raidStrategy"><option value="defense">방어 태세 · 피해 최소화</option><option value="firepower">화력 집중 · 탄약과 내구도 소모</option><option value="supplies">물자 보호 · 물자 손실 감소</option><option value="counter">역습 · 위험과 보상 증가</option></select><button id="startRaid">테스트 레이드 시작</button></div><div id="raidResult" class="item-card">아직 레이드 결과가 없습니다.</div><h3>희귀 상점</h3><div id="raidShop" class="mini">협상 성공 시 특별한 장비, 의약품, 희귀 씨앗을 구매할 수 있습니다.</div></div></section>
+<section class="content-tab" id="tab-gear"><div class="panel"><h2>장비 내구도 · 수리</h2><p class="mini">장비는 사용하면서 점차 마모됩니다. 내구도가 낮아지면 성능이 감소하지만 갑자기 파괴되지는 않습니다.</p><div id="gearList"><div class="item-card"><b>사냥용 석궁</b><div class="stat"><span>내구도</span><b id="crossbowDurability">78 / 100</b></div><div class="bar"><span id="crossbowBar" style="width:78%"></span></div><p>내구도 30% 미만이면 명중률이 감소합니다.</p><button id="useGear">장비 사용 테스트</button><button id="repairGear">수리 키트 사용</button></div><div class="item-card"><b>방한 외투</b><div class="stat"><span>내구도</span><b id="coatDurability">65 / 100</b></div><div class="bar"><span id="coatBar" style="width:65%"></span></div><p>내구도가 낮으면 체온 감소를 충분히 막지 못합니다.</p><button id="repairCoat">외투 수리</button></div></div><h3>장비 · 효과</h3><div class="resource"><span>방한 부츠</span><span>체온 감소 완화</span></div><div class="resource"><span>보온병</span><span>따뜻한 음료 보관</span></div><div class="resource"><span>수리 키트</span><span id="repairKitCount">2개</span></div></div></section>
+<section class="content-tab" id="tab-admin"><div class="panel"><h2>테스트 도구</h2><p class="mini">개발 중 기능을 기다리지 않고 확인하기 위한 테스트 메뉴입니다. 여기서 실행한 결과는 이 브라우저의 시제품 데이터에만 반영됩니다.</p><div class="test-grid"><button id="testWeather">날씨 즉시 변경</button><button id="testCold">체온 25로 설정 · 저체온 테스트</button><button id="testColdClear">체온 회복 · 난로 버프 테스트</button><button id="testRaid">레이드 전투 즉시 실행</button><button id="testIllness">감기·독감·배탈 테스트</button><button id="testRaid">레이드 이벤트 강제 실행</button><button id="testRadio">무전 이벤트 강제 수신</button><button id="testReveal">모든 지역 공개</button><button id="testReset">시제품 초기화</button></div><h3>기능 체크리스트</h3><div id="featureChecklist"><div class="resource"><span>날씨·체온·버프/디버프</span><span class="goodtext">테스트 가능</span></div><div class="resource"><span>무전·탐사 기록·숨겨진 경로</span><span class="goodtext">테스트 가능</span></div><div class="resource"><span>레이드·협상·방어 전략</span><span class="goodtext">테스트 가능</span></div><div class="resource"><span>장비 내구도·수리</span><span class="goodtext">테스트 가능</span></div><div class="resource"><span>재배·성장 타이머</span><span class="goodtext">테스트 가능</span></div><div class="resource"><span>온라인 계정·공유 지도 동기화</span><span class="warning">서버 미연결</span></div></div></div></section>
+</main>
+<aside class="rightcol"><section class="panel"><h2>작전 현황</h2><div id="missionSide" class="mini">진행 중인 작전이 없습니다.</div><h3>오늘의 목표</h3><div class="quest"><b>장작 확보</b><div class="mini">난방용 장작 10개 보유</div><div class="progress"><span id="woodQuestBar" style="width:80%"></span></div></div><div class="quest"><b>외곽 수색</b><div class="mini">얼어붙은 외곽에서 1회 수색</div></div></section><section class="panel" style="margin-top:12px"><h2>주변 소식</h2><div class="log-entry"><div class="log-time">00:42 · 무전</div><div class="log-text">“…관측소 쪽에서 불빛을 봤다는 사람이 있어. 직접 확인하기 전까진 믿지 마.”</div></div><div class="log-entry"><div class="log-time">어제 21:10 · 거점</div><div class="log-text">정비 담당이 북쪽 길목의 표지판을 수리했다.</div></div><h3>날씨 · 환경</h3><div class="stat"><span>현재</span><b id="weatherLabel">혹한 · 약한 눈</b></div><div class="stat"><span>기온</span><b id="weatherTemp">-18°C</b></div><div class="stat"><span>예상 변화</span><b id="weatherForecast">눈보라 가능성</b></div><div class="mini" id="weatherEffect">야외 활동 판정에 불리한 날씨입니다. 이동 시간은 늘어나지 않습니다.</div></section></aside>
 </div>
-<div class="toast" id="toast"></div>
+</div><div class="toast" id="toast"></div>
+
+<div class="modal-back" id="modal"><div class="modal"><h2 id="modalTitle">작전 개시</h2><div id="modalText"></div><div class="modal-actions"><button id="cancelModal">취소</button><button id="confirmModal">확인</button></div></div></div>
 <script>
-const STORAGE_KEY = "polarNightPrototype_v1";
-const dungeons = {
-  outskirts:{name:"얼어붙은 외곽",risk:1,loot:["고철 조각","천 조각","통조림"]},
-  station:{name:"폐쇄된 관측소",risk:2,loot:["전자 부품","고철 조각","응급 키트"]},
-  mine:{name:"빙하 아래 광산",risk:3,loot:["광물 파편","고철 조각","희귀 합금"]},
-  village:{name:"침묵의 마을",risk:2,loot:["천 조각","통조림","낡은 기록"]}
-};
-const itemDescriptions = {
-  "고철 조각":"수리와 제작에 사용할 수 있는 기본 자원.",
-  "천 조각":"방한 장비를 보수할 때 쓰이는 재료.",
-  "통조림":"오래 보관할 수 있는 식량.",
-  "전자 부품":"오래된 기계에서 회수한 부품.",
-  "응급 키트":"부상에 대비한 의료 물자.",
-  "광물 파편":"얼음 아래에서 채굴한 광물.",
-  "희귀 합금":"발견하기 어려운 고품질 소재.",
-  "낡은 기록":"이전 생존자들이 남긴 기록."
-};
-function freshState(){return {hp:100,scrap:12,runs:0,inventory:{"고철 조각":12,"천 조각":2,"통조림":3},selectedDungeon:"outskirts",selectedMinutes:30,discoveredRegions:["outskirts"],expedition:null,logs:[]};}
-let state;
-try { state = {...freshState(), ...(JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}"))}; } catch(e){ state=freshState(); }
-if(!state.inventory) state.inventory=freshState().inventory;
-if(!state.logs) state.logs=[];
-if(!state.discoveredRegions) state.discoveredRegions=["outskirts"];
-let toastTimer;
-function save(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){}}
-function toast(message){const el=document.getElementById("toast");el.textContent=message;el.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove("show"),2200);}
-function showPage(page){
-  document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id==="page-"+page));
-  document.querySelectorAll(".nav").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
-  if(page==="inventory") renderInventory();
-  if(page==="character") renderStats();
-  window.scrollTo({top:0,behavior:"smooth"});
-}
-document.querySelectorAll(".nav").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
-document.getElementById("route-map").addEventListener("click",e=>{
-  const b=e.target.closest("[data-dungeon]");
-  if(!b)return;
-  if(b.disabled || !state.discoveredRegions.includes(b.dataset.dungeon)){toast("아직 발견하지 못한 지역입니다.");return;}
-  if(state.expedition && !state.expedition.completed){toast("탐사가 진행 중입니다.");return;}
-  state.selectedDungeon=b.dataset.dungeon;
-  renderMap();save();
-});
-document.querySelectorAll(".duration").forEach(b=>b.addEventListener("click",()=>{
-  if(state.expedition && !state.expedition.completed){toast("탐사가 진행 중입니다.");return;}
-  state.selectedMinutes=Number(b.dataset.minutes);
-  document.querySelectorAll(".duration").forEach(x=>x.classList.toggle("selected",x===b));
-  save();
-}));
-function addLog(text,type=""){
-  state.logs.unshift({time:new Date().toISOString(),text,type});
-  if(state.logs.length>80)state.logs=state.logs.slice(0,80);
-}
-function formatClock(iso){return new Date(iso).toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit",hour12:false});}
-function startExpedition(){
-  if(state.expedition && !state.expedition.completed){toast("이미 탐사가 진행 중입니다.");return;}
-  const dungeon=dungeons[state.selectedDungeon]||dungeons.outskirts;
-  const now=Date.now();
-  state.expedition={dungeon:state.selectedDungeon,minutes:state.selectedMinutes,startAt:now,endAt:now+state.selectedMinutes*60000,completed:false,elapsed:0,rewarded:false};
-  state.logs=[];
-  addLog(`${dungeon.name} 탐사를 시작했다. 차가운 공기가 장비 틈으로 스며든다.`,"");
-  addLog("주변 지형을 확인하고 탐색을 시작한다.","");
-  save(); renderAll(); toast("탐사를 시작했습니다."); showPage("explore");
-}
-function generateEvent(){
-  if(!state.expedition)return;
-  const exp=state.expedition, d=dungeons[exp.dungeon], roll=Math.random();
-  const events = [
-    {text:`눈더미 아래에서 고철 조각을 발견했다. 자원 +${1+d.risk}.`,type:"good",fn:()=>{const n=1+d.risk;state.scrap+=n;state.inventory["고철 조각"]=(state.inventory["고철 조각"]||0)+n;}},
-    {text:"발자국처럼 보이는 흔적이 눈 위로 이어진다. 주변을 경계하며 이동했다.",type:""},
-    {text:"얼어붙은 잔해를 뒤져 쓸 만한 천 조각을 회수했다.",type:"good",fn:()=>state.inventory["천 조각"]=(state.inventory["천 조각"]||0)+1},
-    {text:"갑작스러운 돌풍이 시야를 가렸다. 잠시 엄폐해 바람이 잦아들기를 기다렸다.",type:"warn"},
-    {text:`위험한 지형을 통과하다 작은 부상을 입었다. 체력 -${d.risk*3}.`,type:"danger",fn:()=>state.hp=Math.max(1,state.hp-d.risk*3)},
-    {text:`버려진 보급 상자를 찾았다. ${d.loot[Math.floor(Math.random()*d.loot.length)]}을(를) 확보했다.`,type:"good",fn:()=>{const item=d.loot[Math.floor(Math.random()*d.loot.length)];state.inventory[item]=(state.inventory[item]||0)+1;}}
-  ];
-  const ev=events[Math.floor(Math.random()*events.length)];
-  ev.fn?.();
-  addLog(ev.text,ev.type);
-}
-function advanceTime(minutes){
-  if(!state.expedition || state.expedition.completed){toast("진행 중인 탐사가 없습니다.");return;}
-  const exp=state.expedition;
-  const remaining=Math.max(0,Math.ceil((exp.endAt-Date.now())/60000));
-  const move=Math.min(minutes,remaining);
-  exp.endAt-=move*60000;
-  exp.elapsed=Math.min(exp.minutes,exp.elapsed+move);
-  const count=Math.max(1,Math.floor(move/10));
-  for(let i=0;i<count;i++)generateEvent();
-  addLog(`테스트 시간 ${move}분이 경과했다. 탐사 진행 상황을 갱신했다.`,"");
-  if(Date.now()>=exp.endAt || exp.elapsed>=exp.minutes)finishExpedition(true);
-  save();renderAll();
-}
-function finishExpedition(fromTimer=false){
-  if(!state.expedition || state.expedition.completed){toast("완료할 탐사가 없습니다.");return;}
-  const exp=state.expedition,d=dungeons[exp.dungeon];
-  if(!fromTimer && exp.elapsed<exp.minutes){
-    // Explicit test completion ends early, while normal completion respects the timer.
-    addLog("테스트 기능으로 탐사를 조기 종료했다.","warn");
-  }
-  if(!exp.rewarded){
-    const bonus=2+d.risk*2;
-    state.scrap+=bonus;
-    state.inventory["고철 조각"]=(state.inventory["고철 조각"]||0)+bonus;
-    if(Math.random()>.45)state.inventory[d.loot[Math.floor(Math.random()*d.loot.length)]]=(state.inventory[d.loot[Math.floor(Math.random()*d.loot.length)]]||0)+1;
-    state.runs+=1;exp.rewarded=true;
-  }
-  exp.completed=true;exp.elapsed=exp.minutes;
-  if(!state.discoveredRegions)state.discoveredRegions=["outskirts"];
-  const reveal={outskirts:["station","village"],station:["mine"],village:[],mine:[]};
-  const newlyFound=(reveal[exp.dungeon]||[]).filter(id=>!state.discoveredRegions.includes(id));
-  state.discoveredRegions=[...new Set([...state.discoveredRegions,...newlyFound])];
-  newlyFound.forEach(id=>addLog(`탐사 기록 갱신: 새로운 지역의 흔적을 확인했다. 지도에 미확인 지역이 추가되었다.`,"good"));
-  addLog(`${d.name} 탐사 완료. 거점으로 복귀했다. 보상 고철 조각 +${2+d.risk*2}.`,"good");
-  save();renderAll();toast("탐사 결과를 저장했습니다.");
-}
-function updateTimer(){
-  if(!state.expedition || state.expedition.completed)return;
-  const exp=state.expedition;
-  const remaining=Math.max(0,exp.endAt-Date.now());
-  exp.elapsed=Math.min(exp.minutes,Math.max(exp.elapsed,exp.minutes-remaining/60000));
-  if(remaining<=0){generateEvent();finishExpedition(true);}
-  save();renderAll();
-}
-function renderLogs(){
-  const el=document.getElementById("logs");
-  if(!state.logs.length){el.innerHTML='<div class="empty">아직 기록된 로그가 없습니다.</div>';return;}
-  el.innerHTML=state.logs.map(l=>`<div class="log ${l.type||""}"><div class="log-time">${formatClock(l.time)}</div><p>${escapeHTML(l.text)}</p></div>`).join("");
-}
-function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-function renderExpedition(){
-  const box=document.getElementById("expedition-state"),pill=document.getElementById("exp-pill"),controls=document.getElementById("test-controls"),start=document.getElementById("start-btn");
-  const exp=state.expedition;
-  if(!exp){box.className="empty";box.innerHTML="진행 중인 탐사가 없습니다.<br>지도에서 발견한 지역을 선택하고 탐사 시간을 정하세요.";pill.textContent="NO ACTIVE RUN";controls.style.display="none";start.disabled=false;return;}
-  const d=dungeons[exp.dungeon]||dungeons.outskirts;
-  const remaining=exp.completed?0:Math.max(0,exp.endAt-Date.now());
-  const elapsed=exp.completed?exp.minutes:Math.min(exp.minutes,Math.max(0,exp.minutes-remaining/60000));
-  const pct=Math.min(100,Math.round(elapsed/exp.minutes*100));
-  box.className="expedition-state";
-  box.innerHTML=`<div class="state-top"><strong>${d.name} ${exp.completed?"· 탐사 완료":"· 탐사 진행 중"}</strong><span>${exp.completed?"완료":formatRemaining(remaining)}</span></div><div class="progress"><span style="width:${pct}%"></span></div><div class="state-top"><span style="color:#8faFCb">진행률 ${pct}%</span><span style="color:#9aafc4">${exp.minutes}분 탐사</span></div>${exp.completed?'<div class="notice" style="margin-top:12px">탐사가 종료되었습니다. 보상은 가방에 반영되었으며 이 기록은 저장되어 있습니다.</div>':'<div class="notice" style="margin-top:12px">브라우저를 닫아도 종료 예정 시각은 저장됩니다. 다시 접속하면 남은 시간 또는 완료 결과를 확인할 수 있습니다.</div>'}`;
-  pill.textContent=exp.completed?"COMPLETED":"IN PROGRESS";controls.style.display=exp.completed?"none":"flex";start.disabled=!exp.completed;
-}
-function formatRemaining(ms){
-  const total=Math.ceil(ms/1000),h=Math.floor(total/3600),m=Math.floor((total%3600)/60),s=total%60;
-  if(h>0)return `${h}시간 ${m}분 남음`;
-  return `${m}분 ${String(s).padStart(2,"0")}초 남음`;
-}
-function renderStats(){
-  document.getElementById("char-hp").textContent=`${state.hp} / 100`;
-  document.getElementById("char-runs").textContent=`${state.runs}회`;
-}
-function renderInventory(){
-  const el=document.getElementById("inventory-list"),items=Object.entries(state.inventory).filter(([k,v])=>v>0);
-  document.getElementById("item-count").textContent=`${items.length} ITEMS`;
-  if(!items.length){el.innerHTML='<div class="empty">보유한 아이템이 없습니다.</div>';return;}
-  el.innerHTML=items.map(([name,count])=>`<div class="item"><div>▧ ${escapeHTML(name)}<small>${escapeHTML(itemDescriptions[name]||"탐사에서 회수한 물자.")}</small></div><strong>× ${count}</strong></div>`).join("");
-}
-function renderMap(){
-  const regions={
-    outskirts:{name:"얼어붙은 외곽",risk:1},
-    station:{name:"폐쇄된 관측소",risk:2},
-    village:{name:"침묵의 마을",risk:2},
-    mine:{name:"빙하 아래 광산",risk:3}
-  };
-  Object.entries(regions).forEach(([id,info])=>{
-    const node=document.querySelector(`[data-dungeon="${id}"]`);
-    if(!node)return;
-    const discovered=(state.discoveredRegions||["outskirts"]).includes(id);
-    node.classList.toggle("unknown",!discovered);
-    node.classList.toggle("selected",state.selectedDungeon===id && discovered);
-    node.disabled=!discovered;
-    node.querySelector("strong").textContent=discovered?info.name:"???";
-    node.querySelector("small").textContent=discovered?`위험도 ${["","I","II","III"][info.risk]} · 발견됨`:"미확인 지역";
-  });
-  document.getElementById("path-station").classList.toggle("hidden-path",!(state.discoveredRegions||[]).includes("station"));
-  document.getElementById("path-village").classList.toggle("hidden-path",!(state.discoveredRegions||[]).includes("village"));
-  document.getElementById("path-mine").classList.toggle("hidden-path",!(state.discoveredRegions||[]).includes("mine"));
-  document.getElementById("map-progress").textContent=`발견한 지역 ${(state.discoveredRegions||["outskirts"]).length} / 4`;
-}
-function renderAll(){
-  document.getElementById("home-hp").innerHTML=`${state.hp} <span style="font-size:12px;color:#8FAFCB">/ 100</span>`;
-  document.getElementById("home-scrap").textContent=state.scrap;
-  document.getElementById("home-runs").textContent=state.runs;
-  document.getElementById("home-state").textContent=state.expedition&&!state.expedition.completed?"탐사 중":"대기 중";
-  document.getElementById("side-hp").textContent=`${state.hp} / 100`;
-  document.getElementById("side-scrap").textContent=state.scrap;
-  document.getElementById("side-runs").textContent=state.runs;
-  document.getElementById("hp-bar").style.width=`${state.hp}%`;
-  renderStats();renderInventory();renderExpedition();renderLogs();
-  renderMap();
-  document.querySelectorAll(".duration").forEach(b=>b.classList.toggle("selected",Number(b.dataset.minutes)===Number(state.selectedMinutes)));
-}
-function resetGame(){
-  if(!confirm("저장된 테스트 데이터를 모두 초기화할까요?"))return;
-  state=freshState();save();renderAll();showPage("home");toast("테스트 데이터를 초기화했습니다.");
-}
-// Update the timer while the page is open. A return visit checks the saved end timestamp.
-setInterval(()=>{if(state.expedition&&!state.expedition.completed){if(Date.now()>=state.expedition.endAt)updateTimer();else renderExpedition();}},1000);
-if(state.expedition&&!state.expedition.completed&&Date.now()>=state.expedition.endAt){finishExpedition(true);}
-renderAll();
+const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+const regions={base:{name:'북부 거점',desc:'생존자들이 모여 만든 임시 거점. 중앙 난로와 낡은 작업대가 있다.',risk:'안전 구역',found:true,travel:0,actions:['거점 정비','장비 제작']},outskirts:{name:'얼어붙은 외곽',desc:'무너진 가로등과 버려진 건물이 늘어선 외곽 도로. 폐목재와 오래된 물자를 찾을 수 있다.',risk:'위험 I',found:true,travel:15,actions:['탐사','채집','사냥']},village:{name:'침묵의 마을',desc:'눈에 파묻힌 주택가. 주민들이 남긴 흔적과 생활 물자가 있을 수 있다.',risk:'위험 II',found:true,travel:25,actions:['탐사','채집','사냥']},observatory:{name:'폐쇄된 관측소',desc:'외곽에서 발견할 수 있는 오래된 관측 시설. 전력 장치와 연구 기록이 남아 있을 가능성이 있다.',risk:'위험 II',found:false,travel:35,actions:['탐사']},mine:{name:'빙하 아래 광산',desc:'얼음 아래로 이어지는 폐광. 금속과 광물 자원이 있지만 붕괴 위험이 있다.',risk:'위험 III',found:false,travel:45,actions:['탐사','채집']},supply:{name:'군용 보급 창고',desc:'잠금장치가 남아 있는 보급 창고. 내부는 확인되지 않았다.',risk:'위험 II',found:false,travel:40,actions:['탐사']},lab:{name:'빙하 연구 시설',desc:'관측소와 창고의 기록을 모아 위치를 특정할 수 있는 연구 시설.',risk:'위험 III',found:false,travel:60,actions:['탐사']},conifer:{name:'침엽수림',desc:'빽빽한 침엽수 사이에서 장작과 마른 가지, 동물 흔적을 찾을 수 있다.',risk:'위험 I',found:true,travel:15,actions:['탐사','채집','사냥'],parent:'outskirts'},birch:{name:'자작나무 숲',desc:'수피와 약초가 발견되는 숲. 눈이 깊어지면 이동이 까다롭다.',risk:'위험 I',found:false,travel:20,actions:['탐사','채집','사냥'],parent:'outskirts'},deadwood:{name:'고사목 지대',desc:'마른 나무와 섬유 재료가 남아 있는 바람 센 지대.',risk:'위험 I',found:false,travel:20,actions:['탐사','채집'],parent:'outskirts'},creek:{name:'얼어붙은 개울',desc:'얼음과 물을 확보할 수 있고 동물의 발자국이 잘 남는다.',risk:'위험 I',found:false,travel:20,actions:['탐사','채집','사냥'],parent:'outskirts'},stationYard:{name:'관측소 외부',desc:'버려진 장비와 금속 부품이 남아 있다.',risk:'위험 II',found:false,travel:35,actions:['탐사','채집'],parent:'observatory'},transmitter:{name:'송신탑',desc:'불안정한 무전 신호가 잡히는 높은 구조물.',risk:'위험 II',found:false,travel:40,actions:['탐사'],parent:'observatory'},mountainTrail:{name:'산악 오솔길',desc:'약초와 동물 흔적을 찾을 수 있지만 강풍에 노출된다.',risk:'위험 II',found:false,travel:30,actions:['탐사','채집','사냥'],parent:'observatory'},buriedTunnel:{name:'매몰된 터널',desc:'눈 아래 묻힌 철도 터널. 광물과 숨겨진 경로가 있을 수 있다.',risk:'위험 III',found:false,travel:45,actions:['탐사','채집'],parent:'mine'},avalancheValley:{name:'눈사태 계곡',desc:'매몰된 보급품과 우회로가 드러나는 위험한 계곡.',risk:'위험 III',found:false,travel:50,actions:['탐사'],parent:'mine'},railStation:{name:'폐쇄된 철도역',desc:'철도 기록과 버려진 물자가 남아 있는 역.',risk:'위험 II',found:false,travel:35,actions:['탐사','채집'],parent:'village'}};
+let state={region:'base',action:'explore',mission:null,wood:8,food:6,water:4,herb:2,scrapwood:3,cloth:2,rawMeat:1,hp:86,mind:78,temp:82,lastTick:Date.now(),selected:'base',weatherIndex:0,lastIllnessCheck:Date.now(),lastWeatherChange:Date.now(),illness:null,log:[],playerName:'생존자',discoveredRegions:['base','outskirts','village'],resourceTimers:{},firstMissionDone:false};
+const weatherTypes=[{name:'혹한 · 약한 눈',temp:-18,forecast:'눈보라 가능성',penalty:0.04},{name:'강풍 · 눈보라',temp:-29,forecast:'한동안 지속될 전망',penalty:0.12},{name:'매서운 한파',temp:-34,forecast:'기온 하락 주의',penalty:0.16},{name:'흐린 날씨',temp:-12,forecast:'눈이 잦아들 가능성',penalty:0.02}];
+function effects(){const heat=Math.min(100,Math.round(state.wood/10*100));const warm=state.region==='base'&&heat>=80;const list=[];if(warm)list.push('<span class="pill good">따뜻함 · 거점 활동 보너스</span>');if(state.temp<60)list.push('<span class="pill warn">한기 · 행동 효율 감소</span>');if(state.temp<30)list.push('<span class="pill warn">저체온 위험</span>');if(state.illness)list.push(`<span class="pill warn">${state.illness}</span>`);if(typeof window.pnIsWeak==='function'&&window.pnIsWeak())list.push('<span class="pill warn">쇠약 · 1시간 초과 활동 불가</span>');if(!list.length)list.push('<span class="pill">활성 효과 없음</span>');$('#effectList').innerHTML=list.join(' ');$('#effectNote').textContent=state.illness==='배탈'?'속이 좋지 않다. 식사와 회복 효율이 낮아진다.':state.illness==='감기'?'몸이 으슬으슬하다. 휴식하거나 감기약을 사용하면 회복에 도움이 된다.':state.illness==='독감'?'심한 피로가 느껴진다. 휴식과 의약품이 필요하다.':state.temp<30?'체온이 위험할 정도로 낮다. 즉시 따뜻한 곳으로 돌아가야 한다.':state.temp<60?'체온이 낮아져 활동 판정에 불리하다.':'난방 상태와 체온에 따라 효과가 바뀝니다.';$('#heatPercent').textContent=heat+'%';$('#weatherLabel').textContent=weatherTypes[state.weatherIndex].name;$('#weatherTemp').textContent=weatherTypes[state.weatherIndex].temp+'°C';$('#weatherForecast').textContent=weatherTypes[state.weatherIndex].forecast;$('#weatherEffect').textContent='야외 활동 판정에 '+(weatherTypes[state.weatherIndex].penalty>=.1?'크게':'조금')+' 불리한 날씨입니다. 이동 시간은 늘어나지 않습니다.';}
+
+const fmtMin=m=>m<60?`${m}분`:`${Math.floor(m/60)}시간${m%60?` ${m%60}분`:''}`;
+function toast(t){$('#toast').textContent=t;$('#toast').style.display='block';setTimeout(()=>$('#toast').style.display='none',2400)}
+function addLog(text,place,important=false){const d=new Date();const time=d.toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',hour12:false});const el=document.createElement('div');el.className='log-entry'+(important?' important':'');const t=document.createElement('div');t.className='log-time';t.textContent=`${time} · ${place||regions[state.region].name}`;const body=document.createElement('div');body.className='log-text';body.textContent=text;el.append(t,body);$('#log').prepend(el);while($('#log').children.length>35)$('#log').lastElementChild.remove()}
+function render(){['wood','food','water','herb','scrapwood','cloth','rawMeat'].forEach(k=>{if($('#'+k))$('#'+k).textContent=Math.floor(state[k]+1e-4)});$('#invWood').textContent=Math.floor(state.wood+1e-4);$('#invHerb').textContent=state.herb;$('#invScrap').textContent=state.scrapwood;$('#hpLabel').textContent=Math.round(state.hp)+' / 100';$('#mindLabel').textContent=Math.round(state.mind)+' / 100';$('#coldLabel').textContent=Math.round(state.temp)+' / 100';$('#hpBar').style.width=state.hp+'%';$('#mindBar').style.width=state.mind+'%';$('#coldBar').style.width=state.temp+'%';$('#locationLabel').textContent=regions[state.region].name;$('#woodBar').style.width=Math.min(100,state.wood/10*100)+'%';$('#woodQuestBar').style.width=Math.min(100,state.wood/10*100)+'%';const mins=Math.round(state.wood*50);$('#woodTime').textContent=mins?`약 ${fmtMin(mins)}`:'연료 없음';$('#heatStatus').textContent=state.wood>0?'가동 중':'꺼짐';effects();$('#stoveLabel').textContent=state.wood>0?'가동 중':'꺼짐';$('#stoveLabel').className=state.wood>0?'goodtext':'danger';$('#heatNote').textContent=state.wood>0?(Math.min(100,Math.round(state.wood/10*100))>=80?'난방 80% 이상 · 따뜻함 버프 활성화':'난방이 약합니다. 장작을 보충하세요.'):'난로가 꺼졌습니다. 거점 체온 회복이 중단됩니다.';const r=regions[state.selected];$('#actionSummary').textContent=r.found?`목적지: ${r.name} · 편도 이동 ${fmtMin(r.travel)} · 왕복 이동 포함 총 예상 ${fmtMin(Number($('#duration').value)+r.travel*2)}`:'이 지역은 아직 지도에 밝혀지지 않았습니다.';$('#startAction').disabled=!r.found||!!state.mission||state.selected==='base';$('#returnBase').disabled=state.region==='base'&&!state.mission;$('#activeMission').classList.toggle('hidden',!state.mission);if(state.mission){$('#missionTitle').textContent=({explore:'탐사 · 수색',gather:'채집',hunt:'사냥'})[state.mission.action]+' — '+regions[state.mission.region].name;$('#missionState').textContent=Date.now()>=state.mission.end?'결과 확인 가능':'진행 중';$('#missionDetails').textContent=`이동 ${fmtMin(state.mission.travel)} · 행동 ${fmtMin(state.mission.duration)} · 귀환 포함 총 ${fmtMin(state.mission.total)} · 종료 예정 ${new Date(state.mission.end).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',hour12:false})}`;$('#missionBar').style.width=Math.min(100,Math.max(0,(Date.now()-state.mission.start)/(state.mission.end-state.mission.start)*100))+'%';$('#missionSide').textContent=`${regions[state.mission.region].name}에서 ${({explore:'수색',gather:'채집',hunt:'사냥'})[state.mission.action]} 중 · ${$('#missionState').textContent}`}else $('#missionSide').textContent='진행 중인 작전이 없습니다.';}
+function selectRegion(id){state.selected=id;const r=regions[id];if(!r.found){toast('아직 발견되지 않은 지역입니다. 인접 지역 탐사를 통해 위치를 밝혀보세요.');return}render()}
+$$('.node').forEach(n=>{n.addEventListener('click',()=>selectRegion(n.dataset.region));n.addEventListener('keydown',e=>{if(e.key==='Enter')selectRegion(n.dataset.region)})});$$('.nav button').forEach(b=>b.addEventListener('click',()=>{$$('.nav button').forEach(x=>x.classList.toggle('active',x===b));$$('.content-tab').forEach(x=>x.classList.toggle('active',x.id==='tab-'+b.dataset.tab))}));
+function setAction(a){state.action=a;toast(({explore:'탐사 · 수색',gather:'채집',hunt:'사냥'})[a]+' 선택됨');if(state.selected==='base'){const candidates=Object.keys(regions).filter(id=>id!=='base'&&regions[id].found);state.selected=candidates[0]||'outskirts'}render()}
+$('#exploreBtn').onclick=()=>setAction('explore');$('#gatherBtn').onclick=()=>setAction('gather');$('#huntBtn').onclick=()=>setAction('hunt');$('#duration').onchange=render;
+function beginAction(){let id=state.selected,r=regions[id];if(!r.found||id==='base'||state.mission)return;let duration=Number($('#duration').value),travel=r.travel,total=duration+travel*2;state.mission={region:id,action:state.action,duration,travel,total,start:Date.now(),end:Date.now()+total*60000};state.region=id;addLog(`${r.name}(으)로 출발했다. 편도 이동에는 약 ${fmtMin(travel)}이 걸릴 예정이다.`,regions[id].name);addLog(`${({explore:'수색',gather:'채집',hunt:'사냥'})[state.action]} 작전을 시작했다. 예상 행동 시간은 ${fmtMin(duration)}이다.`,regions[id].name);render();toast('작전을 시작했습니다. 사이트를 닫아도 이 브라우저에서는 종료 시각을 계산합니다.')}
+$('#startAction').onclick=beginAction;
+function finishMission(){const m=state.mission;if(!m)return;if(Date.now()<m.end){toast('작전이 아직 진행 중입니다.');return}const r=regions[m.region];const penalty=weatherTypes[state.weatherIndex].penalty+(state.temp<60?0.08:0)+(state.illness?0.07:0);const rollChance=Math.random()+penalty;if(m.action==='explore'){let roll=rollChance;const adjacent={outskirts:['observatory','mine'],village:['supply','lab']};const candidates=(adjacent[m.region]||[]).filter(id=>!regions[id].found);if(candidates.length&&roll<.42){const id=candidates[Math.floor(Math.random()*candidates.length)];regions[id].found=true;addLog(`주변 지형을 조사하던 중 '${regions[id].name}'으로 이어지는 경로를 발견했다. 새 지역의 위치가 지도에 기록되었다.`,r.name,true)}else if(roll<.68){let item=['붕대 1개','낡은 손전등 1개','금속 파편 2개'][Math.floor(Math.random()*3)];addLog(`수색 중 ${item}을 발견했다. 주변을 더 살펴봤지만 추가 물자는 없었다.`,r.name,true)}else if(roll<.84){state.scrapwood+=2;addLog('부서진 선반에서 폐목재 2개를 확보했다. 나머지는 얼어붙어 부서졌다.',r.name)}else{state.mind=Math.max(0,state.mind-2);addLog('방 안에는 오래된 흔적만 남아 있었다. 수색을 마치고 기록을 정리했다.',r.name)}}else if(m.action==='gather'){let wood=Math.random()<Math.max(.3,.65-penalty)?2:1;state.scrapwood+=wood;let bonus=Math.random()<.3; if(bonus)state.herb++;addLog(`채집을 마쳤다. 폐목재 ${wood}개${bonus?'와 약초 1개':''}를 확보했다.`,r.name,true)}else{if(Math.random()<Math.max(.25,.65-penalty)){state.rawMeat++;state.food++;addLog('동물의 흔적을 따라가 사냥에 성공했다. 생고기와 식량을 확보했다.',r.name,true)}else{state.mind=Math.max(0,state.mind-3);addLog('발자국은 눈보라 속에서 끊겼다. 사냥감을 찾지 못하고 철수했다.',r.name)}}if(state.temp<45&&!state.illness&&Math.random()<.18){state.illness='감기';addLog('혹한에 오래 노출된 탓인지 몸이 으슬으슬하다. 감기 기운이 생겼다.','북부 거점',true)}state.region='base';state.mission=null;addLog('거점으로 귀환했다. 확보한 물자를 정리하고 장비를 내려놓았다.','북부 거점');render();toast('작전 완료 · 거점으로 귀환했습니다.')}
+$('#refreshMission').onclick=finishMission;$('#returnBase').onclick=()=>{if(state.mission){if(Date.now()<state.mission.end){toast('작전이 진행 중입니다. 완료 후 귀환할 수 있습니다.');return}finishMission()}else{state.region='base';state.selected='base';addLog('거점으로 돌아왔다.','북부 거점');render()}};
+$('#addWood').onclick=()=>{if(state.wood>=30){toast('난로에 넣을 수 있는 장작이 충분합니다.');return}let n=Math.min(3,30-state.wood);state.wood+=n;addLog(`난로에 장작 ${n}개를 넣었다. 불길이 다시 살아났다.`,'북부 거점',true);render()};$('#makeWood').onclick=()=>{if(state.scrapwood<2){toast('폐목재가 부족합니다.');return}state.scrapwood-=2;state.wood+=3;addLog('폐목재 2개를 잘라 장작 3개를 만들었다.','북부 거점');render()};$('#craftWood').onclick=$('#makeWood').onclick;$('#cook').onclick=()=>{if(state.rawMeat<1){toast('생고기가 부족합니다.');return}state.rawMeat--;state.food++;addLog('생고기 1개를 구워 식량으로 준비했다.','북부 거점');render();toast('조리 완료')};$('#craftBandage').onclick=()=>{if(state.cloth<2){toast('천 조각이 부족합니다.');return}state.cloth-=2;addLog('천 조각 2개를 사용해 붕대를 제작했다.','북부 거점');toast('붕대 1개 제작 완료')};
+$('#restWarm').onclick=()=>{if(state.region!=='base'){toast('거점으로 돌아와야 제대로 쉴 수 있습니다.');return}if(state.wood<8){toast('난방이 부족해 충분히 몸을 녹일 수 없습니다. 장작을 보충하세요.');return}state.temp=Math.min(100,state.temp+12);state.mind=Math.min(100,state.mind+4);if(state.illness==='감기'&&Math.random()<.35)state.illness=null;addLog('중앙 난로 곁에서 몸을 녹이며 숨을 돌렸다. 체온과 정신력이 조금 회복되었다.','북부 거점',true);render();toast('따뜻하게 휴식했습니다.')};$('#herbalTea').onclick=()=>{if(state.herb<1){toast('약초가 부족합니다.');return}if(!state.illness){toast('지금은 약초차가 꼭 필요하지 않습니다.');return}state.herb--;const illness=state.illness;state.illness=null;state.temp=Math.min(100,state.temp+3);addLog(`${illness} 증상을 가라앉히기 위해 약초차를 마셨다. 완전히 회복되었다고 장담할 수는 없지만 몸이 한결 편해졌다.`,'북부 거점',true);render();toast('약초차를 마셨습니다.')};
+function tick(){const now=Date.now(),elapsed=Math.max(0,now-state.lastTick);state.lastTick=now;if(elapsed>0){const hours=elapsed/3600000;const heat=Math.min(100,state.wood/10*100);state.wood=Math.max(0,state.wood-hours*1.2);if(state.region!=='base'){state.temp=Math.max(0,state.temp-hours*(weatherTypes[state.weatherIndex].temp<=-29?8:5));if(state.temp<25)state.hp=Math.max(1,state.hp-hours*2)}else if(heat>=80){state.temp=Math.min(100,state.temp+hours*5);if(state.illness==='감기'&&Math.random()<hours*.03)state.illness=null}else if(state.wood===0){state.temp=Math.max(0,state.temp-hours*3);if(state.temp<30)state.hp=Math.max(1,state.hp-hours*1.5)}if(now-state.lastIllnessCheck>4*3600000){state.lastIllnessCheck=now;if(!state.illness&&state.temp<50&&Math.random()<.12){state.illness='감기';addLog('몸이 으슬으슬하고 기침이 난다. 감기 기운이 생겼다.','북부 거점',true)}}}if(now-state.lastWeatherChange>15*60000){state.lastWeatherChange=now;state.weatherIndex=(state.weatherIndex+1+Math.floor(Math.random()*2))%weatherTypes.length;addLog('기상 기록이 갱신되었다. 현재 날씨: '+weatherTypes[state.weatherIndex].name+'.','북부 거점')}$('#clock').textContent='현실 시각 '+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',hour12:false});if(state.mission&&now>=state.mission.end){$('#missionState').textContent='결과 확인 가능'}render()}
+// Prototype persistence: saves state only in this browser; no shared account/server yet.
+try{const saved=localStorage.getItem('polarNightDemo');if(saved){const p=JSON.parse(saved);state={...state,...p};if(typeof state.temp!=='number')state.temp=82;if(typeof state.weatherIndex!=='number')state.weatherIndex=0;if(typeof state.lastWeatherChange!=='number')state.lastWeatherChange=Date.now();if(state.mission&&Date.now()>=state.mission.end){/* keep pending result until player checks in */}}}catch(e){}
+setInterval(()=>{tick();try{localStorage.setItem('polarNightDemo',JSON.stringify(state))}catch(e){}},5000);$('#cancelModal').onclick=()=>$('#modal').style.display='none';$('#confirmModal').onclick=()=>$('#modal').style.display='none';render();tick();
 </script>
-</body>
-</html>
+
+<script>
+// POLAR NIGHT v0.3 gameplay rules patch: prologue, separate travel/activity, test cancel, discoveries and resource respawn.
+(function(){
+ const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+ const oldRender=window.render;
+ const baseRegions=['base','outskirts','village'];
+ const discoveredSet=()=>new Set(state.discoveredRegions||baseRegions);
+ function saveState(){try{localStorage.setItem('polarNightDemo',JSON.stringify(state))}catch(e){}}
+ window.saveState=saveState;
+ function reveal(id,reason){if(!regions[id]||regions[id].found)return false;regions[id].found=true;state.discoveredRegions=Array.from(new Set([...(state.discoveredRegions||baseRegions),id]));addLog(`${regions[id].name}의 위치를 확인했다. 지도에 새 장소가 등록되었다. ${reason||''}`.trim(),regions[state.region]?.name||'북부 거점',true);return true}
+ function resKey(id,key,place){return (place?id+':'+place:id)+'_'+key}
+ function resNeed(key){return (key==='rare'?8:key==='supply'?6:3)*3600000}
+ function curPlace(id){return (state.mission&&state.mission.region===id&&state.mission.place)||''}
+ function resourceAvailable(id,key){state.resourceTimers=state.resourceTimers||{};const stamp=state.resourceTimers[resKey(id,key,curPlace(id))]||0;return Date.now()-stamp>=resNeed(key)}
+ window.pnResourceWait=function(id,key,place){state.resourceTimers=state.resourceTimers||{};const stamp=state.resourceTimers[resKey(id,key,place)]||0;return Math.max(0,resNeed(key)-(Date.now()-stamp))}
+ function markResource(id,key){state.resourceTimers=state.resourceTimers||{};state.resourceTimers[resKey(id,key,curPlace(id))]=Date.now()}
+ function setupRegionButtons(){ $$('[data-local-region]').forEach(b=>{b.onclick=()=>{const id=b.dataset.localRegion;if(!regions[id].found){toast('아직 발견하지 못한 세부 장소입니다. 해당 지역을 탐사해 보세요.');return}state.selected=id;render();toast(regions[id].name+' 선택됨')}}); }
+ // Intro: player chooses their own name; background remains open-ended.
+ const overlay=$('#prologueOverlay');
+ function enter(){const n=($('#playerName').value||'').trim();state.playerName=n||'생존자';const name=$('.profile strong');if(name)name.textContent=state.playerName;overlay.style.display='none';state.introComplete=true;addLog('북부 거점에 도착했다. 중앙 난로와 벽에 걸린 지도를 확인할 수 있다. 첫 행동은 자유롭게 선택할 수 있다.','북부 거점',true);saveState();render();toast('거점 도착 · 채집, 탐사, 사냥 중 원하는 행동을 선택하세요.')}
+ $('#enterGame').onclick=enter;$('#skipPrologue').onclick=enter;
+ try{const saved=JSON.parse(localStorage.getItem('polarNightDemo')||'{}');state={...state,...saved};}catch(e){}
+ if(state.playerName&&state.playerName!=='생존자'){const n=$('.profile strong');if(n)n.textContent=state.playerName}
+ if(!state.introComplete)overlay.style.display='flex';
+ // Ensure initial known locations and region data persist after refresh.
+ state.discoveredRegions=Array.from(new Set([...(state.discoveredRegions||baseRegions),'base','outskirts','village']));
+ Object.keys(regions).forEach(id=>{if(state.discoveredRegions.includes(id))regions[id].found=true});
+ setupRegionButtons();
+ // Separate movement and action phases. Arrival never auto-returns to base.
+ window.beginAction=function(){
+   const id=state.selected,r=regions[id];if(!r||!r.found||id==='base'||state.mission)return;
+   const duration=Number($('#duration').value),travel=Number(r.travel||0),now=Date.now();
+   state.mission={region:id,action:state.action,duration,travel,total:travel+duration,start:now,travelEnd:now+travel*60000,end:now+(travel+duration)*60000,phase:travel>0?'travel':'action',activityStart:now+travel*60000};
+   state.region='base';
+   addLog(`목적지 ${r.name}(으)로 이동을 시작했다. 이동 중에는 다른 행동을 할 수 없다.`, '북부 거점');
+   render();saveState();toast('이동을 시작했습니다. 도착 후 선택한 활동이 진행됩니다.');
+ };
+ $('#startAction').onclick=()=>window.beginAction();
+ window.finishMission=function(){
+   const m=state.mission;if(!m)return;
+   const now=Date.now();if(now<m.end){toast('활동 시간이 아직 끝나지 않았습니다.');return}
+   const r=regions[m.region];state.region=m.region;state.selected=m.region;
+   const penalty=weatherTypes[state.weatherIndex].penalty+(state.temp<60?0.04:0)+(state.illness?0.03:0);
+   if(m.action==='explore'){
+     // Basic discoveries are guaranteed; hidden discoveries remain conditional or chance-based.
+     const adjacent={outskirts:['observatory','conifer','birch','deadwood','creek'],village:['supply','railStation','lab'],observatory:['stationYard','transmitter','mountainTrail'],mine:['buriedTunnel','avalancheValley'],conifer:['birch','deadwood','creek'],stationYard:['transmitter','lab'],railStation:['mine','supply']};
+     const candidates=(adjacent[m.region]||[]).filter(id=>regions[id]&&!regions[id].found);
+     if(candidates.length){const id=candidates[0];reveal(id,'기본 경로 발견');}
+     else if(Math.random()<Math.max(.12,.28-penalty*.5)){
+       const hidden=({outskirts:['buriedTunnel'],observatory:['lab'],village:['supply'],mine:['avalancheValley'],conifer:['creek']})[m.region]||[];const hid=hidden.find(id=>regions[id]&&!regions[id].found);if(hid)reveal(hid,'숨겨진 장소를 발견했다.');else addLog('주변 지형을 조사했다. 아직 확인하지 못한 길은 보이지 않는다.','탐사 일지');
+     }else{
+       const rare=Math.random()<.18; if(rare){state.cloth+=1;addLog('눈에 묻힌 방수 가방에서 천 조각 1개를 확보했다.','탐사 일지',true)}else addLog('주변 지형과 흔적을 기록했다. 새로운 장소는 발견하지 못했지만 탐사 기록이 갱신되었다.','탐사 일지');
+     }
+   }else if(m.action==='gather'){
+     const key='gather';if(!resourceAvailable(m.region,key)){addLog('이 장소의 일반 자원은 아직 재보급되지 않았다. 다른 세부 장소를 방문하거나 시간이 지난 뒤 돌아오자.',r.name);}
+     else {markResource(m.region,key);let amount=Math.max(1,Math.round((m.duration/30)*(.8+Math.random()*.45)*(1-penalty*.5)));if(['conifer','deadwood','outskirts'].includes(m.region)){state.scrapwood+=amount;state.wood+=Math.random()<.65?1:0;addLog(`채집 완료 · 폐목재 +${amount}${state.wood?' · 장작 보충 가능':''}`,r.name,true)}else if(['birch','mountainTrail'].includes(m.region)){state.herb+=amount;addLog(`채집 완료 · 약초 +${amount}`,r.name,true)}else{state.scrapwood+=Math.max(1,Math.ceil(amount/2));state.cloth+=Math.random()<.45?1:0;addLog('채집 완료 · 제작 재료를 확보했다.',r.name,true)}}
+   }else{
+     if(!resourceAvailable(m.region,'hunt')){addLog('이 지역의 동물 흔적이 아직 돌아오지 않았다. 잠시 뒤 다시 사냥할 수 있다.',r.name)}
+     else{markResource(m.region,'hunt');if(Math.random()<Math.max(.35,.72-penalty)){state.rawMeat++;state.food++;if(Math.random()<.35)state.cloth++;addLog('사냥 성공 · 생고기와 식량을 확보했다.','사냥 기록',true)}else{state.mind=Math.max(0,state.mind-1);addLog('흔적이 눈보라 속에서 끊겼다. 사냥감은 놓쳤지만 흔적을 기록했다.',r.name)}}
+   }
+   if(state.temp<45&&!state.illness&&Math.random()<.08){state.illness='감기';addLog('오랜 한기에 몸이 으슬으슬하다. 감기 기운이 생겼다.','상태 기록',true)}
+   state.mission=null;state.firstMissionDone=true;addLog(`${r.name}에서 활동을 마쳤다. 거점으로 자동 귀환하지 않았다.`,r.name);saveState();render();toast('활동 완료 · 현재 위치에 머뭅니다. 귀환은 별도로 선택하세요.');
+ };
+ $('#refreshMission').onclick=()=>window.finishMission();
+ // Test-only stop button: cancels an active exploration without granting its unfinished reward.
+ $('#stopExploreTest').onclick=()=>{const m=state.mission;if(!m){toast('중단할 활동이 없습니다.');return}if(m.action!=='explore'){toast('테스트 버튼은 탐사 중에만 사용할 수 있습니다.');return}state.region=Date.now()<m.travelEnd?'base':m.region;state.selected=state.region;state.mission=null;addLog('테스트 기능으로 탐사를 중단했다. 미완료 보상은 지급되지 않았다.','테스트 도구',true);saveState();render();toast('탐사를 중단했습니다. 미완료 보상은 지급되지 않았습니다.')};
+ // Returning home is a separate timed movement; no activity is possible during the trip.
+ $('#returnBase').onclick=()=>{if(state.mission){toast('이동 또는 활동 중에는 귀환을 시작할 수 없습니다. 활동을 마치거나 테스트 중단 버튼을 사용하세요.');return}if(state.region==='base'){toast('이미 북부 거점에 있습니다.');return}const from=state.region;const travel=Math.max(10,Math.round((regions[from].travel||15)*.6));state.mission={region:'base',action:'return',duration:0,travel,total:travel,start:Date.now(),travelEnd:Date.now()+travel*60000,end:Date.now()+travel*60000,phase:'travel',activityStart:Date.now()+travel*60000,from};addLog(`${regions[from].name}에서 북부 거점으로 귀환하기 시작했다. 예상 이동 시간 ${fmtMin(travel)}.`,regions[from].name);render();saveState();toast('귀환 이동을 시작했습니다.')};
+ // Override render details after base renderer updates them.
+ const oldRender2=window.render;
+ window.render=function(){oldRender2();const m=state.mission;$('#stopExploreTest').disabled=!m||m.action!=='explore';$('#returnBase').disabled=!!m||state.region==='base';if(m){const phase=Date.now()<m.travelEnd?'이동 중':m.action==='return'?'귀환 도착 확인':'활동 중';$('#missionState').textContent=Date.now()>=m.end?'결과 확인 가능':phase;$('#missionDetails').textContent=m.action==='return'?`귀환 이동 · ${fmtMin(m.travel)} · 도착 예정 ${new Date(m.end).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',hour12:false})}`:`${Date.now()<m.travelEnd?'이동': '행동'} ${Date.now()<m.travelEnd?fmtMin(Math.max(0,(m.travelEnd-Date.now())/60000)):fmtMin(m.duration)} · 목적지 ${regions[m.region].name} · 활동 종료 ${new Date(m.end).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',hour12:false})}`;$('#missionBar').style.width=Math.min(100,Math.max(0,(Date.now()-m.start)/(m.end-m.start||1)*100))+'%';$('#missionTitle').textContent=m.action==='return'?'귀환 이동':({explore:'탐사 · 수색',gather:'채집',hunt:'사냥'})[m.action]+' — '+regions[m.region].name;}}
+ // Timer completion respects movement-only return trips.
+ const oldTick=window.tick;
+ window.tick=function(){const now=Date.now();if(state.mission&&now>=state.mission.end){if(state.mission.action==='return'){state.region='base';state.selected='base';state.mission=null;addLog('북부 거점에 도착했다.','북부 거점',true);saveState();render();toast('거점에 도착했습니다.')}else if(state.mission.action==='explore'||state.mission.action==='gather'||state.mission.action==='hunt'){window.finishMission();}}oldTick();};
+ // Avoid a harsh hunger loop: food is not passively consumed in this prototype.
+ // General resource replenishment is per-place and elapsed-time based; discoveries persist locally.
+ const oldSelect=window.selectRegion;
+ window.selectRegion=function(id){if(!regions[id])return;if(!regions[id].found){toast('아직 발견되지 않은 장소입니다. 인접 장소 탐사 또는 조건부 발견을 통해 찾아보세요.');return}state.selected=id;render()};
+ // Save all discovered locations and local timers with the main state.
+ const saveInterval=setInterval(saveState,5000);
+ const originalRefresh=window.refresh;
+ setupRegionButtons();
+})();
+
+// POLAR NIGHT interactive systems extension. All data is local demo state; no server is connected.
+(function(){
+ const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+ const safeState=()=>{try{return typeof state==='object'?state:null}catch(e){return null}};
+ const st=safeState();
+ const local={records:[],radioDecoded:0,radioScans:0,planter:false,seeds:2,plants:[],raidShop:false,raidWins:0,repairKits:2,crossbow:78,coat:65,raidPending:false,raiderIndex:0,raidLast:Date.now(),weatherIndex:0};
+ const groups=[{name:'회색 송곳니',mood:'경계',line:'“쓸데없는 소리 말고, 가진 걸 보여줘. 얘기가 통하면 서로 피곤할 일은 없겠지.”'},{name:'검은 깃발',mood:'적대적',line:'“이번엔 협상하러 온 게 아니야. 문을 열든가, 우리가 열게 하든가.”'},{name:'겨울 까마귀',mood:'거래 지향',line:'“우린 물자가 있고, 너희는 필요한 게 있겠지. 거래할 생각은 있나?”'}];
+ let decoded=false, negotiation=false, navCurrent='base';
+ function toast2(msg){const t=$('#toast');if(t){t.textContent=msg;t.style.display='block';clearTimeout(window.__pnToast);window.__pnToast=setTimeout(()=>t.style.display='none',2400)}}
+ function log2(msg,place='북부 거점',important=false){if(typeof addLog==='function'){addLog(msg,place,important);return}const box=$('#log');if(box){const e=document.createElement('div');e.className='log-entry'+(important?' important':'');e.innerHTML='<div class="log-time">'+new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',hour12:false})+' · '+place+'</div><div class="log-text"></div>';e.querySelector('.log-text').textContent=msg;box.prepend(e)}}
+ function switchTab(tab){navCurrent=tab;$$('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));$$('.content-tab').forEach(p=>p.classList.toggle('active',p.id==='tab-'+tab));const target=$('#tab-'+tab);if(target){target.scrollIntoView({behavior:'smooth',block:'start'});history.replaceState(null,'','#'+tab)}}
+ // Rebind nav buttons to make the selected panel visibly change and scroll into view.
+ $$('.nav button').forEach(b=>{b.addEventListener('click',e=>{e.preventDefault();switchTab(b.dataset.tab)})});
+ function updateJournal(){const box=$('#journalRegions');if(box&&typeof regions==='object'){box.innerHTML='';Object.values(regions).forEach(r=>{const d=document.createElement('div');d.className='resource';d.innerHTML='<span></span><span></span>';d.children[0].textContent=r.name;d.children[1].textContent=r.found?'발견':'미발견';d.children[1].className=r.found?'goodtext':'mini';box.appendChild(d)})}$('#radioCount').textContent=local.radioDecoded;$('#recordCount').textContent=1+local.records.length;$('#hiddenClues').textContent=local.records.includes('관측소 지하 출입구')?'관측소 지하 출입구의 위치가 기록되었다. 탐사 중 숨겨진 경로가 열릴 수 있다.':'폐쇄된 관측소의 지하 출입구에 관한 단서가 아직 부족합니다.'}
+ function updatePlants(){const box=$('#plantList');if(!box)return;box.innerHTML='';if(!local.plants.length){box.innerHTML='<div class="mini">아직 심은 식물이 없습니다.</div>';return}local.plants.forEach((p,i)=>{const d=document.createElement('div');d.className='item-card';const done=Date.now()>=p.end;const mins=Math.max(0,Math.ceil((p.end-Date.now())/60000));d.innerHTML='<b></b><div class="mini"></div><div class="bar"><span></span></div><button></button>';d.querySelector('b').textContent=p.name;d.querySelector('.mini').textContent=done?'성장 완료 · 수확 가능':'성장 중 · 약 '+(mins>=60?Math.floor(mins/60)+'시간 '+mins%60+'분':mins+'분')+' 남음';d.querySelector('.bar span').style.width=Math.min(100,Math.max(0,(Date.now()-p.start)/(p.end-p.start)*100))+'%';d.querySelector('button').textContent=done?'수확하기':'성장 확인';d.querySelector('button').disabled=!done;d.querySelector('button').onclick=()=>{if(Date.now()<p.end)return; if(p.name==='약초')st.herb+=2+Math.floor(Math.random()*2);else st.food+=2+Math.floor(Math.random()*3);local.plants.splice(i,1);log2(p.name+' 재배를 마치고 수확했다.','북부 거점',true);updatePlants();if(typeof render==='function')render()};box.appendChild(d)})}
+ function updateGear(){if($('#crossbowDurability'))$('#crossbowDurability').textContent=local.crossbow+' / 100';if($('#crossbowBar'))$('#crossbowBar').style.width=local.crossbow+'%';if($('#coatDurability'))$('#coatDurability').textContent=local.coat+' / 100';if($('#coatBar'))$('#coatBar').style.width=local.coat+'%';if($('#repairKitCount'))$('#repairKitCount').textContent=local.repairKits+'개'}
+ function updateRaidGroup(){const g=groups[local.raiderIndex%groups.length];$('#raiderName').textContent=g.name;$('#raiderMood').textContent=g.mood;$('#raiderDialogue').textContent=g.line}
+ function setIllness(name){if(!st)return;st.illness=name;log2('상태 이상 발생: '+name+'. 상태 효과 메뉴에서 영향을 확인할 수 있다.','북부 거점',true);if(typeof render==='function')render();toast2(name+' 상태를 적용했습니다.')}
+ $('#scanRadio').onclick=()=>{decoded=false;local.radioScans++;const freqs=['91.2 MHz','104.7 MHz','108.3 MHz','72.4 MHz'];$('#radioFrequency').textContent=freqs[local.radioScans%freqs.length];$('#radioSignalBar').style.width=(25+Math.floor(Math.random()*70))+'%';$('#radioStatus').textContent='신호 '+(local.radioScans%3===0?'강함':'불안정');$('#radioMessage').textContent=local.radioScans%2?'“…여기는 구조 6팀. 철교 아래로 내려가지 마. 얼음 밑에서 두드리는 소리가 들려.”':'“…관측소 지하 출입구는 봉쇄하지 마라. 기록 보관실에 마지막 명령이 남아 있다.”';toast2('새 주파수를 탐색했습니다.')};
+ $('#decodeRadio').onclick=()=>{if(decoded){toast2('이 신호는 이미 해독했습니다.');return}decoded=true;local.radioDecoded++;local.records.push('관측소 지하 출입구');if(typeof regions==='object'&&regions.observatory){regions.observatory.found=true;}$('#radioStatus').textContent='신호 해독 완료';$('#radioMessage').textContent='[해독 기록] 폐쇄된 관측소 지하에 보관실이 존재한다. 접근 경로는 외곽의 무너진 환기구와 연결되어 있다. “첫 폭설 전의 기록을 반드시 회수할 것.”';const h=$('#radioHistory');const d=document.createElement('div');d.className='log-entry important';d.innerHTML='<div class="log-time">방금 · 해독 완료</div><div class="log-text"></div>';d.querySelector('.log-text').textContent=$('#radioMessage').textContent;h.prepend(d);log2('미확인 무전을 해독했다. 관측소 지하 보관실과 숨겨진 접근 경로에 관한 단서를 확보했다.','무전실',true);updateJournal();toast2('무전 해독 완료 · 단서가 일지에 기록되었습니다.')};
+ $('#saveRadio').onclick=()=>{if(!decoded){toast2('먼저 신호를 해독해야 정확한 기록을 남길 수 있습니다.');return}if(!local.records.includes('해독 무전 기록'))local.records.push('해독 무전 기록');updateJournal();toast2('무전 기록을 일지에 보관했습니다.')};
+ $('#findPlanter').onclick=()=>{local.planter=true;$('#planterStatus').textContent='확보 · 2칸';log2('폐창고에서 나무 재배 상자를 찾아 수리했다. 이제 씨앗을 심을 수 있다.','얼어붙은 외곽',true);toast2('재배 상자를 확보했습니다.')};
+ $('#findSeeds').onclick=()=>{local.seeds+=2;$('#seedCount').textContent=local.seeds;log2('오래된 물자 상자에서 씨앗 봉투 2개를 발견했다.','폐쇄된 관측소',true);toast2('씨앗 2개를 확보했습니다.')};
+ function plant(name,duration){if(!local.planter){toast2('먼저 재배 상자를 확보해야 합니다.');return}if(local.seeds<1){toast2('씨앗이 없습니다. 탐사로 씨앗을 찾아보세요.');return}if(local.plants.length>=2){toast2('재배 상자 공간이 가득 찼습니다.');return}local.seeds--;$('#seedCount').textContent=local.seeds;local.plants.push({name,start:Date.now(),end:Date.now()+duration*60000});log2(name+' 씨앗을 심었다. 웹사이트를 닫아도 성장 시간은 계속 흐른다.','북부 거점');updatePlants();toast2(name+' 재배를 시작했습니다.')}
+ $('#plantHerb').onclick=()=>plant('약초',120);$('#plantCrop').onclick=()=>plant('식용 작물',300);
+ $('#negotiateRaid').onclick=()=>{local.raiderIndex=(local.raiderIndex+Math.floor(Math.random()*groups.length))%groups.length;updateRaidGroup();const roll=1+Math.floor(Math.random()*20);const bonus=st?Math.floor((st.mind||70)/25):2;const total=roll+bonus;negotiation=total>=13;$('#raiderDialogue').textContent+=` [판정 ${roll} + 사회·정신 보정 ${bonus} = ${total}] `+(negotiation?'협상 성공. 이번 공격은 피했다.':'협상 실패. 약탈자들이 무기를 들었다.');$('#openRaidShop').disabled=!negotiation;$('#raidResult').textContent=negotiation?'협상에 성공했습니다. 희귀 상점을 열 수 있습니다.':'협상에 실패했습니다. 방어 전략을 정하고 레이드에 대비하세요.';log2('약탈자 집단 '+groups[local.raiderIndex].name+'과 협상했다. 판정 결과: '+(negotiation?'성공':'실패')+'.','북부 거점',true);toast2(negotiation?'협상 성공!':'협상 실패 · 레이드에 대비하세요.')};
+ $('#openRaidShop').onclick=()=>{if(!negotiation)return;local.raidShop=true;$('#raidShop').innerHTML='<div class="item-card"><b>군용 방한 외투</b><p>희귀 장비 · 체온 감소 완화</p><button id="buyCoat">교환하기 · 식량 3개</button></div><div class="item-card"><b>희귀 약품 상자</b><p>감기약과 붕대가 들어 있다</p><button id="buyMedicine">교환하기 · 약초 2개</button></div><div class="item-card"><b>겨울 약초 씨앗</b><p>재배용 희귀 씨앗</p><button id="buySeed">교환하기 · 폐목재 2개</button></div>';$('#buyCoat').onclick=()=>{if(st.food<3){toast2('식량이 부족합니다.');return}st.food-=3;local.coat=100;updateGear();if(typeof render==='function')render();toast2('군용 방한 외투를 교환했습니다.')};$('#buyMedicine').onclick=()=>{if(st.herb<2){toast2('약초가 부족합니다.');return}st.herb-=2;st.illness=null;if(typeof render==='function')render();toast2('약품을 사용해 상태 이상을 치료했습니다.')};$('#buySeed').onclick=()=>{if(st.scrapwood<2){toast2('폐목재가 부족합니다.');return}st.scrapwood-=2;local.seeds++;$('#seedCount').textContent=local.seeds;if(typeof render==='function')render();toast2('희귀 씨앗을 교환했습니다.')};toast2('약탈자 희귀 상점이 열렸습니다.')};
+ $('#startRaid').onclick=()=>{const strategy=$('#raidStrategy').value;let dmg=20+Math.floor(Math.random()*25),loss=2;if(strategy==='defense')dmg-=10;if(strategy==='firepower'){dmg-=15;local.crossbow=Math.max(0,local.crossbow-18)}if(strategy==='supplies'){loss=0;dmg+=5}if(strategy==='counter'){dmg+=10;local.crossbow=Math.max(0,local.crossbow-10);if(Math.random()<.5)st.scrapwood+=2}dmg=Math.max(0,dmg);if(st){st.hp=Math.max(1,st.hp-dmg);if(strategy!=='supplies')st.food=Math.max(0,st.food-loss)}local.raidLast=Date.now();$('#raidResult').textContent=`자동 전투 종료 · 선택 전략: ${{defense:'방어 태세',firepower:'화력 집중',supplies:'물자 보호',counter:'역습'}[strategy]} · 피해 ${dmg} · 식량 손실 ${strategy==='supplies'?0:loss} · 석궁 내구도 ${local.crossbow}/100`;local.raidWins++;log2('약탈자 레이드가 종료됐다. '+$('#raidResult').textContent,'북부 거점',true);updateGear();if(typeof render==='function')render();toast2('레이드 테스트가 끝났습니다.')};
+ $('#useGear').onclick=()=>{local.crossbow=Math.max(0,local.crossbow-8);updateGear();log2('사냥용 석궁을 사용했다. 내구도가 감소했다.','얼어붙은 외곽');toast2(local.crossbow<30?'내구도가 낮습니다. 수리하세요.':'석궁 내구도 -8')};
+ $('#repairGear').onclick=()=>{if(local.repairKits<1){toast2('수리 키트가 없습니다.');return}local.repairKits--;local.crossbow=Math.min(100,local.crossbow+35);updateGear();toast2('석궁을 수리했습니다.')};
+ $('#repairCoat').onclick=()=>{if(local.repairKits<1){toast2('수리 키트가 없습니다.');return}local.repairKits--;local.coat=Math.min(100,local.coat+35);updateGear();toast2('방한 외투를 수리했습니다.')};
+ $('#testWeather').onclick=()=>{if(st){st.weatherIndex=(st.weatherIndex+1)%4; if(typeof render==='function')render()}toast2('날씨를 변경했습니다.')};
+ $('#testCold').onclick=()=>{if(st){st.temp=25;if(typeof render==='function')render()}toast2('체온 25 · 저체온 위험 상태를 확인하세요.')};
+ $('#testColdClear').onclick=()=>{if(st){st.temp=90;st.wood=Math.max(st.wood,9);if(typeof render==='function')render()}toast2('체온 90 · 난방 효율을 올렸습니다.')};
+ $('#testIllness').onclick=()=>{const list=['감기','독감','배탈'];setIllness(list[Math.floor(Math.random()*list.length)])};
+ $('#testRaid').onclick=()=>{switchTab('raid');$('#startRaid').click()};
+ $('#testRadio').onclick=()=>{switchTab('radio');$('#scanRadio').click();$('#decodeRadio').click()};
+ $('#testReveal').onclick=()=>{if(typeof regions==='object'){Object.values(regions).forEach(r=>r.found=true);if(typeof render==='function')render()}updateJournal();toast2('테스트를 위해 모든 지역을 공개했습니다.')};
+ $('#testReset').onclick=()=>{if(confirm('브라우저 시제품 데이터를 초기화할까요?')){localStorage.removeItem('polarNightDemo');location.reload()}};
+ function refresh(){updateJournal();updatePlants();updateGear();updateRaidGroup();if($('#seedCount'))$('#seedCount').textContent=local.seeds;}
+ // Repaint extra panels on initial load and after periodic browser updates.
+ refresh();setInterval(()=>{updatePlants();if(st&&typeof render==='function')render()},5000);
+ // Add navigation fallback if a section was opened by a direct URL hash.
+ const hash=location.hash.replace('#','');if(hash&&$('#tab-'+hash))switchTab(hash);
+})();
+// Build 0.4 usability pass: instant travel, clear region guide, daily decoding quota and danger warning.
+(function(){
+ const $=s=>document.querySelector(s);
+ const dayKey=()=>new Date().toLocaleDateString('sv-SE');
+ const quotaKey='polarNightDecodeDay',usedKey='polarNightDecodeUsed';
+ function used(){return localStorage.getItem(quotaKey)===dayKey()?Number(localStorage.getItem(usedKey)||0):0}
+ function updateQuota(){const b=$('#decodeRadio');if(!b)return;let box=$('#decodeQuota');if(!box){box=document.createElement('div');box.id='decodeQuota';box.className='warning-card';$('#radioMessage').after(box)}box.innerHTML=`<b>오늘의 정식 해독</b><div class="mini">${Math.max(0,3-used())} / 3회 남음 · 자정 초기화 · 기록 열람은 횟수 소모 없음</div>`;b.disabled=used()>=3}
+   // Test version skips travel time entirely: start at selected region and count only activity time.
+ window.beginAction=function(){const id=state.selected,r=regions[id];if(!r||!r.found||id==='base'||state.mission)return;const duration=Number($('#duration').value),now=Date.now();state.region=id;state.mission={region:id,action:state.action,duration,travel:0,total:duration,start:now,travelEnd:now,end:now+duration*60000,phase:'action',activityStart:now};addLog(`${r.name}에 도착했다. 이동 시간 없이 ${({explore:'탐사',gather:'채집',hunt:'사냥'})[state.action]}를 시작했다.`,r.name);render();saveState();toast('활동을 시작했습니다. 이동 시간은 생략됩니다.')};
+ $('#returnBase').onclick=()=>{if(state.mission){toast('활동 중에는 귀환할 수 없습니다. 활동을 마치거나 탐험 중단 버튼을 사용하세요.');return}if(state.region==='base'){toast('이미 북부 거점에 있습니다.');return}const from=state.region;state.region='base';state.selected='base';addLog(`${regions[from].name}에서 북부 거점으로 돌아왔다. (테스트 편의상 즉시 이동)`, '북부 거점');saveState();render();toast('북부 거점으로 돌아왔습니다.')};
+ $('#stopExploreTest').onclick=()=>{const m=state.mission;if(!m||m.action!=='explore'){toast('중단할 탐험이 없습니다.');return}state.mission=null;addLog('테스트 기능으로 탐험을 중단했다. 완료되지 않은 보상은 지급되지 않았다.',regions[state.region]?.name||'탐험 일지',true);saveState();render();toast('탐험을 중단했습니다. 미완료 보상은 지급되지 않았습니다.')};
+ const originalDecode=$('#decodeRadio').onclick;$('#decodeRadio').onclick=()=>{if(used()>=3){toast('오늘의 정식 해독 횟수를 모두 사용했습니다. 내일 다시 시도할 수 있습니다.');return}const next=used()+1;localStorage.setItem(quotaKey,dayKey());localStorage.setItem(usedKey,String(next));updateQuota();if(originalDecode)originalDecode.call($('#decodeRadio'))};
+ // Ignoring today's forest warning can trigger a raid on completion.
+ const oldFinish=window.finishMission;window.finishMission=function(){const m=state.mission;const risky=m&&m.region==='conifer'&&['explore','gather','hunt'].includes(m.action);oldFinish();if(risky&&Math.random()<0.38){const loss=Math.min(state.food,1);state.hp=Math.max(1,state.hp-18);state.food-=loss;addLog('무전 경고를 무시하고 침엽수림 북쪽에 머물렀다. 약탈자에게 습격당해 체력 18을 잃었다.'+(loss?' 식량 1개도 빼앗겼다.':''),'침엽수림',true);saveState();render();toast('위험 발생 · 약탈자 습격으로 큰 피해를 입었습니다.')}};
+ updateQuota();const oldRender=window.render;window.render=function(){oldRender();updateQuota()};
+})();
+
+</script>
+
+
+<script>
+/* Polar Night 0.5: area submenus, character traits, repair kits, combat/death and NPC recovery. */
+(function(){
+const $=s=>document.querySelector(s); const $$=s=>Array.from(document.querySelectorAll(s));
+const S=()=>{try{return state}catch(e){return null}}; const R=()=>{try{return regions}catch(e){return null}};
+const traits=[['탐험가','새 장소 발견에 소폭 보너스'],['흔적 추적자','동물·사람의 흔적 발견에 유리'],['예리한 관찰력','탐험 중 추가 단서 발견에 유리'],['길잡이','숨겨진 경로 발견에 유리'],['행운아','희귀 보상 확률에 소폭 보너스'],['채집 전문가','채집 획득량에 소폭 보너스'],['식물 지식','약초 발견에 유리'],['노련한 사냥꾼','사냥 성공률에 소폭 보너스'],['은밀한 발걸음','사냥과 은신에 유리'],['해체 전문가','동물 부산물 획득에 유리'],['자원 감별사','광물·폐자재 발견에 유리'],['잔해 수색꾼','폐건물 물자 탐색에 유리'],['혹한 적응','야외 체온 감소 완화'],['강인한 체질','부상 피해 완화'],['인내심','장시간 활동의 탈진 부담 완화'],['절약 정신','소모품 효율에 소폭 보너스'],['응급 처치','붕대·약품 효율 증가'],['약초 지식','약초 치료제 제작에 유리'],['숙면 체질','휴식 회복 효율 증가'],['위기 감지','위험·매복을 미리 알아챌 가능성'],['손재주','제작 시간 감소'],['정밀 제작','제작품 내구도에 보너스'],['정비 전문가','수리 도구 효율 증가'],['재료 절약','제작 재료 일부 절약 확률'],['무기 손질','무기 내구도 감소 완화'],['재봉 기술','방한복·가방 제작에 유리'],['요리 솜씨','음식 회복 효과 증가'],['설계 감각','설계도 발견에 유리'],['전투 숙련자','전투 판정에 소폭 보너스'],['정확한 사격','원거리 명중률 증가'],['강한 일격','근접 피해 증가'],['침착함','공포·불안 영향 완화'],['방어 태세','전투 피해 감소'],['생존 본능','위기 시 피해 완화 기회'],['노련한 협상가','약탈자 협상에 유리'],['경계심','기습 피해 완화'],['신호 분석가','무전 단서 분석에 유리'],['주파수 감각','미확인 신호 발견에 유리'],['기록 수집가','문서에서 추가 정보 발견'],['냉철한 판단','정신 상태 이상 영향 완화'],['사교성','생존자 관계 형성에 유리'],['설득력','협상 판정에 유리'],['신뢰 형성','관계 이벤트 발견에 유리'],['고독에 익숙함','고립감 영향 완화'],['임기응변','예상치 못한 사건의 불이익 완화']];
+function addPanel(parent,title,html){let d=document.createElement('section');d.className='panel';d.style.marginTop='12px';d.innerHTML='<h2>'+title+'</h2>'+html;parent.appendChild(d);return d}
+// Hide permanently visible sublocation buttons; show them only after a major area is selected.
+const localButtons=$$('.selectrow [data-local-region]');
+if(localButtons.length){const row=localButtons[0].closest('.selectrow');row.style.display='none';const map=row.closest('.panel');const menu=addPanel(map,'어디를 가볼까?','<div class="mini" id="areaHint">지도에서 큰 지역을 선택하면 세부 장소가 여기에 표시됩니다.</div><div id="areaChoices" class="region-guide"></div>');
+ const groups={outskirts:['conifer','birch','deadwood','creek'],observatory:['stationYard','transmitter','mountainTrail'],mine:['buriedTunnel','avalancheValley'],village:['railStation'],base:[]};
+ function showArea(id){const st=S(),rs=R();if(!st||!rs[id])return;let list=groups[id]||[];$('#areaHint').textContent=rs[id].name+' 지역에 도착했습니다. 세부 장소를 골라 활동을 시작하세요.';const box=$('#areaChoices');box.innerHTML='';if(!list.length){box.innerHTML='<div class="region-info">거점에서는 난로·제작·수리·무전 기능을 이용할 수 있습니다.</div>';return}list.forEach(k=>{let r=rs[k];if(!r)return;let b=document.createElement('button');b.className='action';b.style.textAlign='left';b.style.width='100%';b.innerHTML='<strong>'+r.name+'</strong><small>'+(r.found?r.desc:'미발견 장소 · 탐사를 통해 발견할 수 있음')+'</small><small>위험도 '+r.risk+' · '+r.actions.join(' · ')+'</small>';b.onclick=()=>{if(!r.found){toast('아직 발견하지 못한 장소입니다. 해당 큰 지역에서 탐사를 진행하세요.');return}st.selected=k;st.region=k; if(typeof render==='function')render();toast(r.name+'에 도착했습니다.');};box.appendChild(b)});}
+ $$('.node').forEach(n=>{n.addEventListener('click',()=>{const id=n.dataset.region;setTimeout(()=>showArea(id),30)})});showArea('outskirts');
+}
+// Character traits: select up to three, persist locally.
+const char=$('#tab-character');if(char){const panel=addPanel(char,'캐릭터 특성 선택','<div class="mini">최대 3개 선택 가능. 특성은 테스트용으로 저장되며, 일부 효과는 추후 밸런스 조정 대상입니다.</div><div id="traitCount" class="pill">0 / 3 선택</div><div id="traitGrid" class="recipe-grid" style="margin-top:10px"></div>');let chosen=[];try{chosen=JSON.parse(localStorage.getItem('pnTraits')||'[]')}catch(e){};const grid=$('#traitGrid');traits.forEach(([name,desc])=>{let lab=document.createElement('label');lab.className='region-info';lab.style.display='block';lab.style.cursor='pointer';lab.innerHTML='<input type="checkbox" value="'+name+'" style="margin-right:8px"><b>'+name+'</b><div class="mini">'+desc+'</div>';let cb=lab.querySelector('input');cb.checked=chosen.includes(name);cb.onchange=()=>{if(cb.checked&&chosen.length>=3){cb.checked=false;toast('특성은 최대 3개까지 선택할 수 있습니다.');return}chosen=cb.checked?[...chosen,name]:chosen.filter(x=>x!==name);localStorage.setItem('pnTraits',JSON.stringify(chosen));$('#traitCount').textContent=chosen.length+' / 3 선택';};grid.appendChild(lab)});$('#traitCount').textContent=chosen.length+' / 3 선택';}
+// Death recovery system: a death creates one recoverable lost-cargo record.
+const journal=$('#tab-journal')||$('#tab-gear')||document.querySelector('main');if(journal){const rec=addPanel(journal,'유실품 · 구조대 의뢰','<div class="mini">사망 시 유실품은 사망 지점에 남습니다. 직접 재탐사는 위험하지만 회수량이 많고, NPC 구조대는 탐사 시간의 2배 후 일부 물품을 수고비로 차감해 돌려줍니다.</div><div id="lostStatus" class="region-info">현재 등록된 유실품이 없습니다.</div><div class="selectrow"><button id="directRecovery">직접 재탐사</button><button id="npcRecovery">NPC 구조대 의뢰</button></div><div id="recoveryStatus" class="mini"></div>');
+ function getLost(){try{return JSON.parse(localStorage.getItem('pnLost')||'null')}catch(e){return null}}function setLost(x){localStorage.setItem('pnLost',JSON.stringify(x));renderLost()}function renderLost(){let x=getLost();$('#lostStatus').textContent=!x?'현재 등록된 유실품이 없습니다.':`유실 장소: ${x.place} · 유실품 가치 ${x.value} · ${x.status==='pending'?'회수 대기':x.status==='enroute'?'구조대 회수 중':'현장 회수 필요'}`;$('#directRecovery').disabled=!x||x.status==='enroute';$('#npcRecovery').disabled=!x||x.status==='enroute';}window.renderLost=renderLost;renderLost();
+ $('#directRecovery').onclick=()=>{let x=getLost(),st=S();if(!x||!st)return;let dur=Number($('#duration')?.value||60);x.status='pending';x.directEnd=Date.now()+dur*60000;x.status='direct';setLost(x);$('#recoveryStatus').textContent=`${x.place}로 재탐사 시작 · ${dur}분 후 결과 확인. 이동 시간은 테스트에서 생략됩니다.`;setTimeout(()=>{let now=getLost();if(!now||now.status!=='direct')return;let success=Math.random()<.72;if(success){$('#recoveryStatus').textContent='회수 성공 · 유실품 대부분을 되찾았습니다.';if(st){st.scrapwood=(st.scrapwood||0)+Math.max(1,Math.floor(now.value*.7));st.cloth=(st.cloth||0)+1}localStorage.removeItem('pnLost')}else{now.value=Math.max(1,Math.floor(now.value*.65));now.status='pending';setLost(now);$('#recoveryStatus').textContent='재탐사 실패 · 부상과 추가 유실이 발생했습니다. 다시 도전하거나 구조대에 의뢰할 수 있습니다.';if(st)st.hp=Math.max(20,(st.hp||100)-25)}if(typeof render==='function')render();if(typeof saveState==='function')saveState();renderLost()},dur*60000);toast('직접 회수 작전을 시작했습니다.');};
+ $('#npcRecovery').onclick=()=>{let x=getLost();if(!x)return;let dur=Number($('#duration')?.value||60)*2;x.status='enroute';x.arrive=Date.now()+dur*60000;setLost(x);$('#recoveryStatus').textContent=`NPC 구조대가 회수 중입니다. 약 ${dur}분 후 거점에서 결과를 확인하세요. 수고비로 유실품 일부가 차감됩니다.`;toast('NPC 구조대에 회수 의뢰를 맡겼습니다.');};
+ setInterval(()=>{let x=getLost();if(x&&x.status==='enroute'&&Date.now()>=x.arrive){let st=S();let fee=Math.max(1,Math.ceil(x.value*.25));if(st){st.scrapwood=(st.scrapwood||0)+Math.max(1,x.value-fee);st.cloth=(st.cloth||0)+1;if(typeof saveState==='function')saveState();if(typeof render==='function')render()}localStorage.removeItem('pnLost');$('#recoveryStatus').textContent=`구조대가 유실품을 거점으로 가져왔습니다. 수고비로 물품 가치 ${fee}만큼 차감되었습니다.`;renderLost();toast('구조대가 유실품을 회수했습니다.');}},5000);
+}
+// Make repair kit a real craft button and allow use on damaged equipment.
+const recipe=$$('#tab-inventory .region-info').find(x=>x.textContent.includes('수리 키트'));if(recipe){const b=document.createElement('button');b.className='smallbtn';b.textContent='수리 키트 제작';b.style.marginTop='8px';recipe.appendChild(b);b.onclick=()=>{let st=S();if(!st)return;if((st.scrapwood||0)<2||(st.cloth||0)<1){toast('재료 부족: 폐목재 2개와 천 조각 1개가 필요합니다.');return}st.scrapwood-=2;st.cloth-=1;let n=Number(localStorage.getItem('pnRepairKits')||0)+1;localStorage.setItem('pnRepairKits',n);let count=$('#repairKitCount');if(count)count.textContent=n+'개';if(typeof render==='function')render();if(typeof saveState==='function')saveState();toast('수리 키트 1개를 제작했습니다.');};}
+const gear=$('#tab-gear');if(gear){const use=addPanel(gear,'수리 키트 사용','<div class="mini">수리 키트를 사용해 손상된 장비를 복구합니다.</div><div class="selectrow"><button id="repairCoat">방한복 수리 (+25 내구도)</button><button id="repairWeapon">무기 수리 (+25 내구도)</button></div><div class="mini" id="repairNote"></div>');function repair(which){let n=Number(localStorage.getItem('pnRepairKits')||0);if(n<=0){toast('수리 키트가 없습니다. 제작 탭에서 만들어 주세요.');return}let id=which==='coat'?'coatDurability':'crossbowDurability';let el=$('#'+id);if(el){let m=el.textContent.match(/(\d+)/);let v=m?Number(m[1]):50;el.textContent=Math.min(100,v+25)+' / 100';let bar=$('#'+(which==='coat'?'coatBar':'crossbowBar'));if(bar)bar.style.width=Math.min(100,v+25)+'%'}localStorage.setItem('pnRepairKits',n-1);if($('#repairKitCount'))$('#repairKitCount').textContent=(n-1)+'개';$('#repairNote').textContent='수리 완료. 남은 수리 키트: '+(n-1);toast('장비를 수리했습니다.')}$('#repairCoat').onclick=()=>repair('coat');$('#repairWeapon').onclick=()=>repair('weapon');}
+// Warned regions: today’s broadcast creates a chance of raider ambush during exploration.
+const right=$('.rightcol');if(right){const warn=addPanel(right,'오늘의 무전 경보','<div class="pill warn">주의 · 침엽수림 북쪽</div><p class="mini"><b>약탈자 목격 정보</b> — 미확인 인원이 물자를 수색 중이라는 보고가 들어왔습니다. 오늘 이 지역을 탐험하면 매복이나 물자 손실이 발생할 수 있으며, 준비와 능력에 따라 피해가 달라집니다.</p><p class="mini">다른 날에는 눈사태·강풍·불안정한 얼음·미확인 신호 등 다른 경보가 등장할 수 있습니다.</p>');}
+// Daily decode attempts: existing quota is retained; this note clarifies re-reading doesn't cost an attempt.
+const radio=$('#tab-radio');if(radio){let note=document.createElement('div');note.className='mini';note.textContent='정식 해독은 하루 3회까지. 기록을 다시 읽는 것과 이미 해독한 신호의 재열람은 횟수를 소모하지 않습니다.';radio.querySelector('.panel').appendChild(note)}
+})();
+</script>
+
+<script>
+// === 극야 0.6 prototype patch: exploration log tab, 1-5h actions, auto-heal, weakness ===
+(function(){
+ const $=s=>document.querySelector(s);
+ const $$=s=>Array.from(document.querySelectorAll(s));
+ const st=()=>{try{return state}catch(e){return null}};
+ const safeSave=()=>{try{if(typeof window.saveState==='function')window.saveState()}catch(e){}}
+ const notify=t=>{if(typeof window.toast==='function')window.toast(t);else alert(t)};
+ const get=(k,d)=>{try{let v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}};
+ const put=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+ // Duration selector: actions are selected in whole-hour increments, up to five hours.
+ const duration=$('#duration');
+ if(duration){duration.innerHTML='';for(let h=1;h<=5;h++){let o=document.createElement('option');o.value=String(h*60);o.textContent=h+'시간';duration.appendChild(o)}duration.value='60';}
+  // Auto-use medical inventory toggle and threshold. Demo inventory: 2 bandages and 1 herbal remedy.
+ if(!localStorage.getItem('pnMedInventory'))put('pnMedInventory',{bandage:2,herbalRemedy:1});
+ const inv=get('pnMedInventory',{bandage:2,herbalRemedy:1});
+ if($('#tab-inventory')&&!$('#autoHealPanel')){
+   let panel=document.createElement('div');panel.className='region-info';panel.id='autoHealPanel';panel.innerHTML='<h3>자동 회복 아이템</h3><div class="mini">탐색 중 체력이 설정한 기준 이하로 떨어지면 가방 속 회복 아이템을 자동 사용합니다. 보유 수량이 없으면 발동하지 않습니다.</div><label class="resource"><span>자동 사용</span><input type="checkbox" id="autoHealToggle" style="width:20px;height:20px"></label><div class="selectrow"><label for="autoHealThreshold" class="mini">발동 체력 기준</label><select id="autoHealThreshold"><option value="25">체력 25% 이하</option><option value="40">체력 40% 이하</option><option value="60">체력 60% 이하</option></select></div><div class="resource"><span>붕대 (회복 +20)</span><b id="medBandageCount">'+inv.bandage+'</b></div><div class="resource"><span>약초 치료제 (회복 +30)</span><b id="medHerbCount">'+inv.herbalRemedy+'</b></div><div class="mini" id="autoHealStatus">자동 사용 설정을 확인하세요.</div><button id="testGiveMeds" class="smallbtn">테스트용 회복 아이템 +1씩</button>';
+   $('#tab-inventory .panel').appendChild(panel);
+ }
+ $('#autoHealToggle').checked=!!get('pnAutoHeal',false);$('#autoHealThreshold').value=String(get('pnAutoHealThreshold',40));
+ $('#autoHealToggle').onchange=()=>put('pnAutoHeal',$('#autoHealToggle').checked);
+ $('#autoHealThreshold').onchange=()=>put('pnAutoHealThreshold',Number($('#autoHealThreshold').value));
+ $('#testGiveMeds').onclick=()=>{let x=get('pnMedInventory',{bandage:2,herbalRemedy:1});x.bandage++;x.herbalRemedy++;put('pnMedInventory',x);$('#medBandageCount').textContent=x.bandage;$('#medHerbCount').textContent=x.herbalRemedy;notify('테스트용 회복 아이템을 추가했습니다.')};
+ function autoHeal(){let s=st();if(!s||!s.mission||!['explore','gather','hunt'].includes(s.mission.action)||!get('pnAutoHeal',false))return;let threshold=Number(get('pnAutoHealThreshold',40));let hp=Number(s.hp||0);if(hp>threshold)return;let x=get('pnMedInventory',{bandage:2,herbalRemedy:1});let amount=0,name='';if(x.herbalRemedy>0){x.herbalRemedy--;amount=30;name='약초 치료제'}else if(x.bandage>0){x.bandage--;amount=20;name='붕대'}else return;s.hp=Math.min(100,hp+amount);put('pnMedInventory',x);if($('#medBandageCount'))$('#medBandageCount').textContent=x.bandage;if($('#medHerbCount'))$('#medHerbCount').textContent=x.herbalRemedy;if($('#autoHealStatus'))$('#autoHealStatus').textContent=`자동 사용: ${name} 1개 · 체력 ${hp} → ${s.hp}`;if(typeof window.addLog==='function')window.addLog(`${name}을 자동 사용해 체력을 회복했다.`, '탐색 중', true);safeSave();if(typeof window.render==='function')window.render()}
+ // Death penalty: no level/stat loss; apply Weakness for 3 hours, restricting long exploration to <=1h.
+ function getWeak(){return Number(get('pnWeakUntil',0))}
+ function isWeak(){return Date.now()<getWeak()}
+ /* 0.7이 따로 저장하던 쇠약 시간(pn07_weakUntil)을 한 곳(pnWeakUntil)으로 합침 */
+ try{const lg=Number(JSON.parse(localStorage.getItem('pn07_weakUntil')||'0'));if(lg>getWeak())put('pnWeakUntil',lg);localStorage.removeItem('pn07_weakUntil')}catch(e){}
+ function updateWeakUI(){let s=st();if(!s)return;let rem=Math.max(0,getWeak()-Date.now());let mins=Math.ceil(rem/60000);let select=$('#duration');if(select){Array.from(select.options).forEach(o=>{o.disabled=isWeak()&&Number(o.value)>60});if(isWeak()&&Number(select.value)>60)select.value='60';}const wt=$('#pnWeakText');if(wt)wt.textContent=isWeak()?`쇠약 지속: 약 ${mins}분 · 1시간 초과 활동 불가`:'쇠약 상태 아님'}
+ // Make death test create a three-hour weakness and preserve level/stat values.
+ function deathTest(){let s=st();if(!s)return;let place=(window.regions&&window.regions[s.region]&&window.regions[s.region].name)||'탐색 지역';let goods=Math.max(1,Math.floor((s.scrapwood||0)+(s.cloth||0)+(s.rawMeat||0)+(s.herb||0)+(s.food||0)));put('pnLost',{place,value:goods,created:Date.now(),status:'pending',cause:'사망'});s.hp=35;s.mind=Math.max(1,(s.mind||50)-15);s.region='base';s.selected='base';s.mission=null;['scrapwood','cloth','rawMeat','herb','food'].forEach(k=>{if(k in s)s[k]=Math.max(0,Math.floor(s[k]*.15))});put('pnWeakUntil',Date.now()+3*60*60*1000);if(typeof window.addLog==='function')window.addLog(`탐색 중 사망했다. ${place}에 소지품을 유실했다. 쇠약 상태가 3시간 지속된다. 레벨과 스탯은 유지된다.`,'북부 거점',true);safeSave();updateWeakUI();if(typeof window.render==='function')window.render();if(typeof window.renderLost==='function')window.renderLost();notify('사망 처리 완료 · 쇠약 3시간. 레벨과 스탯은 유지됩니다.');}
+ /* 다른 코드(0.7 테스트 도구, 상태 효과, 지도 연결)가 쓰는 공개 함수 */
+ window.pnIsWeak=isWeak;window.pnDeathTest=deathTest;window.pnUpdateWeakUI=updateWeakUI;
+ // Override action start so all activities are immediate travel-wise, and open the separate text-log tab.
+ const oldBegin=window.beginAction;
+ window.beginAction=function(){let s=st();if(!s)return;let d=Number($('#duration')?.value||60);if(isWeak()&&d>60){notify('쇠약 상태입니다. 남은 쇠약 시간 동안 1시간 탐색만 가능합니다.');return}if(typeof oldBegin==='function')oldBegin();s=st();if(s&&s.mission){s.mission.duration=d;s.mission.total=d;s.mission.travel=0;s.mission.start=Date.now();s.mission.travelEnd=Date.now();s.mission.end=Date.now()+d*60000;s.mission.activityStart=Date.now();safeSave();safeSave();}}
+ // Wrap tick to perform healing and keep log-tab status fresh.
+ const oldTick=window.tick;window.tick=function(){autoHeal();if(typeof oldTick==='function')oldTick();updateWeakUI();}
+  // Periodic UI refresh for weakness timer; disabled long-duration options are also checked on selection.
+ if(duration)duration.addEventListener('change',()=>{if(isWeak()&&Number(duration.value)>60){duration.value='60';notify('쇠약 상태에서는 1시간 탐색만 가능합니다.')}});
+ updateWeakUI();setInterval(updateWeakUI,5000);
+})();
+</script>
+
+
+<style id="polar-night-final-fixes">
+#pnMapSubplaces{margin-top:10px;padding:10px;background:var(--panel2);border:1px solid var(--line);border-radius:8px}
+#pnMapSubplaces h3{margin:0 0 6px;color:var(--ice)}
+#pnMapSubplaces .region-guide{margin:8px 0 0}
+#pnMapSubplaces .action{min-height:70px;border-radius:8px}
+#pnFamilyTest .family-card{padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--panel2);margin:8px 0}
+#pnFamilyTest select,#pnFamilyTest input{background:var(--panel);color:var(--text);border:1px solid var(--line);padding:7px;border-radius:6px}
+</style>
+<script id="polar-night-final-fix-script">
+(function(){
+ const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+ // There must be exactly one Information tab/button. The old journal button is repurposed, not duplicated.
+ const nav=$('.nav'), main=$('main');
+ if(nav&&main){
+   const infoButtons=$$('button[data-tab="info"]');
+   infoButtons.slice(1).forEach(b=>b.remove());
+   let infoButton=infoButtons[0];
+   const journalButton=nav.querySelector('button[data-tab="journal"]');
+   if(journalButton){ if(!infoButton){infoButton=journalButton;infoButton.dataset.tab='info';infoButton.textContent='정보'}else journalButton.remove(); }
+   const infoPanels=$$('#tab-info'); infoPanels.slice(1).forEach(x=>x.remove());
+   const journal=$('#tab-journal'); if(journal){if(!$('#tab-info'))journal.id='tab-info';else journal.remove();}
+   if(!infoButton){infoButton=document.createElement('button');infoButton.dataset.tab='info';infoButton.textContent='정보';nav.appendChild(infoButton)}
+   // ensure tab click behavior remains coherent
+   nav.addEventListener('click',e=>{const b=e.target.closest('button[data-tab]');if(!b)return;const id=b.dataset.tab;if(!['home','info'].includes(id))return;$$('.content-tab').forEach(x=>x.classList.toggle('active',x.id==='tab-'+id));nav.querySelectorAll('button[data-tab]').forEach(x=>x.classList.toggle('active',x===b));});
+ }
+ // Place the sub-location picker inside the map box, never in a separate "where to go" panel.
+ const mapWrap=$('.map-wrap');
+ const oldSubRow=$$('[data-local-region]')[0]?.closest('.selectrow');
+ if(oldSubRow) oldSubRow.remove();
+ const oldWhere=$$('h2').find(h=>h.textContent.trim()==='어디를 가볼까?')?.closest('.panel');
+ if(oldWhere) oldWhere.remove();
+ if(mapWrap){
+   let sub=$('#pnMapSubplaces'); if(!sub){sub=document.createElement('div');sub.id='pnMapSubplaces';mapWrap.appendChild(sub)}
+   sub.innerHTML='<h3 id="pnMapSubTitle">지도에서 지역을 선택하세요</h3><div class="mini" id="pnMapSubHint">지도 노드를 누르면 해당 지역의 세부 장소가 이 칸에 표시됩니다.</div><div class="region-guide" id="pnMapSubChoices"></div>';
+   const groups={outskirts:['conifer','birch','deadwood','creek'],village:['railStation','supply'],observatory:['stationYard','transmitter','mountainTrail'],mine:['buriedTunnel','avalancheValley'],supply:['supply'],lab:['lab'],base:[]};
+   const nameMap={conifer:'침엽수림',birch:'자작나무 숲',deadwood:'고사목 지대',creek:'얼어붙은 개울',railStation:'폐쇄된 역',supply:'보급 창고',stationYard:'관측소 앞마당',transmitter:'송신탑',mountainTrail:'산악 오솔길',buriedTunnel:'매몰 터널',avalancheValley:'눈사태 계곡',lab:'연구 시설'};
+   function show(id){let stateObj;try{stateObj=state}catch(e){};let rs;try{rs=regions}catch(e){};const title=$('#pnMapSubTitle'),hint=$('#pnMapSubHint'),box=$('#pnMapSubChoices');if(!title||!hint||!box)return;
+    const region=rs&&rs[id];title.textContent=region?.name||'지역 세부 장소';hint.textContent='장소를 선택하면 아래 행동 선택에서 탐사·채집·사냥을 시작할 수 있습니다.';box.innerHTML='';
+    (groups[id]||[]).forEach(k=>{const r=rs?.[k];const b=document.createElement('button');b.className='action';b.innerHTML='<strong>'+(r?.name||nameMap[k]||k)+'</strong><small>'+(r?(r.found?'발견 완료 · '+r.actions.join(' · '):'미발견 · 해당 지역 탐사로 발견 가능'):'장소 정보')+'</small>';b.addEventListener('click',()=>{if(!stateObj||!r){return}if(!r.found){stateObj.selected=id; if(typeof render==='function')render();const sm=$('#actionSummary');if(sm)sm.textContent=(region?.name||'선택 지역')+'에서 먼저 탐사·수색을 진행해 이 장소를 발견하세요.';toast('아직 발견하지 못한 장소입니다. 큰 지역에서 탐사·수색을 진행하세요.');return}stateObj.selected=k;stateObj.region=k;if(typeof render==='function')render();const sm=$('#actionSummary');if(sm)sm.textContent='목적지: '+r.name+' · 행동 시간을 선택하고 작전을 개시하세요.';toast(r.name+' 선택 완료.');});box.appendChild(b)});
+    if(!(groups[id]||[]).length)box.innerHTML='<div class="mini">거점에서는 난방·제작·수리·무전을 이용할 수 있습니다.</div>';
+   }
+   $$('.node').forEach(n=>{n.addEventListener('click',()=>setTimeout(()=>show(n.dataset.region),0));n.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();n.dispatchEvent(new MouseEvent('click',{bubbles:true}))}})});
+   show('outskirts');
+ }
+ // Restore reliable operation start: call the existing game function, and give a useful reason if no valid location is selected.
+ const start=$('#startAction'); if(start){start.onclick=function(){let st;try{st=state}catch(e){};let rs;try{rs=regions}catch(e){};if(!st||!rs){toast('게임 상태를 불러오지 못했습니다. 페이지를 새로 열어 주세요.');return}if(st.mission){toast('이미 진행 중인 작전이 있습니다.');return}if(st.selected==='base'){toast('지도에서 탐사할 지역을 먼저 선택하세요.');return}if(!rs[st.selected]?.found){toast('아직 발견하지 못한 지역입니다. 먼저 인접 지역을 탐사하세요.');return}if(typeof beginAction==='function'){beginAction()}else{toast('작전 시작 기능을 찾을 수 없습니다. 페이지를 새로 열어 주세요.')}}}
+ // Temporary local test character whose relationship to the player is Family.
+ const rel=$('#tab-relations'); if(rel){
+   let test=$('#pnFamilyTest'); if(!test){test=document.createElement('section');test.className='panel';test.id='pnFamilyTest';test.style.marginTop='12px';test.innerHTML='<h2>임시 캐릭터 관계 테스트</h2><div class="mini">현재 브라우저에서만 저장되는 테스트용 캐릭터입니다. 실제 온라인 계정 간 관계는 아닙니다.</div><div class="family-card"><b id="pnTestNpcName">한서윤</b> <span class="pill good">임시 캐릭터</span><div class="mini">Lv. 1 · 북부 거점 생존자</div><div class="selectrow"><label for="pnFamilyRelation">나와의 관계</label><select id="pnFamilyRelation"><option value="family" selected>가족</option><option value="friend">친구</option><option value="partner">연인</option><option value="stranger">아는 사이</option></select><button id="pnSaveFamily">관계 저장</button></div><div id="pnFamilyStatus" class="mini">현재 관계: 가족 · 테스트용 설정</div></div><div class="mini">이 캐릭터는 테스트용으로만 추가됩니다. 다른 플레이어에게 표시되지는 않습니다.</div>';rel.appendChild(test)}
+   const sel=$('#pnFamilyRelation'),status=$('#pnFamilyStatus');try{const saved=localStorage.getItem('pnTestCharacterRelation')||'family';if(sel)sel.value=saved;if(status)status.textContent='현재 관계: '+({family:'가족',friend:'친구',partner:'연인',stranger:'아는 사이'}[saved]||'가족')+' · 테스트용 설정'}catch(e){}
+   $('#pnSaveFamily')?.addEventListener('click',()=>{const v=sel?.value||'family';try{localStorage.setItem('pnTestCharacterRelation',v);localStorage.setItem('pnTestCharacterName','한서윤')}catch(e){}if(status)status.textContent='현재 관계: '+({family:'가족',friend:'친구',partner:'연인',stranger:'아는 사이'}[v]||'가족')+' · 저장 완료';toast('임시 캐릭터 한서윤과의 관계를 저장했습니다.');});
+ }
+})();
+</script>
+
+<script>
+/* Final integrated layout based on user's accumulated feedback. */
+(function(){
+ const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+ const nav=$('.nav'), main=$('main'), char=$('#tab-character'), inv=$('#tab-inventory'), base=$('#tab-base');
+ if(!nav||!main)return;
+ // Relationship is part of Character, not a separate top-level tab.
+ const relNav=nav.querySelector('button[data-tab="relations"]'); if(relNav)relNav.remove();
+ const rel=$('#tab-relations');
+ if(rel){
+   let panel=rel.querySelector('.panel');
+   if(panel){panel.querySelector('h2')?.replaceChildren(document.createTextNode('관계 · 거점 생존자')); char?.appendChild(panel);}
+   rel.remove();
+ }
+ // Put the temporary family test character in Character as well.
+ const family=$('#pnFamilyTest'); if(family && char && !char.contains(family))char.appendChild(family);
+ // Move status effects from the base to the bottom of the character panel.
+ const effects=$$('#tab-base .panel').find(p=>p.querySelector('h2')?.textContent.trim()==='상태 효과');
+ if(effects && char){effects.querySelector('h2').textContent='상태효과';char.appendChild(effects);}
+ // Move equipped gear detail and equipment durability/repair panel to bottom of Character.
+ const gearDetail=$('#pnGearDetail')?.closest('.panel'); if(gearDetail && char)char.appendChild(gearDetail);
+ const oldGear=$('#tab-gear'); if(oldGear){[...oldGear.querySelectorAll('.panel')].forEach(p=>{if(char)char.appendChild(p)});oldGear.remove();}
+ const gearNav=nav.querySelector('button[data-tab="gear"]');if(gearNav)gearNav.remove();
+ // Rename base shared storage.
+ const storageTitle=$$('#tab-base h2').find(h=>['보유 물자','공용 물자'].includes(h.textContent.trim()));
+ if(storageTitle)storageTitle.textContent='거점 공용 창고';
+ 
+ // Hide raid tab until an attack event/test is explicitly triggered.
+ const raidNav=nav.querySelector('button[data-tab="raid"]'), raidPanel=$('#tab-raid');
+ if(raidNav)raidNav.style.display='none'; if(raidPanel)raidPanel.style.display='none';
+ const showRaid=()=>{if(raidNav)raidNav.style.display='';if(raidPanel){raidPanel.style.display='';raidPanel.classList.add('active')}if(raidNav){nav.querySelectorAll('button[data-tab]').forEach(b=>b.classList.toggle('active',b===raidNav));$$('.content-tab').forEach(p=>p.classList.toggle('active',p===raidPanel));}};
+ ['#testRaid','#startRaid','#negotiateRaid'].forEach(sel=>$(sel)?.addEventListener('click',showRaid));
+ // Put Information at the far right.
+ const infoNav=nav.querySelector('button[data-tab="info"]'); if(infoNav)nav.appendChild(infoNav);
+ const infoPanel=$('#tab-info'); if(infoPanel)main.appendChild(infoPanel);
+ const mapDocument="\u003c!doctype html\u003e\n\u003chtml lang=\"ko\"\u003e\n\u003chead\u003e\n\u003cmeta charset=\"utf-8\"\u003e\u003cmeta name=\"viewport\" content=\"width=device-width,initial-scale=1\"\u003e\n\u003ctitle\u003e극야 · 탐사지도 미리보기\u003c/title\u003e\n\u003cstyle\u003e\n:root{--bg:#111c29;--panel:#1b2a3a;--panel2:#223649;--line:#3a5064;--text:#e5edf4;--muted:#a1b4c6;--ice:#d5e8f6;--accent:#91b9d5;--gold:#d9b27c;--danger:#d99191;--green:#9dc6ae}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,-apple-system,\"Malgun Gothic\",sans-serif}.app{max-width:1440px;margin:auto;padding:0}.top{display:none!important}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:18px}.brand{font-size:26px;letter-spacing:5px;font-weight:800;color:var(--ice)}.muted{color:var(--muted);font-size:12px}.status{display:flex;gap:8px;flex-wrap:wrap}.chip{border:1px solid var(--line);border-radius:20px;padding:5px 10px;color:var(--muted);font-size:12px}.chip.active{color:var(--ice);border-color:#7197b3;background:#263d50}.workspace{display:grid;grid-template-columns:minmax(0,7fr) minmax(260px,3fr);gap:14px;align-items:stretch}.panel{background:var(--panel);border:1px solid #2d4154;border-radius:12px;min-width:0}.map-panel{padding:14px;display:flex;flex-direction:column;min-height:660px}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.panel-head h2,.side h2{font-size:16px;margin:0}.zoom-controls{display:flex;gap:6px;align-items:center}.btn{background:#2a4054;border:1px solid #506a80;color:var(--text);padding:8px 11px;border-radius:7px;cursor:pointer;font:inherit}.btn:hover{background:#35536c}.btn:disabled{opacity:.4;cursor:not-allowed}.btn.primary{background:#c4ddeb;color:#172a3a;border-color:#c4ddeb;font-weight:700}.btn.ghost{background:transparent}.map-viewport{position:relative;flex:1;min-height:470px;overflow:hidden;border:1px solid #344c60;border-radius:9px;background:#172838;cursor:grab}.map-viewport:active{cursor:grabbing}.terrain{width:100%;height:100%;min-height:470px;display:block;transform-origin:center;transition:transform .18s ease}.terrain .land{fill:#2d4658;stroke:#668197;stroke-width:2}.terrain .ridge{fill:none;stroke:#8199aa;stroke-width:2;opacity:.5}.terrain .road{fill:none;stroke:#8aa0b1;stroke-width:3;stroke-dasharray:7 8;opacity:.55}.terrain .river{fill:none;stroke:#7197b5;stroke-width:8;opacity:.35}.terrain .building{fill:#9eb4c4;stroke:#d7e4ed;stroke-width:1.5}.terrain .forest{fill:#3f5c63;stroke:#78969a;stroke-width:1.3}.terrain .node{cursor:pointer}.terrain .node circle{fill:#253d50;stroke:#c5deed;stroke-width:3}.terrain .node text{fill:#f0f6fa;font-size:13px;font-weight:700;text-anchor:middle;paint-order:stroke;stroke:#172838;stroke-width:4px;stroke-linejoin:round}.terrain .node.selected circle{fill:#d5e8f6;stroke:#fff;stroke-width:4}.terrain .node.selected text{fill:#fff}.terrain .node.unknown circle{fill:#1c2936;stroke:#748494;stroke-dasharray:4 4}.terrain .node.unknown text{fill:#9aa9b7}.map-label{fill:#b7c8d5;font-size:12px;letter-spacing:2px;opacity:.8}.map-bottom{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:11px}.legend span:before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:#c5deed;margin-right:6px}.legend .fog:before{background:#647486}.legend .base:before{background:var(--gold)}.side{padding:14px;display:flex;flex-direction:column;gap:12px;min-height:660px}.side-head{display:flex;align-items:start;justify-content:space-between;gap:8px}.side-head h2{margin-bottom:3px}.region-tabs{display:flex;gap:6px;flex-wrap:wrap}.region-tabs button{font-size:12px;padding:6px 8px}.place-list{display:flex;flex-direction:column;gap:7px;max-height:330px;overflow:auto}.place{width:100%;text-align:left;background:#203346;border:1px solid #354e63;color:var(--text);padding:10px;border-radius:8px;cursor:pointer}.place:hover{border-color:#8eafc8}.place.selected{background:#2b465b;border-color:#b6d8ed;box-shadow:inset 3px 0 #c9e3f3}.place:disabled{opacity:.5;cursor:not-allowed}.place strong{display:block;font-size:13px;margin-bottom:3px}.place small{display:block;color:var(--muted);font-size:11px}.place .tags{display:flex;gap:5px;margin-top:7px}.tag{font-size:10px;border:1px solid #536b7e;border-radius:4px;padding:2px 5px;color:#c2d5e4}.tag.warn{color:var(--gold);border-color:#8b7658}.tag.lock{color:#9eabb8;border-style:dashed}.detail{margin-top:auto;border-top:1px solid var(--line);padding-top:12px}.detail h3{font-size:16px;margin:0 0 5px}.detail-summary{color:var(--muted);font-size:12px}.detail-more{margin-top:10px;padding:10px;background:#172737;border-radius:7px;color:#c6d5e1;font-size:12px}.detail-more p{margin:4px 0}.detail-actions{display:flex;gap:8px;margin-top:12px}.detail-actions .btn{flex:1}.statusline{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.statusline .chip{border-radius:5px}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#d7e8f4;color:#172838;padding:10px 15px;border-radius:8px;box-shadow:0 8px 30px #0006;display:none;z-index:5}.hint{margin-top:10px;color:var(--muted);font-size:11px}.back{display:none}@media(max-width:850px){.app{padding:0}.workspace{grid-template-columns:minmax(0,7fr) minmax(240px,3fr)}.map-panel,.side{min-height:unset}.map-viewport,.terrain{min-height:380px}.side{gap:10px}.place-list{max-height:240px}.top{align-items:flex-start;flex-direction:column}.detail{margin-top:0}}@media(max-width:480px){.map-viewport,.terrain{min-height:300px}.panel-head{align-items:flex-start;flex-direction:column}.detail-actions{flex-direction:column}.brand{font-size:22px}}\n/* ===== 0.8 : 행동 선택(탐사·채집·사냥), 진행 상황, 모바일 배치 ===== */\n.zoom-controls .btn,.zoom-controls .chip{white-space:nowrap}\n.act-box{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}\n.act-label{display:flex;justify-content:space-between;gap:6px;margin-bottom:6px;font-size:12px;color:var(--muted)}\n.act-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}\n.act{background:#203346;border:1px solid #354e63;color:var(--text);border-radius:8px;padding:8px 2px;cursor:pointer;font:inherit;text-align:center;min-width:0}\n.act strong{display:block;font-size:14px}\n.act small{display:block;margin-top:2px;font-size:10.5px;color:var(--muted)}\n.act:hover:not(:disabled){border-color:#8eafc8}\n.act.on{background:#2b465b;border-color:#c9e3f3;box-shadow:inset 0 -3px #c9e3f3}\n.act:disabled{opacity:.42;cursor:not-allowed}\n.act-note{margin-top:6px;min-height:2.8em;font-size:11.5px;line-height:1.45;color:var(--muted)}\n.dur-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px;font-size:12px;color:var(--muted)}\n.dur-row select{background:#172737;color:var(--text);border:1px solid #506a80;border-radius:6px;padding:6px 8px;font:inherit}\n.dur-row select:disabled{opacity:.5}\n.mission,.home-box{margin:0 0 10px;padding:10px;background:#172737;border:1px solid #3a5064;border-radius:8px}\n.mission[hidden],.home-box[hidden],.recent[hidden]{display:none}\n.mission .m-head{display:flex;justify-content:space-between;align-items:center;gap:8px}\n.mission .m-head strong{font-size:13px}\n.mission .m-bar{height:6px;margin:8px 0 4px;background:#0f1b27;border-radius:4px;overflow:hidden}\n.mission .m-bar span{display:block;width:0;height:100%;background:var(--accent)}\n.mission .detail-actions{margin-top:8px}\n.home-box{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:var(--muted)}\n.recent{margin-top:10px;font-size:12px;line-height:1.45;color:#c6d5e1}\n.recent h4{margin:0 0 4px;font-size:12px;font-weight:600;color:var(--muted)}\n.recent p{margin:3px 0}\n.recent time{display:block;font-size:10.5px;color:var(--muted)}\n.btn:focus-visible,.act:focus-visible,.place:focus-visible,select:focus-visible{outline:2px solid #c9e3f3;outline-offset:2px}\n.terrain .node:focus-visible circle{stroke:#fff;stroke-width:5}\n@media(max-width:640px){.workspace{grid-template-columns:minmax(0,1fr)}.map-panel,.side{min-height:unset}.map-viewport,.terrain{min-height:300px}.place-list{max-height:260px}.detail{margin-top:0}}\n\n.place{padding:8px 10px}.place .tags{margin-top:5px}.place-list{max-height:246px}.side{gap:10px}\n@media(max-width:640px){.place-list{max-height:260px}}\n/* ===== 홈페이지 팔레트와 동일하게: 색은 부모 창의 변수를 그대로 받아 씁니다(테마 변경에도 따라감) ===== */\nhtml,body{background:transparent!important;color:var(--text)}\n.panel{background:var(--panel2);border-color:var(--line)}\n.btn{background:color-mix(in srgb,var(--panel2),var(--text) 8%);border-color:var(--line);color:var(--text)}\n.btn:hover{background:color-mix(in srgb,var(--panel2),var(--text) 16%)}\n.btn.ghost{background:transparent}\n.btn.primary{background:var(--ice);border-color:var(--ice);color:var(--bg)}\n.btn.primary:disabled{opacity:.45}\n.chip{border-color:var(--line);color:var(--muted)}\n.chip.active{color:var(--ice);background:var(--panel)}\n.muted,.hint,.detail-summary,.place small,.act small,.act-label,.act-note,.dur-row,.home-box,.recent h4,.recent time,.legend{color:var(--muted)}\n.map-viewport{background:color-mix(in srgb,var(--bg),var(--panel2) 45%);border-color:var(--line)}\n.place,.act{background:color-mix(in srgb,var(--panel2),var(--text) 5%);border-color:var(--line);color:var(--text)}\n.place:hover,.act:hover:not(:disabled){border-color:var(--ice)}\n.place.selected,.act.on{background:color-mix(in srgb,var(--panel2),var(--ice) 18%);border-color:var(--ice);box-shadow:inset 3px 0 var(--ice)}\n.act.on{box-shadow:inset 0 -3px var(--ice)}\n.tag{border-color:var(--line);color:var(--muted)}\n.detail{border-top-color:var(--line)}\n.detail-more,.mission,.home-box,.dur-row select{background:var(--bg);border-color:var(--line);color:var(--text)}\n.detail-more{color:var(--text)}\n.recent{color:var(--text)}\n.mission .m-bar{background:var(--bg)}\n.mission .m-bar span{background:var(--ice)}\n.toast{background:var(--ice);color:var(--bg)}\n.legend span:before{background:var(--ice)}\n.legend .fog:before{background:var(--muted)}\n.legend .base:before{background:var(--gold)}\n.terrain\u003erect:first-of-type{fill:color-mix(in srgb,var(--bg),var(--panel2) 45%)}\n.terrain .land{fill:var(--panel2);stroke:color-mix(in srgb,var(--line),var(--text) 25%)}\n.terrain .ridge,.terrain .road{stroke:var(--muted)}\n.terrain .river{stroke:var(--ice)}\n.terrain .building{fill:var(--muted);stroke:var(--ice)}\n.terrain .forest{fill:color-mix(in srgb,var(--panel2) 68%,#5f9086);stroke:color-mix(in srgb,var(--line),#7fb0a4 40%)}\n.terrain .node circle{fill:var(--panel);stroke:var(--ice)}\n.terrain .node text{fill:var(--text);stroke:var(--bg)}\n.terrain .node.selected circle{fill:var(--ice);stroke:var(--text)}\n.terrain .node.selected text{fill:var(--text)}\n.terrain .node.unknown circle{fill:var(--bg);stroke:var(--muted)}\n.terrain .node.unknown text{fill:var(--muted)}\n.map-label{fill:var(--muted)}\n#fog stop{stop-color:var(--bg)}\n\u003c/style\u003e\u003c/head\u003e\n\u003cbody\u003e\u003cmain class=\"app\"\u003e\n\u003cheader class=\"top\"\u003e\u003cdiv\u003e\u003cdiv class=\"brand\"\u003e극야\u003c/div\u003e\u003cdiv class=\"muted\"\u003e거점 탐사지도\u003c/div\u003e\u003c/div\u003e\u003cdiv class=\"status\"\u003e\u003cspan class=\"chip active\"\u003e현재 위치 · 북부 거점\u003c/span\u003e\u003cspan class=\"chip\"\u003e발견 지역 3 / 7\u003c/span\u003e\u003cspan class=\"chip\"\u003e눈보라 · 약함\u003c/span\u003e\u003c/div\u003e\u003c/header\u003e\n\u003cdiv class=\"workspace\"\u003e\n\u003csection class=\"panel map-panel\"\u003e\u003cdiv class=\"panel-head\"\u003e\u003cdiv\u003e\u003ch2 id=\"mapTitle\"\u003e북부 권역\u003c/h2\u003e\u003cdiv class=\"muted\" id=\"mapSub\"\u003e지역을 선택하면 지도 안에서 세부 지형으로 확대됩니다.\u003c/div\u003e\u003c/div\u003e\u003cdiv class=\"zoom-controls\"\u003e\u003cbutton class=\"btn\" id=\"zoomOut\" aria-label=\"축소\"\u003e−\u003c/button\u003e\u003cspan class=\"chip\" id=\"zoomLabel\"\u003e100%\u003c/span\u003e\u003cbutton class=\"btn\" id=\"zoomIn\" aria-label=\"확대\"\u003e＋\u003c/button\u003e\u003cbutton class=\"btn ghost\" id=\"zoomReset\"\u003e전체 보기\u003c/button\u003e\u003c/div\u003e\u003c/div\u003e\n\u003cdiv class=\"mission\" id=\"missionBox\" hidden\u003e\u003cdiv class=\"m-head\"\u003e\u003cstrong id=\"mTitle\"\u003e\u003c/strong\u003e\u003cspan class=\"chip\" id=\"mState\"\u003e\u003c/span\u003e\u003c/div\u003e\u003cdiv class=\"m-bar\"\u003e\u003cspan id=\"mBar\"\u003e\u003c/span\u003e\u003c/div\u003e\u003cdiv class=\"muted\" id=\"mTime\"\u003e\u003c/div\u003e\u003cdiv class=\"detail-actions\"\u003e\u003cbutton class=\"btn\" id=\"mFinish\" disabled\u003e결과 받기\u003c/button\u003e\u003cbutton class=\"btn\" id=\"mCancel\"\u003e중단\u003c/button\u003e\u003c/div\u003e\u003c/div\u003e\u003cdiv class=\"home-box\" id=\"homeBox\" hidden\u003e\u003cspan id=\"homeText\"\u003e\u003c/span\u003e\u003cbutton class=\"btn\" id=\"btnHome\"\u003e거점으로 귀환\u003c/button\u003e\u003c/div\u003e\u003cdiv class=\"map-viewport\" id=\"viewport\"\u003e\u003csvg class=\"terrain\" id=\"terrain\" viewBox=\"0 0 760 560\" role=\"img\" aria-label=\"눈 덮인 북부 권역 지도\"\u003e\n\u003cdefs\u003e\u003cpattern id=\"snow\" width=\"32\" height=\"32\" patternUnits=\"userSpaceOnUse\"\u003e\u003ccircle cx=\"4\" cy=\"8\" r=\"1\" fill=\"#a7bbc9\" opacity=\".22\"/\u003e\u003ccircle cx=\"23\" cy=\"25\" r=\"1.2\" fill=\"#a7bbc9\" opacity=\".18\"/\u003e\u003c/pattern\u003e\u003clinearGradient id=\"fog\" x1=\"0\" x2=\"1\" y1=\"0\" y2=\"1\"\u003e\u003cstop stop-color=\"#182633\" stop-opacity=\".82\"/\u003e\u003cstop offset=\"1\" stop-color=\"#263645\" stop-opacity=\".94\"/\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\n\u003crect width=\"760\" height=\"560\" fill=\"#1b3040\"/\u003e\u003crect width=\"760\" height=\"560\" fill=\"url(#snow)\"/\u003e\n\u003cpath class=\"land\" d=\"M0 0H250L290 70 250 120 290 170 245 225 275 300 220 350 245 420 190 480 200 560H0Z\"/\u003e\u003cpath class=\"land\" d=\"M760 0H550L520 70 560 130 510 185 555 250 515 320 560 380 520 440 565 500 550 560H760Z\"/\u003e\u003cpath class=\"land\" d=\"M270 0L490 0 465 65 500 110 460 160 500 215 455 265 480 325 430 380 460 440 415 500 435 560H230L260 500 230 440 270 390 240 330 280 270 250 210 285 155 255 100Z\" opacity=\".8\"/\u003e\n\u003cpath class=\"ridge\" d=\"M20 70l70 -30 65 42 50 -20M20 120l65 -20 65 50 75 -25M30 430l70 -40 80 32M590 60l60 -25 75 35M570 410l65 -30 95 45M580 470l55 -20 85 30\"/\u003e\u003cpath class=\"river\" d=\"M370 -10C330 80 420 115 370 190S320 310 390 360 360 470 410 570\"/\u003e\u003cpath class=\"road\" d=\"M100 480C170 420 220 400 310 340S430 260 520 230 610 170 680 100\"/\u003e\n\u003cg opacity=\".8\"\u003e\u003cpath class=\"forest\" d=\"M105 180l-18 32h36zM130 200l-20 34h40zM170 160l-17 30h34zM600 300l-18 34h36zM635 320l-20 34h40zM590 350l-17 30h34zM330 430l-18 32h36zM360 450l-20 34h40z\"/\u003e\u003crect class=\"building\" x=\"455\" y=\"170\" width=\"25\" height=\"22\" rx=\"2\"/\u003e\u003crect class=\"building\" x=\"486\" y=\"180\" width=\"22\" height=\"18\" rx=\"2\"/\u003e\u003crect class=\"building\" x=\"450\" y=\"199\" width=\"18\" height=\"17\" rx=\"2\"/\u003e\u003crect class=\"building\" x=\"150\" y=\"385\" width=\"24\" height=\"20\" rx=\"2\"/\u003e\u003crect class=\"building\" x=\"180\" y=\"395\" width=\"20\" height=\"18\" rx=\"2\"/\u003e\u003c/g\u003e\n\u003ctext class=\"map-label\" x=\"35\" y=\"35\"\u003e북부 산악 지대\u003c/text\u003e\u003ctext class=\"map-label\" x=\"550\" y=\"535\"\u003e빙하 경계\u003c/text\u003e\n\u003cg class=\"node base\" data-region=\"base\" tabindex=\"0\"\u003e\u003ccircle cx=\"375\" cy=\"300\" r=\"15\" fill=\"#d9b27c\"/\u003e\u003ctext x=\"375\" y=\"330\"\u003e북부 거점\u003c/text\u003e\u003c/g\u003e\n\u003cg class=\"node\" data-region=\"ruins\" tabindex=\"0\"\u003e\u003ccircle cx=\"475\" cy=\"185\" r=\"11\"/\u003e\u003ctext x=\"475\" y=\"160\"\u003e폐허 지구\u003c/text\u003e\u003c/g\u003e\n\u003cg class=\"node\" data-region=\"forest\" tabindex=\"0\"\u003e\u003ccircle cx=\"160\" cy=\"205\" r=\"11\"/\u003e\u003ctext x=\"160\" y=\"180\"\u003e침엽수림\u003c/text\u003e\u003c/g\u003e\n\u003cg class=\"node\" data-region=\"village\" tabindex=\"0\"\u003e\u003ccircle cx=\"175\" cy=\"400\" r=\"11\"/\u003e\u003ctext x=\"175\" y=\"430\"\u003e침묵의 마을\u003c/text\u003e\u003c/g\u003e\n\u003cg class=\"node unknown\" data-region=\"glacier\" tabindex=\"0\"\u003e\u003ccircle cx=\"620\" cy=\"360\" r=\"11\"/\u003e\u003ctext x=\"620\" y=\"388\"\u003e미탐사 지대\u003c/text\u003e\u003cellipse cx=\"620\" cy=\"360\" rx=\"64\" ry=\"58\" fill=\"url(#fog)\" stroke=\"#738495\" stroke-dasharray=\"5 5\"/\u003e\u003c/g\u003e\n\u003c/svg\u003e\u003c/div\u003e\n\u003cdiv class=\"map-bottom\"\u003e\u003cdiv class=\"legend\"\u003e\u003cspan\u003e발견 지역\u003c/span\u003e\u003cspan class=\"base\"\u003e거점\u003c/span\u003e\u003cspan class=\"fog\"\u003e미탐사 · 안개\u003c/span\u003e\u003c/div\u003e\u003cdiv class=\"muted\"\u003e＋/− 버튼으로 확대·축소 · 지역을 선택해 세부 지도로 이동\u003c/div\u003e\u003c/div\u003e\n\u003cdiv class=\"recent\" id=\"recentBox\" hidden\u003e\u003ch4\u003e최근 기록\u003c/h4\u003e\u003cdiv id=\"recentList\"\u003e\u003c/div\u003e\u003c/div\u003e\u003c/section\u003e\n\u003caside class=\"panel side\"\u003e\u003cdiv class=\"side-head\"\u003e\u003cdiv\u003e\u003ch2\u003e장소 목록\u003c/h2\u003e\u003cdiv class=\"muted\" id=\"listSubtitle\"\u003e북부 권역 · 발견한 지역\u003c/div\u003e\u003c/div\u003e\u003cbutton class=\"btn ghost\" id=\"backBtn\" style=\"display:none\"\u003e← 지역으로\u003c/button\u003e\u003c/div\u003e\n\u003cdiv class=\"region-tabs\" id=\"regionTabs\"\u003e\u003cbutton class=\"btn active\" data-pick-region=\"ruins\"\u003e폐허 지구\u003c/button\u003e\u003cbutton class=\"btn\" data-pick-region=\"forest\"\u003e침엽수림\u003c/button\u003e\u003cbutton class=\"btn\" data-pick-region=\"village\"\u003e침묵의 마을\u003c/button\u003e\u003cbutton class=\"btn\" data-pick-region=\"glacier\"\u003e미탐사 지대\u003c/button\u003e\u003c/div\u003e\n\u003cdiv class=\"place-list\" id=\"placeList\"\u003e\u003c/div\u003e\n\u003cdiv class=\"detail\" id=\"detail\"\u003e\u003ch3 id=\"placeTitle\"\u003e폐허 지구\u003c/h3\u003e\u003cdiv class=\"detail-summary\" id=\"placeSummary\"\u003e지역을 선택하면 세부 장소와 예상 위험도를 확인할 수 있습니다.\u003c/div\u003e\u003cdiv class=\"statusline\" id=\"detailTags\"\u003e\u003c/div\u003e\u003cbutton class=\"btn ghost\" id=\"detailToggle\" style=\"margin-top:10px;width:100%\"\u003e상세 정보 펼치기 ＋\u003c/button\u003e\u003cdiv class=\"detail-more\" id=\"detailMore\" hidden\u003e\u003c/div\u003e\u003cdiv class=\"act-box\" id=\"actBox\"\u003e\u003cdiv class=\"act-label\"\u003e\u003cspan\u003e행동 선택\u003c/span\u003e\u003cspan id=\"actPlaceName\"\u003e\u003c/span\u003e\u003c/div\u003e\u003cdiv class=\"act-grid\" role=\"radiogroup\" aria-label=\"행동 선택\"\u003e\u003cbutton class=\"act\" data-act=\"explore\" role=\"radio\" aria-checked=\"false\" disabled\u003e\u003cstrong\u003e탐사\u003c/strong\u003e\u003csmall\u003e새 장소·기록\u003c/small\u003e\u003c/button\u003e\u003cbutton class=\"act\" data-act=\"gather\" role=\"radio\" aria-checked=\"false\" disabled\u003e\u003cstrong\u003e채집\u003c/strong\u003e\u003csmall\u003e장작·약초\u003c/small\u003e\u003c/button\u003e\u003cbutton class=\"act\" data-act=\"hunt\" role=\"radio\" aria-checked=\"false\" disabled\u003e\u003cstrong\u003e사냥\u003c/strong\u003e\u003csmall\u003e고기·식량\u003c/small\u003e\u003c/button\u003e\u003c/div\u003e\u003cdiv class=\"act-note\" id=\"actNote\"\u003e먼저 위 목록에서 장소를 고르세요.\u003c/div\u003e\u003cdiv class=\"dur-row\"\u003e\u003clabel for=\"durSel\"\u003e행동 시간\u003c/label\u003e\u003cselect id=\"durSel\"\u003e\u003coption value=\"60\" selected\u003e1시간\u003c/option\u003e\u003coption value=\"120\"\u003e2시간\u003c/option\u003e\u003coption value=\"180\"\u003e3시간\u003c/option\u003e\u003coption value=\"240\"\u003e4시간\u003c/option\u003e\u003coption value=\"300\"\u003e5시간\u003c/option\u003e\u003c/select\u003e\u003c/div\u003e\u003c/div\u003e\n\u003cdiv class=\"detail-actions\"\u003e\u003cbutton class=\"btn\" id=\"selectPlace\"\u003e목적지 선택\u003c/button\u003e\u003cbutton class=\"btn primary\" id=\"startMission\"\u003e작전 개시\u003c/button\u003e\u003c/div\u003e\u003cdiv class=\"hint\" id=\"actionHint\"\u003e장소를 고른 뒤 행동과 시간을 정하세요.\u003c/div\u003e\u003c/div\u003e\n\u003c/aside\u003e\u003c/div\u003e\u003c/main\u003e\u003cdiv class=\"toast\" id=\"toast\"\u003e\u003c/div\u003e\n\u003cscript\u003e\nconst $=s=\u003edocument.querySelector(s);let zoom=1,view='world',region='ruins',selected='shop',detailOpen=false;const found={base:true,ruins:true,forest:true,village:true,glacier:false};const regions={ruins:{name:'폐허 지구',places:[['shop','폐쇄 상점','물자 수색','보통',true],['warehouse','물류 창고','자원 수색','높음',true],['road','무너진 도로','경로 탐색','보통',true]]},forest:{name:'침엽수림',places:[['clearing','눈 덮인 공터','채집 · 사냥','낮음',true],['creek','얼어붙은 개울','물자 · 흔적','보통',true],['deepwoods','깊은 숲','미확인','미상',false]]},village:{name:'침묵의 마을',places:[['homes','버려진 주택','생활 물자','보통',true],['clinic','폐쇄 진료소','의약품','높음',true],['basement','지하 대피소','미확인','미상',false]]},glacier:{name:'미탐사 지대',places:[['glacierGate','빙하 경계','미발견 지역','미상',false],['mine','빙하 아래 광산','미발견 지역','미상',false]]}};const placeInfo={shop:['폐쇄 상점','식량과 생활용품이 남아 있을 가능성이 있습니다.','건물 내부 · 보통 위험','주요 예상 물자: 식량, 생활용품','탐사 기록: 아직 없음','미확인 위험 요소가 있을 수 있습니다.'],warehouse:['물류 창고','물자가 남아 있을 수 있지만 내부가 불안정합니다.','건물 내부 · 높은 위험','주요 예상 물자: 제작 재료, 공구','탐사 기록: 아직 없음','부상에 대비할 물자를 권장합니다.'],road:['무너진 도로','주변 지역으로 이어지는 흔적을 조사할 수 있습니다.','야외 · 보통 위험','주요 발견: 경로와 지역 단서','탐사 기록: 아직 없음','눈더미 아래 장애물을 주의하세요.'],clearing:['눈 덮인 공터','주변의 자원과 동물 흔적을 확인할 수 있습니다.','야외 · 낮은 위험','주요 예상 자원: 장작, 흔적','탐사 기록: 아직 없음','날씨에 따라 수확량이 달라질 수 있습니다.'],creek:['얼어붙은 개울','얼음 상태와 동물 발자국을 살펴볼 수 있습니다.','야외 · 보통 위험','주요 예상 자원: 물, 동물 흔적','탐사 기록: 아직 없음','얇은 얼음 구간에 주의하세요.'],homes:['버려진 주택','주민들이 남긴 생활 물자를 찾아볼 수 있습니다.','건물 내부 · 보통 위험','주요 예상 물자: 생활용품','탐사 기록: 아직 없음','집 안쪽이 무너졌을 수 있습니다.'],clinic:['폐쇄 진료소','의약품과 의료 기록이 남아 있을 수 있습니다.','건물 내부 · 높은 위험','주요 예상 물자: 의약품','탐사 기록: 아직 없음','출입구가 막혀 있을 수 있습니다.']};\nfunction toast(msg){if(window.parent&&window.parent!==window){window.parent.postMessage({pn:'toast',msg:String(msg)},'*');return}const t=$('#toast');t.textContent=msg;t.style.display='block';clearTimeout(window._tt);window._tt=setTimeout(()=\u003et.style.display='none',2300)}function setZoom(z){zoom=Math.max(.8,Math.min(1.8,z));$('#terrain').style.transform=`scale(${zoom})`;$('#zoomLabel').textContent=Math.round(zoom*100)+'%'}function pickRegion(id){if(id==='base'){toast('거점은 탐사 목적지로 선택할 수 없습니다.');return}if(!found[id]){toast('아직 발견하지 못한 지역입니다. 인접 지역을 탐험해 발견하세요.');return}region=id;view='region';selected=null;$('#mapTitle').textContent=regions[id].name;$('#mapSub').textContent='세부 장소를 선택하면 지도와 정보가 함께 갱신됩니다.';$('#listSubtitle').textContent=regions[id].name+' · 세부 장소';$('#backBtn').style.display='inline-block';$('#regionTabs').style.display='none';$('#terrain').style.transform=`scale(${zoom*1.18})`;$('#zoomLabel').textContent=Math.round(zoom*118)+'%';document.querySelectorAll('.node').forEach(n=\u003en.classList.toggle('selected',n.dataset.region===id));renderPlaces();const first=regions[id].places.find(p=\u003ep[4]);if(first)pickPlace(first[0]);else showDetail(null)}function worldView(){view='world';$('#mapTitle').textContent='북부 권역';$('#mapSub').textContent='지역을 선택하면 지도 안에서 세부 지형으로 확대됩니다.';$('#listSubtitle').textContent='북부 권역 · 발견한 지역';$('#backBtn').style.display='none';$('#regionTabs').style.display='flex';$('#terrain').style.transform=`scale(${zoom})`;$('#zoomLabel').textContent=Math.round(zoom*100)+'%';renderPlaces();showDetail(null)}function renderPlaces(){const list=$('#placeList');list.innerHTML='';(regions[region]?.places||[]).forEach(p=\u003e{const b=document.createElement('button');b.className='place'+(selected===p[0]?' selected':'');b.disabled=!p[4];b.innerHTML=`\u003cstrong\u003e${p[1]}\u003c/strong\u003e\u003csmall\u003e${p[2]} · 위험도 ${p[3]}\u003c/small\u003e\u003cdiv class=\"tags\"\u003e\u003cspan class=\"tag ${p[4]?'':'lock'}\"\u003e${p[4]?'정보 공개':'미확인'}\u003c/span\u003e${p[3]==='높음'?'\u003cspan class=\"tag warn\"\u003e주의\u003c/span\u003e':''}\u003c/div\u003e`;b.onclick=()=\u003epickPlace(p[0]);list.appendChild(b)})}function pickPlace(id){selected=id;renderPlaces();const p=(regions[region]?.places||[]).find(p=\u003ep[0]===id);showDetail(p)}function showDetailBase(p){detailOpen=false;$('#detailMore').hidden=true;$('#detailToggle').textContent='상세 정보 펼치기 ＋';if(!p){$('#placeTitle').textContent=view==='world'?'지역을 선택하세요':regions[region].name;$('#placeSummary').textContent='지도에서 지역을 선택하거나 장소 목록에서 목적지를 고르세요.';$('#detailTags').innerHTML='';$('#selectPlace').disabled=true;$('#startMission').disabled=true;$('#actionHint').textContent='선택한 장소가 있어야 작전을 시작할 수 있습니다.';return}const info=placeInfo[p[0]];$('#placeTitle').textContent=p[1];$('#placeSummary').textContent=info?.[1]||'아직 공개된 정보가 없습니다. 탐험을 통해 확인하세요.';$('#detailTags').innerHTML=`\u003cspan class=\"chip\"\u003e${p[4]?'발견':'미확인'}\u003c/span\u003e\u003cspan class=\"chip\"\u003e위험도 ${p[3]}\u003c/span\u003e\u003cspan class=\"chip\"\u003e${p[2]}\u003c/span\u003e`;$('#detailMore').innerHTML=info?`\u003cp\u003e${info[3]}\u003c/p\u003e\u003cp\u003e${info[4]}\u003c/p\u003e\u003cp\u003e${info[5]}\u003c/p\u003e`:'\u003cp\u003e아직 공개된 정보가 없습니다. 해당 지역을 탐험해 보세요.\u003c/p\u003e';$('#selectPlace').disabled=!p[4];$('#startMission').disabled=!p[4];$('#actionHint').textContent=p[4]?'이 장소를 목적지로 선택하고 작전을 시작할 수 있습니다.':'탐험을 통해 이 장소를 발견해야 합니다.'}document.querySelectorAll('[data-pick-region]').forEach(b=\u003eb.onclick=()=\u003epickRegion(b.dataset.pickRegion));document.querySelectorAll('.node').forEach(n=\u003e{const activate=()=\u003epickRegion(n.dataset.region);n.addEventListener('click',activate);n.addEventListener('keydown',e=\u003e{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate()}})});$('#zoomIn').onclick=()=\u003esetZoom(zoom+.1);$('#zoomOut').onclick=()=\u003esetZoom(zoom-.1);$('#zoomReset').onclick=()=\u003e{setZoom(1);if(view==='region')$('#terrain').style.transform='scale(1.18)'};$('#viewport').addEventListener('wheel',e=\u003e{e.preventDefault();setZoom(zoom+(e.deltaY\u003c0?.08:-.08))},{passive:false});$('#backBtn').onclick=worldView;$('#detailToggle').onclick=()=\u003e{detailOpen=!detailOpen;$('#detailMore').hidden=!detailOpen;$('#detailToggle').textContent=detailOpen?'상세 정보 접기 −':'상세 정보 펼치기 ＋'};$('#selectPlace').onclick=()=\u003e{if(!selected)return;$('#actionHint').textContent=$('#placeTitle').textContent+'을(를) 목적지로 선택했습니다.';toast('목적지를 선택했습니다.')};/* ===== 0.8 게임 본체 연결: 탐사 · 채집 · 사냥 =====\n   이 지도는 게임 화면(부모 창) 안에서 열릴 때만 작전을 시작할 수 있습니다.\n   장소·행동·시간은 부모 창의 게임 로직(beginAction)으로 전달되고, 진행 상태·발견 지역·최근 기록을 되돌려 받습니다. */\nconst ACT={\n explore:{ko:'탐사',note:'새 장소와 숨겨진 길, 기록을 찾습니다.'},\n gather:{ko:'채집',note:'장작·약초·제작 재료를 모읍니다. 같은 장소는 몇 시간 뒤에 다시 채집할 수 있습니다.'},\n hunt:{ko:'사냥',note:'동물을 추적해 생고기와 식량을 얻습니다. 실패할 수도 있습니다.'}\n};\nconst RISK_LABEL={'위험 I':'낮음','위험 II':'보통','위험 III':'높음'};\nconst inGame=window.parent!==window;\nlet game={connected:false,open:{},can:{},nodes:{},extras:[],loc:'base',locName:'북부 거점',weak:false,mission:null,logs:[]};\nlet act='explore',lastSig='',timer=null,lastH=0;\nconst send=m=\u003e{if(inGame)window.parent.postMessage(m,'*')};\nconst curPlace=()=\u003e(regions[region]&&regions[region].places||[]).find(p=\u003ep[0]===selected)||null;\nconst fmtLeft=ms=\u003e{const m=Math.ceil(ms/60000),h=Math.floor(m/60);return h?(h+'시간 '+(m%60?(m%60)+'분':'')).trim():(m\u003c=1?'1분 미만':m+'분')};\n\nfunction updateControls(){\n const p=curPlace(),busy=!!game.mission,open=!!(p&&p[4]);\n const can=(p&&open&&game.connected)?(game.can[p[0]]||[]):[];\n if(can.length&&!can.includes(act))act=can[0];\n document.querySelectorAll('.act').forEach(b=\u003e{\n  const a=b.dataset.act,allowed=can.includes(a),on=allowed&&a===act;\n  b.disabled=!allowed||busy;b.classList.toggle('on',on);b.setAttribute('aria-checked',on?'true':'false');\n  b.title=(p&&open&&game.connected&&!allowed)?ACT[a].ko+'은(는) 이 장소에서 할 수 없습니다.':'';\n });\n $('#actPlaceName').textContent=p?p[1]:'';\n document.querySelectorAll('#durSel option').forEach(o=\u003e{o.disabled=game.weak&&Number(o.value)\u003e60});\n if(game.weak&&Number($('#durSel').value)\u003e60)$('#durSel').value='60';\n $('#durSel').disabled=busy;\n let note,hint,ready=false;\n if(!inGame||!game.connected){note='게임 화면과 연결되지 않아 지도 미리보기만 볼 수 있습니다.';hint='이 지도는 게임 화면 안에서 열어야 작전을 시작할 수 있습니다.'}\n else if(!p){note='먼저 위 목록에서 장소를 고르세요.';hint='장소를 고른 뒤 행동과 시간을 정하세요.'}\n else if(!open){note='아직 발견하지 못한 장소입니다.';hint='다른 장소를 탐사하면 발견할 수 있습니다.'}\n else if(!can.length){note='이 장소에서는 지금 할 수 있는 행동이 없습니다.';hint='다른 장소를 선택하세요.'}\n else{\n  note=ACT[act].note;\n  const no=['explore','gather','hunt'].filter(a=\u003e!can.includes(a));\n  if(no.length)note+=' (이 장소에서 할 수 없는 행동: '+no.map(a=\u003eACT[a].ko).join('·')+')';\n  if(game.weak)note+=' · 쇠약 상태: 1시간 활동만 가능합니다.';\n  if(busy)hint='진행 중인 작전이 끝나거나 중단된 뒤에 새로 시작할 수 있습니다.';\n  else{ready=true;hint=p[1]+' · '+ACT[act].ko+' · '+Math.round(Number($('#durSel').value)/60)+'시간 — 작전을 시작할 수 있습니다.'}\n }\n $('#actNote').textContent=note;$('#actionHint').textContent=hint;$('#startMission').disabled=!ready;\n}\nfunction showDetail(p){showDetailBase(p);updateControls()}\n\nfunction renderMission(){\n const m=game.mission,box=$('#missionBox'),home=$('#homeBox');\n if(m){\n  const now=Date.now(),total=Math.max(1,m.end-m.start),left=Math.max(0,m.end-now),done=left===0;\n  box.hidden=false;home.hidden=true;\n  $('#mTitle').textContent=(ACT[m.act]?ACT[m.act].ko:'이동')+' · '+m.placeName;\n  $('#mState').textContent=done?'완료':'진행 중';\n  $('#mBar').style.width=Math.min(100,Math.max(0,(now-m.start)/total*100))+'%';\n  $('#mTime').textContent=done?'활동이 끝났습니다. 결과를 정리하는 중입니다.':'남은 시간 '+fmtLeft(left);\n  $('#mFinish').disabled=!done;\n  if(!timer)timer=setInterval(renderMission,1000);\n }else{\n  box.hidden=true;if(timer){clearInterval(timer);timer=null}\n  home.hidden=!game.connected||game.loc==='base';\n  if(!home.hidden)$('#homeText').textContent='현재 위치: '+game.locName+' · 야외에서는 체온이 계속 떨어집니다.';\n }\n const list=$('#recentList');\n list.textContent='';\n (game.logs||[]).forEach(l=\u003e{const p=document.createElement('p'),t=document.createElement('time');t.textContent=l.t;p.append(t,document.createTextNode(l.x));list.appendChild(p)});\n $('#recentBox').hidden=!(game.logs&&game.logs.length);\n}\n\nfunction applyNodes(){\n const g=!!(game.nodes&&game.nodes.glacier);found.glacier=g;\n regions.glacier.name=g?'빙하 지대':'미탐사 지대';\n const n=document.querySelector('.node[data-region=\"glacier\"]');\n if(n){\n  n.classList.toggle('unknown',!g);\n  const fog=n.querySelector('ellipse');if(fog)fog.style.display=g?'none':'';\n  const label=n.querySelector('text');if(label)label.textContent=regions.glacier.name;\n }\n const tb=document.querySelector('[data-pick-region=\"glacier\"]');if(tb)tb.textContent=regions.glacier.name;\n}\n\nfunction applyState(s){\n game=Object.assign({},game,s,{connected:true});\n Object.keys(game.open||{}).forEach(id=\u003eObject.keys(regions).forEach(k=\u003eregions[k].places.forEach(p=\u003e{if(p[0]===id)p[4]=!!game.open[id]})));\n (game.extras||[]).forEach(x=\u003e{\n  const list=regions[x.node]&&regions[x.node].places;\n  if(!list||list.some(p=\u003ep[0]===x.id))return;\n  const names=(game.can[x.id]||[]).map(a=\u003eACT[a].ko);\n  list.push([x.id,x.name,names.join(' · '),RISK_LABEL[x.risk]||'미상',true]);\n  placeInfo[x.id]=[x.name,x.desc,'야외 · '+x.risk,'가능한 행동: '+names.join(', '),'탐사 기록: 아직 없음','탐사로 발견한 장소입니다.'];\n });\n applyNodes();\n const sig=JSON.stringify([game.open,(game.extras||[]).map(x=\u003ex.id),game.nodes]);\n if(sig!==lastSig){lastSig=sig;if(view==='region'){renderPlaces();const p=curPlace();if(p)showDetailBase(p)}}\n updateControls();renderMission();\n}\n\nwindow.addEventListener('message',e=\u003e{\n const d=e.data;\n if(e.source!==window.parent||!d||typeof d!=='object')return;\n if(d.pn==='palette'&&d.colors){Object.keys(d.colors).forEach(k=\u003e{if(/^[a-z0-9]+$/.test(k)&&typeof d.colors[k]==='string'&&d.colors[k])document.documentElement.style.setProperty('--'+k,d.colors[k])})}\n else if(d.pn==='state'&&d.state)applyState(d.state);\n else if(d.pn==='reply'&&d.ok===false){updateControls();$('#actionHint').textContent=String(d.msg||'').slice(0,160);toast(d.msg)}\n});\n\ndocument.querySelectorAll('.act').forEach(b=\u003eb.onclick=()=\u003e{if(b.disabled)return;act=b.dataset.act;updateControls()});\n$('#durSel').onchange=updateControls;\n$('#startMission').onclick=()=\u003e{\n const p=curPlace();\n if(!p||!p[4]||!game.connected||game.mission)return;\n $('#startMission').disabled=true;\n send({pn:'start',place:p[0],placeName:p[1],act:act,dur:Number($('#durSel').value)});\n};\n$('#mFinish').onclick=()=\u003esend({pn:'finish'});\n$('#mCancel').onclick=()=\u003e{if(confirm('지금 중단하면 이번 활동의 보상은 받을 수 없습니다. 중단할까요?'))send({pn:'cancel'})};\n$('#btnHome').onclick=()=\u003esend({pn:'home'});\n\n/* iframe 높이를 내용에 맞춰 부모 창에 알려 줌(불필요한 빈 공간 방지) */\nconst appEl=document.querySelector('.app');\nconst reportH=()=\u003e{const h=Math.ceil(appEl.getBoundingClientRect().height);if(Math.abs(h-lastH)\u003e1){lastH=h;send({pn:'height',h:h})}};\nif(window.ResizeObserver)new ResizeObserver(reportH).observe(appEl);\nwindow.addEventListener('load',reportH);\n\nrenderPlaces();showDetail(null);renderMission();reportH();\n/* 부모 창과 연결(처음 연결이 늦으면 몇 번 다시 요청) */\nif(inGame){let tries=0;send({pn:'ready'});const iv=setInterval(()=\u003e{if(game.connected||++tries\u003e5){clearInterval(iv);return}send({pn:'ready'})},800)}\n\n\u003c/script\u003e\u003c/body\u003e\u003c/html\u003e\n";
+ function integrate(){
+  const nav=document.querySelector('.nav');
+  if(nav){const b=nav.querySelector('[data-tab="map"]');if(b)b.remove();}
+  const extra=document.getElementById('tab-map');if(extra)extra.remove();
+  const base=document.getElementById('tab-base');if(!base)return;
+  const first=[...base.querySelectorAll('.panel')].find(el=>el.querySelector('h2')?.textContent.trim()==='공동 세계 지도');if(!first)return;
+  first.innerHTML='<div class="pn-home-map"><iframe title="거점 지도" srcdoc=""></iframe></div>'; 
+  const frame=first.querySelector('iframe');frame.style.cssText='display:block;width:100%;height:720px;border:0;border-radius:10px;background:transparent;overflow:hidden';frame.setAttribute('scrolling','no');frame.srcdoc=mapDocument;
+  const style=document.createElement('style');style.textContent='.pn-home-map{width:100%;overflow:hidden;border-radius:10px}.pn-home-map iframe{max-width:100%}';document.head.appendChild(style);
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',integrate);else integrate();
+})();
+</script>
+
+
+
+
+<script>
+/* Polar Night 0.7: offline feature pass based on user's checklist. */
+(function(){
+const $=s=>document.querySelector(s); const S=()=>{try{return state}catch(e){return null}}; const R=()=>{try{return regions}catch(e){return null}};
+const get=(k,d)=>{try{let v=localStorage.getItem('pn07_'+k);return v===null?d:JSON.parse(v)}catch(e){return d}};const put=(k,v)=>localStorage.setItem('pn07_'+k,JSON.stringify(v));
+const add=(parent,title,html)=>{if(!parent)return null;let p=document.createElement('section');p.className='panel';p.style.marginTop='12px';p.innerHTML='<h2>'+title+'</h2>'+html;parent.appendChild(p);return p};
+const nav=$('.brand');if(nav)nav.textContent='극야';document.title='극야 | 생존 기록 · 테스트 빌드 0.8';
+// simplify regional guide and remove redundant “where to go” wording
+const guide=[...document.querySelectorAll('h2')].find(x=>x.textContent.includes('지역 안내'));if(guide){guide.textContent='주변 지역';const mini=guide.parentElement.querySelector('.mini');if(mini)mini.textContent='지도에서 큰 지역을 선택하면 세부 장소가 표시됩니다. 장소를 고르면 활동을 바로 시작할 수 있습니다.'}
+const base=$('#tab-base')||document.querySelector('[data-tab="base"]');
+const char=$('#tab-character'),inv=$('#tab-inventory'),journal=$('#tab-journal'),garden=$('#tab-garden'),gear=$('#tab-gear'),admin=$('#tab-admin');
+// local progression, training, level and stats
+let prog=get('progress',{level:1,xp:0,points:3,stats:{strength:1,agility:1,mind:1,warmth:1,constitution:1,luck:1},trained:0});
+const statNames={strength:'근력',agility:'민첩',mind:'정신',warmth:'보온',constitution:'체질',luck:'행운'};
+const hpMax=()=>100+((prog.stats.strength||1)+(prog.stats.constitution||1)-2)*5;
+const refreshProg=()=>{put('progress',prog);const s=S();if(s){s.hp=Math.min(Number(s.hp)||hpMax(),hpMax());}const level=$('#pnLevel');if(level)level.textContent='Lv.'+prog.level;const pt=$('#pnPoints');if(pt)pt.textContent='남은 스탯 포인트: '+prog.points;const hp=$('#pnHpMax');if(hp)hp.textContent='최대 HP '+hpMax();const st=$('#pnStatGrid');if(st)st.innerHTML=Object.entries(prog.stats).map(([k,v])=>`<div class="region-info"><b>${statNames[k]} ${v}</b><button class="action" data-stat="${k}" ${prog.points<=0?'disabled':''}>+1</button></div>`).join('');};
+const profile=add(char,'성장 · 훈련','<div class="pill" id="pnLevel">Lv.1</div><div class="mini" id="pnHpMax">최대 HP 100</div><div id="pnPoints" class="mini">남은 스탯 포인트: 3</div><div id="pnStatGrid" class="region-guide"></div><p class="mini">근력과 체질은 최대 HP에 영향을 줍니다. 훈련은 현실 시간 대신 테스트용 행동으로 처리됩니다.</p><button class="action" id="pnTrain">훈련하기</button><div class="mini" id="pnTrainMsg"></div>');
+if(profile){profile.addEventListener('click',e=>{let b=e.target.closest('[data-stat]');if(!b||prog.points<=0)return;prog.stats[b.dataset.stat]++;prog.points--;refreshProg();const s=S();if(s&&b.dataset.stat==='strength'||s&&b.dataset.stat==='constitution')s.hp=Math.min(hpMax(),(s.hp||100)+5);if(typeof render==='function')render();});$('#pnTrain').onclick=()=>{prog.xp+=20;prog.trained++;if(prog.xp>=prog.level*100){prog.xp-=prog.level*100;prog.level++;prog.points+=2;let logs=S()?.log;if(typeof addLog==='function')addLog('레벨 업! 스탯 포인트 2점을 얻었다. 캐릭터 탭에서 능력치를 배분할 수 있다.','훈련',true);$('#pnTrainMsg').textContent='레벨 업! 스탯 포인트 2점을 얻었습니다.'}else $('#pnTrainMsg').textContent='훈련 완료 · 경험치 +20 ('+prog.xp+'/'+prog.level*100+')';refreshProg();};refreshProg()}
+// health and mental status effects, rare restorative item
+const statusPanel=add(inv,'생존 상태 · 회복','<div id="pnVitals" class="region-info">체력·정신력 상태를 확인하세요.</div><div class="selectrow"><button class="action" id="pnUseOtamatone">희귀 아이템 · 오타마톤 사용</button><button class="action" id="pnUseBandage">붕대 사용</button></div><div class="mini" id="pnVitalsMsg"></div>');
+function vitals(){let s=S();if(!s)return;let hp=Number(s.hp)||0,m=Number(s.mind)||0;$('#pnVitals').textContent=`체력 ${Math.round(hp)} / ${hpMax()} · 정신력 ${Math.round(m)} / 100 · ${hp<30?'중상 위험: 탐색 중 부상 확률 증가':hp<60?'체력이 낮아 위험 행동에 취약함':'체력 안정'} · ${m<25?'정신력 저하: 판단·신호 해석 불리':m<50?'불안정: 판단에 작은 불이익':'정신 상태 안정'}`;}
+if(statusPanel){$('#pnUseOtamatone').onclick=()=>{let s=S();let n=get('otamatone',1);if(!s||n<=0){$('#pnVitalsMsg').textContent='오타마톤이 없습니다.';return}s.mind=Math.min(100,(s.mind||0)+45);put('otamatone',n-1);$('#pnVitalsMsg').textContent='오타마톤 사용 · 정신력 +45';vitals();if(typeof render==='function')render()};$('#pnUseBandage').onclick=()=>{let s=S();let n=get('bandage',2);if(!s||n<=0){$('#pnVitalsMsg').textContent='붕대가 없습니다.';return}s.hp=Math.min(hpMax(),(s.hp||0)+20);put('bandage',n-1);$('#pnVitalsMsg').textContent='붕대 사용 · 체력 +20';vitals();if(typeof render==='function')render()};vitals();setInterval(vitals,4000)}
+// weakness/death test: no level/stat loss; three-hour weakness, long exploration blocked
+const death=add(admin,'사망 · 쇠약 테스트','<div class="mini">사망 시 레벨·스탯은 유지됩니다. 쇠약 3시간 동안 1시간을 초과하는 탐색은 불가능합니다.</div><button class="action" id="pnDeathTest">사망 상황 테스트</button><div id="pnWeakText" class="region-info"></div>');
+if(death){$('#pnDeathTest').onclick=()=>{if(typeof window.pnDeathTest==='function')window.pnDeathTest()};if(typeof window.pnUpdateWeakUI==='function')window.pnUpdateWeakUI()}
+// gardening: three home-only plots, harvest improves with level
+const gardenPanel=add(garden,'거점 약초 재배','<div class="mini">북부 거점에서만 관리할 수 있습니다. 최대 3칸이며 레벨이 높을수록 수확량이 늘어납니다.</div><div id="pnPlots" class="region-guide"></div><div class="mini" id="pnGardenMsg"></div>');let plots=get('plots',[0,0,0]);
+function drawPlots(){const el=$('#pnPlots');if(!el)return;el.innerHTML=plots.map((v,i)=>`<div class="region-info"><b>재배 칸 ${i+1}</b><div class="mini">${v?'성장 중 · '+Math.max(1,Math.ceil((v-Date.now())/60000))+'분':'비어 있음'}</div><button class="action" data-plant="${i}" ${v?'disabled':''}>약초 심기</button><button class="action" data-harvest="${i}" ${!v||Date.now()<v?'disabled':''}>수확</button></div>`).join('')}
+if(gardenPanel){gardenPanel.addEventListener('click',e=>{let p=e.target.closest('[data-plant]'),h=e.target.closest('[data-harvest]');if(p){if(!S()||S().region!=='base'){ $('#pnGardenMsg').textContent='거점에 있을 때만 심을 수 있습니다.';return}plots[+p.dataset.plant]=Date.now()+30*60000;put('plots',plots);$('#pnGardenMsg').textContent='약초를 심었습니다. 30분 후 수확할 수 있습니다.';drawPlots()}if(h){let i=+h.dataset.harvest;if(!plots[i]||Date.now()<plots[i])return;let s=S();if(s)s.herb=(s.herb||0)+1+Math.floor((prog.level-1)/3);plots[i]=0;put('plots',plots);if(typeof render==='function')render();drawPlots();$('#pnGardenMsg').textContent='약초 수확 완료.'}});drawPlots();setInterval(drawPlots,10000)}
+// shared heater upgrades: everyone contributes concept represented locally; upgrades reduce hourly fuel use
+const heat=add(base,'공동 난방 시설','<div class="mini">초기 난방은 취약합니다. 거점 구성원이 함께 보강한다는 설정의 로컬 테스트 기능입니다.</div><div id="pnHeatInfo" class="region-info"></div><button class="action" id="pnHeatUpgrade">난방 보강 · 장작 5</button>');let heater=get('heater',{level:1,durability:100});function drawHeat(){if($('#pnHeatInfo'))$('#pnHeatInfo').textContent=`난방 단계 ${heater.level} · 내구도 ${heater.durability}% · 시간당 장작 소비 ${Math.max(.3,1.2-(heater.level-1)*.15).toFixed(2)}`;if(window.pnShowDurability)window.pnShowDurability(heater.durability)}window.pnHeaterState=()=>heater;
+if(heat){$('#pnHeatUpgrade').onclick=()=>{let s=S();if(!s||s.wood<5){toast('장작이 5개 필요합니다.');return}s.wood-=5;heater.level++;heater.durability=Math.min(100,heater.durability+10);put('heater',heater);drawHeat();if(typeof render==='function')render();toast('공동 난방 시설을 보강했습니다.')};drawHeat()}
+// repair moved to bottom of inventory and equipped gear detail
+const gearDetail=add(inv,'착용 장비 상세','<div class="region-guide" id="pnGearDetail"></div>');function drawGear(){let el=$('#pnGearDetail');if(!el)return;let eq=get('equipped',{head:'낡은 털모자',body:'겹쳐 입은 외투',hands:'모직 장갑',feet:'가죽 장화',weapon:'손도끼'});el.innerHTML=Object.entries(eq).map(([k,v])=>`<div class="region-info"><b>${({head:'머리',body:'몸통',hands:'손',feet:'발',weapon:'무기'})[k]||k} · ${v}</b><div class="mini">내구도 ${get('dur_'+k,70)}% · 방한/성능 정보(테스트 수치)</div></div>`).join('')}
+if(gearDetail)drawGear();if(inv){const repairButtons=[...inv.querySelectorAll('button')].filter(b=>/수리/.test(b.textContent));repairButtons.forEach(b=>{let wrap=b.closest('.panel')||b.parentElement;if(wrap&&wrap!==inv){wrap.style.order='99';wrap.style.marginTop='24px'}})}
+// raid defense stars and heater damage
+const raid=add($('#tab-raid'),'거점 방어 평가','<div id="pnDefense" class="region-info"></div><button class="action" id="pnRaidLoss">레이드 패배 테스트</button><div class="mini">패배하면 난방 시설 내구도가 감소합니다.</div>');function drawDefense(){let score=Math.max(1,Math.min(5,Math.floor(heater.level/2)+1));if($('#pnDefense'))$('#pnDefense').textContent='방어 등급: '+'★'.repeat(score)+'☆'.repeat(5-score)+' · 난방 내구도 '+heater.durability+'%'}if(raid){$('#pnRaidLoss').onclick=()=>{heater.durability=Math.max(0,heater.durability-20);put('heater',heater);drawHeat();drawDefense();if(typeof addLog==='function')addLog('레이드 패배로 공동 난방 시설 내구도가 20% 감소했다.','거점 방어',true)};drawDefense()}
+// theme selector, local only
+const theme=add(admin,'화면 테마','<label>테마 <select id="pnTheme"><option value="ice">빙설</option><option value="night">극야</option><option value="warm">난롯불</option></select></label><div class="mini">테마는 이 브라우저에만 저장됩니다.</div>');if(theme){let sel=$('#pnTheme');sel.value=get('theme','ice');function setTheme(v){document.documentElement.dataset.theme=v;document.body.style.filter=v==='night'?'brightness(.82) saturate(.8)':v==='warm'?'sepia(.15)':'none';put('theme',v)}sel.onchange=()=>setTheme(sel.value);setTheme(sel.value)}
+// local message board and stall as single-player mockups, not online features
+const board=add(base,'거점 메모지','<textarea id="pnNote" rows="3" style="width:100%" placeholder="집 앞에 남길 메모..."></textarea><button class="action" id="pnSaveNote">메모 붙이기</button><div class="region-info" id="pnNoteSaved"></div>');if(board){$('#pnNote').value=get('note','');$('#pnNoteSaved').textContent=get('note','아직 메모가 없습니다.');$('#pnSaveNote').onclick=()=>{let v=$('#pnNote').value;put('note',v);$('#pnNoteSaved').textContent=v||'아직 메모가 없습니다.';toast('메모를 저장했습니다.')}}
+const stall=add(base,'가판대 · 물자 교환','<div class="mini">온라인 거래가 아닌 개인 테스트용 교환 기능입니다.</div><button class="action" id="pnBuyHerb">약초 1개 구매 · 장작 3</button><button class="action" id="pnSellScrap">폐자재 1개 판매 · 장작 +2</button><div class="mini" id="pnStallMsg"></div>');if(stall){$('#pnBuyHerb').onclick=()=>{let s=S();if(s&&s.wood>=3){s.wood-=3;s.herb=(s.herb||0)+1;$('#pnStallMsg').textContent='약초 1개를 교환했습니다.';if(typeof render==='function')render()}else $('#pnStallMsg').textContent='장작이 부족합니다.'};$('#pnSellScrap').onclick=()=>{let s=S();if(s&&(s.scrapwood||0)>0){s.scrapwood--;s.wood+=2;$('#pnStallMsg').textContent='폐자재 1개를 장작 2개와 교환했습니다.';if(typeof render==='function')render()}else $('#pnStallMsg').textContent='교환할 폐자재가 없습니다.'}}
+// level indicator near profile/character and all traits can be changed at base (existing trait UI stays local)
+const topStatus=$('.statusline');if(topStatus&&!$('#pnLevel')){let lv=document.createElement('span');lv.id='pnLevel';lv.textContent='Lv.'+prog.level;topStatus.prepend(lv)}
+refreshProg();
+})();
+</script>
+
+
+<script>
+/* 0.7 layout corrections from user feedback */
+(function(){
+ const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+ const nav=$('.nav'), main=$('main'), base=$('#tab-base'), inv=$('#tab-inventory'), char=$('#tab-character');
+ if(!nav||!main||!base||!inv)return;
+  // Theme title: use Korean title only.
+ const brand=$('.brand'); if(brand)brand.textContent='극야';
+ 
+ // Add a Home tab and an Information tab.
+ function addTab(id,label){let b=nav.querySelector('button[data-tab="'+id+'"]');if(!b){b=document.createElement('button');b.dataset.tab=id;b.textContent=label;nav.appendChild(b)}let panel=$('#tab-'+id);if(!panel){panel=document.createElement('section');panel.className='content-tab';panel.id='tab-'+id;main.appendChild(panel)}return panel}
+ const home=addTab('home','집'); const info=addTab('info','정보');
+ // Existing garden becomes home-only. Hide old garden tab and put all garden content in Home.
+ const gardenTab=$('#tab-garden');
+ if(gardenTab){gardenTab.querySelectorAll('.panel').forEach(x=>home.appendChild(x));gardenTab.remove();}
+ const gardenNav=nav.querySelector('button[data-tab="garden"]'); if(gardenNav)gardenNav.remove();
+ // Move the new 3-plot garden panel to Home as well.
+ const plots=$('#pnPlots')?.closest('.panel'); if(plots && !home.contains(plots))home.appendChild(plots);
+ // Put the memo in Home and remove it from base.
+ const note=$('#pnNote')?.closest('.panel'); if(note){home.appendChild(note);note.querySelector('h2')&&(note.querySelector('h2').textContent='집 메모');}
+ // Remove single-player market stall entirely (reserved for online player trade).
+ const stall=$('#pnBuyHerb')?.closest('.panel'); if(stall)stall.remove();
+ // Information tab: exploration journal + local lost-item/rescue-request board.
+ const journal=$('#tab-journal'); if(journal){journal.querySelectorAll('.panel').forEach(x=>info.appendChild(x));journal.remove();}
+ const journalNav=nav.querySelector('button[data-tab="journal"]');if(journalNav)journalNav.textContent='정보';if(journalNav)journalNav.dataset.tab='info';
+ const rescue=document.createElement('section');rescue.className='panel';rescue.style.marginTop='12px';rescue.innerHTML='<h2>유실품 · 구조 의뢰</h2><p class="mini">사망 시 남겨진 물품과 구조 요청을 확인하는 로컬 시제품입니다.</p><div id="pnRescueList" class="region-info">현재 등록된 구조 의뢰가 없습니다.</div><button class="action" id="pnRescueTest">구조 의뢰 테스트 등록</button>';
+ info.appendChild(rescue);
+ $('#pnRescueTest')?.addEventListener('click',()=>{const el=$('#pnRescueList');el.textContent='북부 거점 구조대 의뢰 · 유실품 회수 요청이 등록되었습니다. (테스트)';});
+ // Move the original gear durability/repair panel to the bottom of inventory; remove its own tab.
+ const gearTab=$('#tab-gear'); if(gearTab){const panels=[...gearTab.querySelectorAll('.panel')];panels.forEach(x=>inv.appendChild(x));gearTab.remove();}
+ const gearNav=nav.querySelector('button[data-tab="gear"]');if(gearNav)gearNav.remove();
+ // Any newly added gear-detail panel is placed last in Inventory too.
+ const detail=$('#pnGearDetail')?.closest('.panel');if(detail){inv.appendChild(detail)}
+ // Remove redundant separate memo if there are duplicates; keep the one now inside Home.
+ $$('textarea#pnNote').forEach((el,i)=>{if(i>0)el.closest('.panel')?.remove()});
+ // Remove the old standalone local heater widget if any duplicate remained.
+ // Character: remove warmth as a growth stat; clothing handles insulation.
+ if(char){$$('#tab-character .resource').filter(x=>x.textContent.trim().startsWith('보온')).forEach(x=>x.remove());}
+ // Training consumes one in-game hour; prevent spam while training is in progress and log completion.
+ const train=$('#pnTrain'); if(train && !train.dataset.timeCost){train.dataset.timeCost='1';train.textContent='훈련 시작 · 1시간';train.addEventListener('click',function(){if(this.dataset.busy==='1')return;this.dataset.busy='1';this.disabled=true;const msg=$('#pnTrainMsg');if(msg)msg.textContent='훈련 중 · 1시간 소요 (테스트는 즉시 완료 처리됩니다).';setTimeout(()=>{this.dataset.busy='0';this.disabled=false;if(msg)msg.textContent=(msg.textContent||'훈련')+' · 훈련 시간 완료';},1500);});const p=train.closest('.panel');if(p){const text=p.querySelector('p.mini');if(text)text.textContent='근력과 체질은 최대 HP에 영향을 줍니다. 훈련은 1시간을 소모합니다. 보온은 성장 능력치에서 제외되며 방한 장비로 체온을 관리합니다.'}}
+ // Theme control: add a genuine light palette, not just filters.
+ const themeSelect=$('#pnTheme'); if(themeSelect){if(![...themeSelect.options].some(o=>o.value==='light')){const o=document.createElement('option');o.value='light';o.textContent='밝은 테마';themeSelect.appendChild(o)}
+   const apply=()=>{const v=themeSelect.value;document.documentElement.dataset.theme=v;document.body.style.filter='none';['--bg','--panel','--text','--muted','--line'].forEach(k=>document.documentElement.style.removeProperty(k));document.body.style.background='';document.body.style.color='';try{localStorage.setItem('pnTheme',v);localStorage.setItem('theme',v)}catch(e){}};
+   themeSelect.addEventListener('change',apply); if(localStorage.getItem('pnTheme')==='light')themeSelect.value='light';apply();
+ }
+ // Exploration log is embedded in the action area and appears only while an expedition is active.
+ const actionPanel=$('#startAction')?.closest('.panel'); const oldLog=$('#log');
+ if(actionPanel&&oldLog){let box=$('#pnInlineExploreLog');if(!box){box=document.createElement('div');box.id='pnInlineExploreLog';box.className='region-info';box.style.display='none';box.innerHTML='<b>탐색 진행 로그</b><div class="log" id="pnInlineLogContent"></div>';actionPanel.appendChild(box)}
+   const update=()=>{const active=$('#activeMission')&&!$('#activeMission').classList.contains('hidden');box.style.display=active?'block':'none';const dest=$('#pnInlineLogContent');if(dest&&oldLog)dest.innerHTML=oldLog.innerHTML;};
+   setInterval(update,1000);$('#startAction')?.addEventListener('click',()=>setTimeout(update,50));$('#refreshMission')?.addEventListener('click',()=>setTimeout(update,50));
+ }
+ // Home tab navigation uses same tab mechanism.
+ nav.addEventListener('click',e=>{const b=e.target.closest('button[data-tab]');if(!b)return;const id=b.dataset.tab;if(!['home','info'].includes(id))return;$$('.content-tab').forEach(x=>x.classList.toggle('active',x.id==='tab-'+id));nav.querySelectorAll('button[data-tab]').forEach(x=>x.classList.toggle('active',x===b));});
+ // Clean out standalone redundant panels explicitly requested to be removed.
+ $$('h2').filter(h=>h.textContent.trim()==='거점 메모지').forEach(h=>{if(!home.contains(h))h.closest('.panel')?.remove()});
+})();
+</script>
+
+
+<style id="user-corrections-final">
+/* 극야 메인 화면 최종 정리 */
+#tab-base .panel:has(h2), #tab-base .panel {min-width:0}
+#tab-base .panel:has(h2) { }
+#tab-base .panel:has(h2) { }
+/* 메인에서 제거 요청한 보조 영역은 숨겨 메인 지도만 남긴다. */
+#tab-base .panel.pn-remove-requested {display:none!important}
+#tab-base .panel:has(> h2) { }
+/* 지도와 본문 색상 통일 */
+.pn-home-map, .pn-home-map iframe {background:transparent!important}
+.leftcol #effectList .pill {margin-top:4px}
+#pnInlineDurability {font-size:12px;color:var(--muted);font-weight:500;white-space:nowrap}
+</style>
+<script>
+(function(){
+ const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+ const base=$('#tab-base'), left=$('.leftcol'), characterCard=left?.querySelector('.panel');
+ if(!base||!left||!characterCard)return;
+ // 상태 효과는 왼쪽 상단 캐릭터 상태창 바로 아래에 붙인다.
+ const effects=$$('.panel').find(p=>p.querySelector('h2')?.textContent.trim().replace(/\s/g,'')==='상태효과');
+ if(effects){
+   effects.style.marginTop='10px';
+   characterCard.appendChild(effects);
+   effects.querySelector('h2').textContent='상태 효과';
+ }
+ // 창고 이름 변경
+ const storage=$$('#tab-base h2').find(h=>['보유 물자','공용 물자','거점 공용 창고'].includes(h.textContent.trim()));
+ if(storage)storage.textContent='거점 공용 창고';
+ // 난방 내구도는 왼쪽 난방 제목 바로 옆에 표시
+ const heatHeading=$$('.leftcol h2').find(h=>h.textContent.trim()==='거점 난방');
+ if(heatHeading){
+   heatHeading.style.cssText+=';display:flex;align-items:center;justify-content:space-between;gap:8px';
+   let durability=$('#pnInlineDurability');
+   if(!durability){durability=document.createElement('small');durability.id='pnInlineDurability';heatHeading.appendChild(durability)}
+   window.pnShowDurability=v=>{durability.textContent='내구도 '+v+'%'};
+    window.pnShowDurability(window.pnHeaterState?window.pnHeaterState().durability:100);
+ }
+ // 요청한 메인 하단의 주변 지역/행동 선택/작전 기록/공동 난방 시설은 화면에서 제거.
+ const removeTitles=['주변 지역','지역 안내','행동 선택','작전 기록','공동 난방 시설'];
+ const hideRequested=()=>{
+   $$('#tab-base h2').forEach(h=>{
+     const title=h.textContent.trim();
+     if(removeTitles.includes(title)){
+       const panel=h.closest('.panel'); if(panel)panel.classList.add('pn-remove-requested');
+     }
+   });
+   // 지역 안내 패널은 제목이 스크립트에서 변경되는 경우가 있어 관련 텍스트도 확인
+   $$('#tab-base .panel').forEach(panel=>{
+     const txt=panel.innerText||'';
+     if(txt.includes('지도에서 큰 지역을 선택하면 세부 장소가 표시됩니다') ||
+        (txt.includes('난방 단계')&&txt.includes('난방 보강')) ||
+        (txt.includes('무너진 가로등 아래에서 낡은 발자국을 발견했다')&&txt.includes('어제 22:15'))){
+       panel.classList.add('pn-remove-requested');
+     }
+   });
+ };
+ hideRequested();
+ const observer=new MutationObserver(hideRequested);observer.observe(base,{childList:true,subtree:true,characterData:true});
+ // 지도 iframe 안쪽도 홈페이지의 동일한 남청색 팔레트로 맞춘다.
+ const syncMap=()=>{
+   $$('.pn-home-map iframe, #tab-base iframe').forEach(frame=>{
+     try{
+       const doc=frame.contentDocument;if(!doc)return;
+       let st=doc.getElementById('pn-theme-sync');
+       if(!st){st=doc.createElement('style');st.id='pn-theme-sync';doc.head.appendChild(st)}
+       const pnCss=':root{--bg:#101a29;--panel:#1c2b3d;--panel2:#22354a;--line:#35495e;--text:#e3edf7;--muted:#8fafcb;--ice:#d6e6f8;--accent:#8fafcb}html,body,.app{background:#101a29!important;color:#e3edf7!important}.panel,.detail,.place,.region-tabs{background:#1c2b3d!important;border-color:#35495e!important}.map-viewport{background:#152335!important;border-color:#35495e!important}.btn,.place{color:#e3edf7!important}.muted,.hint{color:#8fafcb!important}';if(st.textContent!==pnCss)st.textContent=pnCss;
+     }catch(e){}
+   });
+ };
+ 
+})();
+</script>
+
+<script id="pn-08-map-bridge">
+/* Polar Night 0.8 — 지도(iframe) ↔ 게임 본체 연결
+   · 지도에서 고른 장소·행동·시간을 게임의 기존 작전 로직(beginAction / finishMission)에 그대로 넘깁니다.
+   · 게임 상태(진행 중 작전, 발견 지역, 최근 기록)를 지도에 되돌려 보냅니다.
+   · 새 장소·행동을 추가할 때는 아래 세 개의 표(PLACE_REGION, PLACE_CAN, EXTRA_NODE)만 고치면 됩니다. */
+(function(){
+ 'use strict';
+ const $=s=>document.querySelector(s);
+ const KEY={'탐사':'explore','채집':'gather','사냥':'hunt'};
+ const KO={explore:'탐사',gather:'채집',hunt:'사냥'};
+
+ /* 지도에 그려진 장소 → 게임 지역 id (여기 없는 장소는 '미확인'으로 남고 행동을 시작할 수 없음) */
+ const PLACE_REGION={shop:'outskirts',warehouse:'outskirts',road:'outskirts',clearing:'conifer',creek:'creek',homes:'village',clinic:'village',mine:'mine'};
+ /* 장소별로 허용할 행동(게임 지역이 허용하는 행동과 겹치는 것만 실제로 선택 가능) */
+ const PLACE_CAN={shop:['explore','gather'],warehouse:['explore','gather'],road:['explore'],clearing:['explore','gather','hunt'],creek:['explore','gather','hunt'],homes:['explore','gather'],clinic:['explore','gather'],mine:['explore','gather']};
+ /* 지도 그림에 자리가 없는 게임 지역: 발견되면 해당 권역 목록에 나타남 */
+ const EXTRA_NODE={observatory:'ruins',stationYard:'ruins',transmitter:'ruins',mountainTrail:'ruins',birch:'forest',deadwood:'forest',railStation:'village',supply:'village',lab:'glacier',buriedTunnel:'glacier',avalancheValley:'glacier'};
+ /* 지도 위 권역이 '열렸는지' 판단하는 게임 지역 */
+ const NODE_GAME={ruins:['outskirts'],forest:['conifer'],village:['village'],glacier:['mine','lab','buriedTunnel','avalancheValley']};
+
+ window.regions=regions;                      /* 옛 패치가 window.regions를 읽음 */
+ 
+ const frame=()=>document.querySelector('.pn-home-map iframe');
+ const send=m=>{const f=frame();if(f&&f.contentWindow)f.contentWindow.postMessage(m,'*')};
+ const reply=(ok,msg)=>{send({pn:'reply',ok:ok,msg:msg||''});return ok};
+ const isWeak=()=>typeof window.pnIsWeak==='function'&&window.pnIsWeak();
+ const gameActs=id=>((regions[id]&&regions[id].actions)||[]).map(a=>KEY[a]).filter(Boolean);
+ const minText=ms=>{const m=Math.ceil(ms/60000),h=Math.floor(m/60);return h?(h+'시간 '+(m%60?(m%60)+'분':'')).trim():m+'분'};
+
+ function snapshot(){
+  const S=state,m=S.mission,open={},can={},extras=[],nodes={};
+  Object.keys(PLACE_REGION).forEach(p=>{const g=PLACE_REGION[p];open[p]=!!(regions[g]&&regions[g].found);can[p]=PLACE_CAN[p].filter(a=>gameActs(g).includes(a))});
+  Object.keys(EXTRA_NODE).forEach(id=>{const r=regions[id];if(!r||!r.found)return;can[id]=gameActs(id);extras.push({id:id,node:EXTRA_NODE[id],name:r.name,desc:r.desc,risk:r.risk})});
+  Object.keys(NODE_GAME).forEach(n=>{nodes[n]=NODE_GAME[n].some(id=>regions[id]&&regions[id].found)});
+  const logs=Array.from(document.querySelectorAll('#log .log-entry')).slice(0,3).map(e=>({t:(e.querySelector('.log-time')||{}).textContent||'',x:(e.querySelector('.log-text')||{}).textContent||''}));
+  return {open:open,can:can,extras:extras,nodes:nodes,loc:S.region,locName:regions[S.region]?regions[S.region].name:'',weak:isWeak(),logs:logs,
+   mission:m?{act:m.action,placeName:m.placeName||(regions[m.region]?regions[m.region].name:''),start:m.start,end:m.end}:null};
+ }
+ let last='',timer=null;
+ function push(force){const s=JSON.stringify(snapshot());if(!force&&s===last)return;last=s;send({pn:'state',state:JSON.parse(s)})}
+ function queuePush(){clearTimeout(timer);timer=setTimeout(()=>push(false),80)}
+
+ /* render가 끝날 때마다(5초 주기·행동 직후 모두) 변경분을 지도에 보냄 */
+ const prevRender=window.render;
+ window.render=function(){try{return prevRender.apply(this,arguments)}finally{queuePush()}};
+
+ function startAction(d){
+  const place=String(d.place||''),act=String(d.act||''),placeName=String(d.placeName||'').slice(0,30);
+  const gid=PLACE_REGION[place]||(EXTRA_NODE[place]?place:null);
+  if(!gid||!regions[gid])return reply(false,'이 장소는 아직 게임 기능과 연결되지 않았습니다.');
+  if(!regions[gid].found)return reply(false,'아직 발견하지 못한 장소입니다.');
+  if(state.mission)return reply(false,'이미 진행 중인 작전이 있습니다.');
+  if(!KO[act])return reply(false,'알 수 없는 행동입니다.');
+  const allowed=PLACE_REGION[place]?PLACE_CAN[place].filter(a=>gameActs(gid).includes(a)):gameActs(gid);
+  if(!allowed.includes(act))return reply(false,placeName+'에서는 '+KO[act]+(act==='explore'?'를':'을')+' 할 수 없습니다.');
+  let dur=Number(d.dur);if([60,120,180,240,300].indexOf(dur)<0)dur=60;
+  if(isWeak()&&dur>60)return reply(false,'쇠약 상태에서는 1시간 활동만 할 수 있습니다.');
+  if(act!=='explore'&&typeof window.pnResourceWait==='function'){
+   const wait=window.pnResourceWait(gid,act==='gather'?'gather':'hunt',place);
+   if(wait>0)return reply(false,placeName+'에서는 아직 '+KO[act]+'을 할 수 없습니다. 약 '+minText(wait)+' 뒤에 다시 시도하거나 다른 장소를 고르세요.');
+  }
+  /* 게임이 원래 쓰던 입력(선택 지역·행동·시간)을 채운 뒤 기존 시작 로직을 그대로 호출 */
+  state.selected=gid;state.action=act;
+  const sel=$('#duration');if(sel)sel.value=String(dur);
+  window.beginAction();
+  if(!state.mission)return reply(false,'작전을 시작하지 못했습니다. 잠시 뒤 다시 시도하세요.');
+  state.mission.place=place;state.mission.placeName=placeName;   /* 장소별 재보급 시간 계산에 사용 */
+  if(window.saveState)window.saveState();
+  window.render();push(true);
+  return true;
+ }
+ function finish(){
+  const m=state.mission;
+  if(!m)return reply(false,'진행 중인 작전이 없습니다.');
+  if(Date.now()<m.end)return reply(false,'아직 활동 시간이 끝나지 않았습니다.');
+  window.finishMission();push(true);
+ }
+ function cancel(){
+  if(!state.mission)return reply(false,'중단할 작전이 없습니다.');
+  state.mission=null;state.region='base';state.selected='base';
+  addLog('활동을 중단했다. 미완료 보상은 지급되지 않았다.','북부 거점',true);
+  if(window.saveState)window.saveState();
+  window.render();push(true);toast('활동을 중단했습니다. 미완료 보상은 지급되지 않았습니다.');
+ }
+ function goHome(){
+  const b=$('#returnBase');
+  if(b&&typeof b.onclick==='function')b.onclick.call(b);
+  push(true);
+ }
+
+ window.addEventListener('message',e=>{
+  const f=frame(),d=e.data;
+  if(!f||e.source!==f.contentWindow||!d||typeof d!=='object')return;
+  try{
+   switch(d.pn){
+    case 'ready':sendPalette();push(true);break;
+    case 'height':{const h=Math.round(Number(d.h));if(h>=300&&h<=4000)f.style.height=h+'px';break}
+    case 'toast':if(typeof d.msg==='string'&&d.msg)toast(d.msg.slice(0,120));break;
+    case 'start':startAction(d);break;
+    case 'finish':finish();break;
+    case 'cancel':cancel();break;
+    case 'home':goHome();break;
+   }
+  }catch(err){console.error(err);reply(false,'처리 중 오류가 발생했습니다. 페이지를 새로 고친 뒤 다시 시도하세요.')}
+ });
+ /* 지도 색은 홈페이지 색 변수를 그대로 받아 씀 → 테마를 바꿔도 항상 같은 색 */
+ function sendPalette(){const c=getComputedStyle(document.documentElement),colors={};
+  ['bg','panel','panel2','line','text','muted','ice','gold'].forEach(k=>{const v=c.getPropertyValue('--'+k).trim();if(v)colors[k]=v});
+  send({pn:'palette',colors:colors})}
+ new MutationObserver(sendPalette).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','style']});
+ document.addEventListener('load',e=>{if(e.target===frame()){sendPalette();push(true)}},true);
+ /* 탭을 오래 비워 둔 뒤 돌아오면 바로 시간 경과를 반영(방치형 게임) */
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&typeof tick==='function')tick()});
+})();
+</script>
+
+</body></html>
