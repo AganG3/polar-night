@@ -948,6 +948,78 @@ refreshProg();
   });
 })();
 </script>
+<script id="pn-09-jobs">
+/* 극야 0.9 — 아르바이트(일자리) · 일일 임무 · 출석 보너스 · 레벨 시스템 통합 */
+(function(){
+ const $=s=>document.querySelector(s), S=()=>state;
+ const NM={wood:'장작',scrapwood:'폐목재',food:'식량',water:'물',herb:'약초',cloth:'천 조각'};
+ const SN={strength:'근력',agility:'민첩',mind:'정신',constitution:'체질',luck:'행운'};
+ const JOBS=[
+  {id:'chop',n:'장작 패기',m:30,xp:12,lv:1,r:{wood:2},c:{temp:4},d:'거점 뒤편에서 장작을 팬다.'},
+  {id:'snow',n:'눈 치우기',m:45,xp:18,lv:1,r:{scrapwood:2},c:{temp:6},d:'입구와 통로의 눈을 치운다.'},
+  {id:'train',n:'체력 단련',m:60,xp:30,lv:1,r:{},c:{temp:2,mind:3},d:'몸을 단련한다. 보상은 없지만 경험치가 높다.'},
+  {id:'cook',n:'취사 보조',m:60,xp:25,lv:2,r:{food:2,water:1},c:{mind:2},d:'공동 취사장에서 일손을 돕는다.'},
+  {id:'med',n:'의무실 보조',m:60,xp:28,lv:3,r:{herb:2},c:{mind:2},d:'엘리를 도와 약초를 손질한다.'},
+  {id:'fix',n:'정비 보조',m:90,xp:45,lv:4,r:{scrapwood:3,cloth:1},c:{mind:3},d:'도윤과 거점 시설을 수리한다.'},
+  {id:'watch',n:'야간 보초',m:120,xp:60,lv:5,r:{wood:2,cloth:1},c:{temp:8,mind:8},d:'밤새 망루에서 경계를 선다. 힘들지만 보수가 좋다.'}
+ ];
+ const QUESTS=[['job','일자리 2회 완료',2],['mission','탐사·채집·사냥 1회 완료',1],['train','체력 단련 1회',1]];
+ const day=()=>new Date().toLocaleDateString('sv-SE');
+ const save=()=>{try{window.saveState&&window.saveState()}catch(e){}};
+ const say=(t,imp)=>{try{addLog(t,'북부 거점',imp)}catch(e){}};
+ function P(){const s=S();if(!s.pnProg){let o={};try{o=JSON.parse(localStorage.getItem('pn07_progress')||'{}')}catch(e){}
+  const st=Object.assign({strength:1,agility:1,mind:1,constitution:1,luck:1},o.stats||{});delete st.warmth;
+  s.pnProg={lv:o.level||1,xp:o.xp||0,pt:o.points==null?3:o.points,st:st,streak:0,last:'',jobs:0}}return s.pnProg}
+ function D(){const s=S();if(!s.pnDaily||s.pnDaily.day!==day())s.pnDaily={day:day(),job:0,mission:0,train:0,got:{},all:false};return s.pnDaily}
+ const hpMax=()=>{const p=P();return 100+(p.st.strength+p.st.constitution-2)*5};
+ function gain(x){const p=P();p.xp+=x;let up=0;while(p.xp>=p.lv*100){p.xp-=p.lv*100;p.lv++;p.pt+=2;up++;if(p.lv%5===0)S().wood+=5;}
+  if(up){say('레벨 업! Lv.'+p.lv+' 달성. 스탯 포인트 +'+(up*2)+(p.lv%5===0?' · 보너스 장작 5개':''),true);toast('레벨 업! Lv.'+p.lv)}}
+ function quest(k){const d=D();d[k]++;QUESTS.forEach(([q,n,need])=>{if(d[q]>=need&&!d.got[q]){d.got[q]=1;gain(40);say('일일 임무 완료: '+n+' (경험치 +40)',true)}});
+  if(!d.all&&QUESTS.every(([q])=>d.got[q])){d.all=1;gain(60);say('오늘의 임무를 모두 완료했다. 보너스 경험치 +60',true)}}
+ function attendance(){const p=P(),t=day();if(p.last===t)return;const y=new Date(Date.now()-864e5).toLocaleDateString('sv-SE');
+  p.streak=p.last===y?p.streak+1:1;p.last=t;const x=10+Math.min(p.streak,7)*5;gain(x);say('출석 '+p.streak+'일째. 경험치 +'+x,true)}
+ function start(id){const s=S(),j=JOBS.find(x=>x.id===id),p=P();
+  if(!j)return;if(s.pnJob)return toast('이미 일하는 중입니다.');if(s.mission)return toast('작전 중에는 일할 수 없습니다.');
+  if(s.region!=='base')return toast('거점에 있을 때만 일할 수 있습니다.');if(p.lv<j.lv)return toast('Lv.'+j.lv+' 이상 필요합니다.');
+  if(s.temp<20)return toast('체온이 너무 낮습니다. 먼저 몸을 녹이세요.');
+  if(typeof window.pnIsWeak==='function'&&window.pnIsWeak()&&j.m>60)return toast('쇠약 상태에서는 1시간 이하 일만 가능합니다.');
+  s.pnJob={id:id,start:Date.now(),end:Date.now()+j.m*60000};say(j.n+' 일을 시작했다. 약 '+j.m+'분 걸린다.');save();draw()}
+ function finish(){const s=S(),w=s.pnJob;if(!w||Date.now()<w.end)return;const j=JOBS.find(x=>x.id===w.id);s.pnJob=null;
+  Object.keys(j.r).forEach(k=>s[k]=(s[k]||0)+j.r[k]);if(j.c.temp)s.temp=Math.max(0,s.temp-j.c.temp);if(j.c.mind)s.mind=Math.max(0,s.mind-j.c.mind);
+  const p=P();p.jobs++;gain(j.xp);quest(j.id==='train'?'train':'job');
+  const rw=Object.keys(j.r).map(k=>NM[k]+' +'+j.r[k]).join(', ');say(j.n+' 완료 · 경험치 +'+j.xp+(rw?' · '+rw:''),true);toast(j.n+' 완료!');
+  save();try{render()}catch(e){}draw()}
+ // 작전(탐사·채집·사냥)이 정상 완료되면 경험치 지급
+ const of=window.finishMission;
+ window.finishMission=function(){const m=state.mission;of.apply(this,arguments);if(m&&!state.mission&&m.action!=='return'){gain(Math.round(15*m.duration/60)+5);quest('mission');save();draw()}};
+ // 화면
+ const nav=$('.nav'),main=$('main');if(!nav||!main)return;
+ const b=document.createElement('button');b.dataset.tab='jobs';b.textContent='일자리 · 성장';nav.appendChild(b);
+ const tab=document.createElement('section');tab.className='content-tab';tab.id='tab-jobs';main.appendChild(tab);
+ b.onclick=()=>{document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.content-tab').forEach(x=>x.classList.toggle('active',x===tab))};
+ const old=[...document.querySelectorAll('h2')].find(h=>h.textContent.trim()==='성장 · 훈련');if(old)old.closest('.panel').style.display='none';
+ let last='';
+ function draw(){const s=S(),p=P(),d=D(),w=s.pnJob,now=Date.now();
+  const sub=document.querySelector('.profile .sub');if(sub)sub.textContent='생존자 · Lv. '+p.lv;
+  const lv=document.getElementById('pnLevel');if(lv)lv.textContent='Lv.'+p.lv;
+  let h='<div class="panel"><h2>성장 · Lv.'+p.lv+'</h2><div class="stat"><span>경험치</span><b>'+p.xp+' / '+p.lv*100+'</b></div><div class="progress"><span style="width:'+Math.min(100,p.xp/(p.lv*100)*100)+'%"></span></div>'
+   +'<div class="mini" style="margin-top:6px">최대 체력 '+hpMax()+' · 남은 스탯 포인트 '+p.pt+' · 출석 '+p.streak+'일째 · 누적 일자리 '+p.jobs+'회</div><div class="recipe-grid">'
+   +Object.keys(SN).map(k=>'<div class="region-info"><b>'+SN[k]+' '+p.st[k]+'</b><br><button class="smallbtn" data-st="'+k+'"'+(p.pt<=0?' disabled':'')+'>+1</button></div>').join('')+'</div>'
+   +'<div class="mini" style="margin-top:6px">레벨 업마다 스탯 +2, 5레벨마다 장작 5개. 근력·체질은 최대 체력에 영향을 줍니다.</div></div>';
+  h+='<div class="panel" style="margin-top:12px"><h2>오늘의 임무</h2>'+QUESTS.map(([q,n,need])=>'<div class="resource"><span>'+n+'</span><span class="'+(d.got[q]?'goodtext':'')+'">'+Math.min(d[q],need)+' / '+need+(d.got[q]?' ✓':'')+'</span></div>').join('')
+   +'<div class="mini">각 임무 경험치 +40 · 전부 완료 시 +60 · 자정에 초기화</div></div>';
+  h+='<div class="panel" style="margin-top:12px"><h2>거점 일자리 (아르바이트)</h2><div class="mini">거점에서 일하고 물자와 경험치를 얻습니다. 창을 닫아도 시간은 계속 흐릅니다. 작전과 동시에 할 수 없습니다.</div>';
+  if(w){const j=JOBS.find(x=>x.id===w.id),left=Math.max(0,w.end-now);h+='<div class="region-info"><b>'+j.n+' 진행 중</b><div class="progress"><span style="width:'+Math.min(100,(now-w.start)/(w.end-w.start)*100)+'%"></span></div><div class="mini">'+(left?'남은 시간 약 '+Math.ceil(left/60000)+'분':'완료! 보상을 받는 중입니다.')+'</div><button class="smallbtn" data-cancel="1">그만두기 (보상 없음)</button></div>'}
+  h+=JOBS.map(j=>{const lock=p.lv<j.lv,rw=Object.keys(j.r).map(k=>NM[k]+' '+j.r[k]).join(' · ');return '<div class="item-card"><b>'+j.n+'</b> <span class="pill">'+j.m+'분</span> <span class="pill good">경험치 +'+j.xp+'</span>'+(lock?' <span class="pill warn">Lv.'+j.lv+' 필요</span>':'')+'<p>'+j.d+'</p><p>보상: '+(rw||'없음')+'</p><button class="smallbtn" data-job="'+j.id+'"'+(lock||w?' disabled':'')+'>일 시작</button></div>'}).join('')+'</div>';
+  if(h!==last){last=h;tab.innerHTML=h}}
+ tab.addEventListener('click',e=>{const t=e.target.closest('button');if(!t||t.disabled)return;const s=S(),p=P();
+  if(t.dataset.job)start(t.dataset.job);
+  else if(t.dataset.st&&p.pt>0){p.st[t.dataset.st]++;p.pt--;if(t.dataset.st==='strength'||t.dataset.st==='constitution')s.hp=Math.min(hpMax(),s.hp+5);save();try{render()}catch(x){}draw()}
+  else if(t.dataset.cancel&&confirm('지금 그만두면 보상을 받을 수 없습니다. 그만둘까요?')){s.pnJob=null;save();draw()}});
+ attendance();draw();
+ setInterval(()=>{try{finish();draw()}catch(e){}},1000);
+})();
+</script>
 
 </body>
 </html>
